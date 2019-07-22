@@ -1,0 +1,167 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Исходные файлы">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Файлы заголовков">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Файлы ресурсов">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Modules">
+      <UniqueIdentifier>{8a225011-5fb7-441f-9b07-81bef55a906e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Modules\Login">
+      <UniqueIdentifier>{3b5110ec-bf2f-4420-95a1-21ff9a2e31f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Modules\Login\View">
+      <UniqueIdentifier>{34436e6f-b670-4ac5-b31d-dd58ba400890}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{253e9434-c1ba-4552-b009-fe4f9fd70c75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Modules\Settings">
+      <UniqueIdentifier>{7cff90d4-c6ad-48de-9706-09ba75d491dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Modules\Settings\View">
+      <UniqueIdentifier>{efb535ca-ae9d-4ae8-a5a3-8d91cf7bef5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Modules\Settings\Presenter">
+      <UniqueIdentifier>{5a0db036-3e99-4e78-95b0-b64036e088c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Modules\Settings\Configurator">
+      <UniqueIdentifier>{38769502-b5e0-4c28-9546-d96a60cc71a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Modules\Login\Presenter">
+      <UniqueIdentifier>{a867e5bb-093c-4a0d-add8-f660ab343b34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Modules\Filtres">
+      <UniqueIdentifier>{4e465b3c-6787-482e-a20e-2e433adaaa5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Modules\Filtres\View">
+      <UniqueIdentifier>{e3a5303b-e03a-4d1e-8119-b3702c2f70da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Modules\Login\Configurator">
+      <UniqueIdentifier>{6cebd7f6-4a82-4490-81a3-dc50f0b433da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UIComponents">
+      <UniqueIdentifier>{dadff87b-5e53-4476-afeb-ba1424b3110b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Modules\Filtres\Presenter">
+      <UniqueIdentifier>{468ab78d-6603-44b4-b4e9-6fee2e2daa37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Modules\Filtres\Configurator">
+      <UniqueIdentifier>{f822a58f-504d-420f-ac11-f3166332d1bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SettingsDataSource">
+      <UniqueIdentifier>{932fe874-8713-4b40-b6e8-f22d04f92a24}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="LoginViewController.cpp">
+      <Filter>Modules\Login\View</Filter>
+    </ClCompile>
+    <ClCompile Include="SettingsViewController.cpp">
+      <Filter>Modules\Settings\View</Filter>
+    </ClCompile>
+    <ClCompile Include="SettingsPresenter.cpp">
+      <Filter>Modules\Settings\Presenter</Filter>
+    </ClCompile>
+    <ClCompile Include="SettingsInitializer.cpp">
+      <Filter>Modules\Settings\Configurator</Filter>
+    </ClCompile>
+    <ClCompile Include="LoginPresenter.cpp">
+      <Filter>Modules\Login\Presenter</Filter>
+    </ClCompile>
+    <ClCompile Include="FiltersViewController.cpp">
+      <Filter>Modules\Filtres\View</Filter>
+    </ClCompile>
+    <ClCompile Include="LoginInitializer.cpp">
+      <Filter>Modules\Login\Configurator</Filter>
+    </ClCompile>
+    <ClCompile Include="UIDialogViewController.cpp">
+      <Filter>UIComponents</Filter>
+    </ClCompile>
+    <ClCompile Include="FiltersPresenter.cpp">
+      <Filter>Modules\Filtres\Presenter</Filter>
+    </ClCompile>
+    <ClCompile Include="FiltersInitializer.cpp">
+      <Filter>Modules\Filtres\Configurator</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="resource.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="ILoginViewInput.h">
+      <Filter>Modules\Login\View</Filter>
+    </ClInclude>
+    <ClInclude Include="ILoginViewOutput.h">
+      <Filter>Modules\Login\View</Filter>
+    </ClInclude>
+    <ClInclude Include="LoginViewController.h">
+      <Filter>Modules\Login\View</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="ISettingsViewInput.h">
+      <Filter>Modules\Settings\View</Filter>
+    </ClInclude>
+    <ClInclude Include="ISettingsViewOutput.h">
+      <Filter>Modules\Settings\View</Filter>
+    </ClInclude>
+    <ClInclude Include="SettingsViewController.h">
+      <Filter>Modules\Settings\View</Filter>
+    </ClInclude>
+    <ClInclude Include="SettingsPresenter.h">
+      <Filter>Modules\Settings\Presenter</Filter>
+    </ClInclude>
+    <ClInclude Include="SettingsInitializer.h">
+      <Filter>Modules\Settings\Configurator</Filter>
+    </ClInclude>
+    <ClInclude Include="LoginPresenter.h">
+      <Filter>Modules\Login\Presenter</Filter>
+    </ClInclude>
+    <ClInclude Include="IFiltersViewInput.h">
+      <Filter>Modules\Filtres\View</Filter>
+    </ClInclude>
+    <ClInclude Include="IFiltersViewOutput.h">
+      <Filter>Modules\Filtres\View</Filter>
+    </ClInclude>
+    <ClInclude Include="FiltersViewController.h">
+      <Filter>Modules\Filtres\View</Filter>
+    </ClInclude>
+    <ClInclude Include="LoginInitializer.h">
+      <Filter>Modules\Login\Configurator</Filter>
+    </ClInclude>
+    <ClInclude Include="UIDialogViewController.h">
+      <Filter>UIComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="IExtensible.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="FiltersPresenter.h">
+      <Filter>Modules\Filtres\Presenter</Filter>
+    </ClInclude>
+    <ClInclude Include="FiltersInitializer.h">
+      <Filter>Modules\Filtres\Configurator</Filter>
+    </ClInclude>
+    <ClInclude Include="ISettingsDataSource.h">
+      <Filter>SettingsDataSource</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="SQLTest.rc">
+      <Filter>Файлы ресурсов</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
