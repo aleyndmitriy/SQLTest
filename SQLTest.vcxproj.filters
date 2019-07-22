@@ -61,6 +61,21 @@
     <Filter Include="SettingsDataSource">
       <UniqueIdentifier>{932fe874-8713-4b40-b6e8-f22d04f92a24}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DataAccessLayer">
+      <UniqueIdentifier>{ebbbab39-9247-45bd-8c46-63ea9832abdb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DataAccessLayer\Environment">
+      <UniqueIdentifier>{8905e73c-2426-4bc0-a18a-37ff7b2261cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DataAccessLayer\Environment\SQLServerEnvironment">
+      <UniqueIdentifier>{d0261e72-03ac-472e-85cb-d350768406de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DataAccessLayer\Connection">
+      <UniqueIdentifier>{125cfdaa-d1e9-47b8-89e2-00feca708ccf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DataAccessLayer\Connection\SQLServerConnection">
+      <UniqueIdentifier>{7a17366b-2064-4438-8c05-be1005b8f298}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -95,6 +110,18 @@
     </ClCompile>
     <ClCompile Include="FiltersInitializer.cpp">
       <Filter>Modules\Filtres\Configurator</Filter>
+    </ClCompile>
+    <ClCompile Include="SQLServerEnvironment.cpp">
+      <Filter>DataAccessLayer\Environment\SQLServerEnvironment</Filter>
+    </ClCompile>
+    <ClCompile Include="Connection.cpp">
+      <Filter>DataAccessLayer\Connection</Filter>
+    </ClCompile>
+    <ClCompile Include="SQLServerConnection.cpp">
+      <Filter>DataAccessLayer\Connection\SQLServerConnection</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils.cpp">
+      <Filter>Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -157,6 +184,24 @@
     </ClInclude>
     <ClInclude Include="ISettingsDataSource.h">
       <Filter>SettingsDataSource</Filter>
+    </ClInclude>
+    <ClInclude Include="IEnvironment.h">
+      <Filter>DataAccessLayer\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="SQLServerEnvironment.h">
+      <Filter>DataAccessLayer\Environment\SQLServerEnvironment</Filter>
+    </ClInclude>
+    <ClInclude Include="Connection.h">
+      <Filter>DataAccessLayer\Connection</Filter>
+    </ClInclude>
+    <ClInclude Include="ConnectionAttributes.h">
+      <Filter>DataAccessLayer\Connection</Filter>
+    </ClInclude>
+    <ClInclude Include="SQLServerConnection.h">
+      <Filter>DataAccessLayer\Connection\SQLServerConnection</Filter>
+    </ClInclude>
+    <ClInclude Include="Constants.h">
+      <Filter>Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
