@@ -76,6 +76,12 @@
     <Filter Include="DataAccessLayer\Connection\SQLServerConnection">
       <UniqueIdentifier>{7a17366b-2064-4438-8c05-be1005b8f298}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DataAccessLayer\DatabaseEngine">
+      <UniqueIdentifier>{4d6f9893-77c9-4958-9be3-bf2c7aae706f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assemblies">
+      <UniqueIdentifier>{f41999e1-dc5f-46d2-82d9-7970a35c34b2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -122,6 +128,9 @@
     </ClCompile>
     <ClCompile Include="Utils.cpp">
       <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="SQLServerDatabaseEngine.cpp">
+      <Filter>DataAccessLayer\DatabaseEngine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -202,6 +211,12 @@
     </ClInclude>
     <ClInclude Include="Constants.h">
       <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="DatabaseEngine.h">
+      <Filter>DataAccessLayer\DatabaseEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="SQLServerDatabaseEngine.h">
+      <Filter>DataAccessLayer\DatabaseEngine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -30,6 +30,7 @@ void DrvFtaeAlarm::SettingsViewController::setupInitialState()
 	TabCtrl_InsertItem(hTabControl, 1, &tia);
 	TabCtrl_SetCurSel(hTabControl, 0);
 	ShiftChildDialog();
+	DestroyFiltersView();
 	CreateLoginView();
 	presenter->setViewInput(shared_from_this());
 

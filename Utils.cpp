@@ -37,3 +37,21 @@ std::string FindAndReplace(std::string tInput, std::string tFind, const std::str
 	}
 	return tInput;
 }
+
+std::vector<std::string> split(const std::string& text, const std::string& delimeters)
+{
+	std::vector<std::string> tokens = std::vector<std::string>{};
+	size_t pos = 0;
+	size_t prevPos = 0;
+	while (pos != std::string::npos ) {
+		pos = text.find_first_of(delimeters, prevPos);
+		if (pos > prevPos) {
+			tokens.push_back(text.substr(prevPos, pos - prevPos));
+		}
+		prevPos = pos + 1;
+	}
+	/*if (prevPos < text.length()) {
+		tokens.push_back(text.substr(prevPos, std::string::npos));
+	}*/
+	return tokens;
+}
