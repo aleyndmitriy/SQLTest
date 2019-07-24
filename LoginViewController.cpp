@@ -92,7 +92,7 @@ void DrvFtaeAlarm::LoginViewController::ChooseDatabase()
 
 void DrvFtaeAlarm::LoginViewController::ConnectToDatabase()
 {
-
+	presenter->ConnectToDatabase();
 }
 
 void DrvFtaeAlarm::LoginViewController::CloseView()
@@ -235,6 +235,12 @@ INT_PTR WINAPI LoginDlg_Proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				controller->SaveDatabaseName();
 				break;
 			case CBN_EDITCHANGE:
+				controller->SaveDatabaseName();
+				break;
+			case CBN_SELCHANGE:
+				controller->ChooseDatabase();
+				break;
+			case CBN_SELENDOK:
 				controller->ChooseDatabase();
 				break;
 			}

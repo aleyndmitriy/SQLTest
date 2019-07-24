@@ -1,8 +1,9 @@
 #include"FiltersInitializer.h"
+#include"DataSQLServerAccessAssembly.h"
 
 void DrvFtaeAlarm::FiltersInitializer::CreateModule(HINSTANCE hInstance, const std::shared_ptr<UIDialogViewController>& parent)
 {
-	std::shared_ptr<IFiltersViewOutput> presenter = std::make_shared<FiltersPresenter>();
+	std::shared_ptr<IFiltersViewOutput> presenter = std::make_shared<FiltersPresenter>(DataSQLServerAccessAssembly::instance().GetDataBaseEngine());
 	FiltersViewController* controller = new FiltersViewController(parent, presenter);
 	HWND hParentHandle = NULL;
 	if (parent) {

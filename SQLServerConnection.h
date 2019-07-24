@@ -22,7 +22,7 @@ namespace DrvFtaeAlarm {
 		void* GetInterface() override;
 		void ConnectToServerInstances(std::string driverName) override;
 		void ConnectToDatabaseInstances(std::string serverName, std::string login, std::string password) override;
-		void ConnectToDatabase(std::string databaseName) override;
+		bool ConnectToDatabase(std::string databaseName) override;
 		std::vector<std::string> GetServerList() const override;
 		std::vector<std::string> GetDatabaseList() const override;
 	private:

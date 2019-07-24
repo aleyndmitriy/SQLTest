@@ -15,11 +15,11 @@ namespace DrvFtaeAlarm {
 		void OpenConnection(const ConnectionAttributes& attributes) override;
 		void loadServerInstances(std::string driverName) override;
 		void loadDatabaseInstances(std::string serverName, AuthenticationType type, std::string user, std::string password) override;
-		void ChooseDatabase(std::string databaseName) override;
+		bool ChooseDatabase(std::string databaseName) override;
 		void CloseConnection() override;
 		std::vector<std::string> GetServersList() const override;
 		std::vector<std::string> GetDatabasesList() const override;
-		 ~SQLServerDatabaseEngine();
+		~SQLServerDatabaseEngine();
 	private:
 		std::shared_ptr<SQLServerEnvironment> environment;
 		std::shared_ptr<SQLServerConnection> connection;

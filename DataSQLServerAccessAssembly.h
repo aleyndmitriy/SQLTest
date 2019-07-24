@@ -1,0 +1,20 @@
+#pragma once
+#include"DataAccessAssembly.h"
+#include"SQLServerDatabaseEngine.h"
+
+namespace DrvFtaeAlarm {
+
+	class DataSQLServerAccessAssembly final : public DataAccessAssembly {
+	public:
+		std::shared_ptr<DatabaseEngine> GetDataBaseEngine() const override;
+		DataSQLServerAccessAssembly(const DataSQLServerAccessAssembly& src) = delete;
+		DataSQLServerAccessAssembly& operator=(const DataSQLServerAccessAssembly& src) = delete;
+		DataSQLServerAccessAssembly(DataSQLServerAccessAssembly&& rhs) = delete;
+		DataSQLServerAccessAssembly& operator=(DataSQLServerAccessAssembly&& rhs) = delete;
+		static DataSQLServerAccessAssembly& instance();
+	private:
+		DataSQLServerAccessAssembly();
+		~DataSQLServerAccessAssembly();
+		std::shared_ptr<SQLServerDatabaseEngine> databaseEngine;
+	};
+}

@@ -16,6 +16,7 @@ namespace DrvFtaeAlarm {
 		virtual void GetDatabaseName(std::string&& databaseName) = 0;
 		virtual void GetDatabaseIndex(int index) = 0;
 		virtual void ConnectToServer() = 0;
+		virtual void ConnectToDatabase() = 0;
 		virtual ~ILoginViewOutput() {};
 	};
 }

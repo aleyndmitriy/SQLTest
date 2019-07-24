@@ -137,7 +137,7 @@ void DrvFtaeAlarm::SQLServerConnection::ConnectToDatabaseInstances(std::string s
 	}
 }
 
-void DrvFtaeAlarm::SQLServerConnection::ConnectToDatabase(std::string databaseName)
+bool DrvFtaeAlarm::SQLServerConnection::ConnectToDatabase(std::string databaseName)
 {
 	wchar_t wchDataBaseName[MAX_DATABASENAME_LENGTH];
 	wchar_t wStrOut[STR_LENGTH];
@@ -149,7 +149,9 @@ void DrvFtaeAlarm::SQLServerConnection::ConnectToDatabase(std::string databaseNa
 		wStrOut, STR_LENGTH, &shBrowseResultLen);
 	if (!SQL_SUCCEEDED(res)) {
 		freeConnection();
+		return false;
 	}
+	return true;
 }
 
 std::vector<std::string> DrvFtaeAlarm::SQLServerConnection::GetServerList() const

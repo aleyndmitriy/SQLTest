@@ -1,6 +1,6 @@
 #include"FiltersPresenter.h"
 
-DrvFtaeAlarm::FiltersPresenter::FiltersPresenter() :view()
+DrvFtaeAlarm::FiltersPresenter::FiltersPresenter(const std::shared_ptr<DatabaseEngine>& database) :view(), _database(database)
 {
 
 }

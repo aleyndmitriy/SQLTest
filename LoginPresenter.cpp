@@ -83,3 +83,11 @@ void DrvFtaeAlarm::LoginPresenter::ConnectToServer()
 		}
 	}
 }
+
+void DrvFtaeAlarm::LoginPresenter::ConnectToDatabase()
+{
+	if (!attributes.databaseName.empty()) {
+		bool isOpened = _database->ChooseDatabase(attributes.databaseName);
+		
+	}
+}

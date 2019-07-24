@@ -21,7 +21,7 @@ namespace DrvFtaeAlarm {
 		ConnectionAttributes GetConnectionAttributes() const;
 		virtual void ConnectToServerInstances(std::string driverName) = 0 ;
 		virtual void ConnectToDatabaseInstances(std::string serverName, std::string login, std::string password) = 0;
-		virtual void ConnectToDatabase(std::string databaseName) = 0;
+		virtual bool ConnectToDatabase(std::string databaseName) = 0;
 		virtual std::vector<std::string> GetServerList() const = 0;
 		virtual std::vector<std::string> GetDatabaseList() const = 0;
 	protected:

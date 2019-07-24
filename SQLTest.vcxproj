@@ -126,6 +126,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Connection.cpp" />
+    <ClCompile Include="DataSQLServerAccessAssembly.cpp" />
     <ClCompile Include="FiltersInitializer.cpp" />
     <ClCompile Include="FiltersPresenter.cpp" />
     <ClCompile Include="FiltersViewController.cpp" />
@@ -146,7 +147,9 @@
     <ClInclude Include="Connection.h" />
     <ClInclude Include="ConnectionAttributes.h" />
     <ClInclude Include="Constants.h" />
+    <ClInclude Include="DataAccessAssembly.h" />
     <ClInclude Include="DatabaseEngine.h" />
+    <ClInclude Include="DataSQLServerAccessAssembly.h" />
     <ClInclude Include="FiltersInitializer.h" />
     <ClInclude Include="FiltersPresenter.h" />
     <ClInclude Include="FiltersViewController.h" />
