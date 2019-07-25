@@ -1,4 +1,6 @@
 #pragma once
+#include<Windows.h>
+#include<CommCtrl.h>
 #include"resource.h"
 #include"Utils.h"
 #include"IFiltersViewOutput.h"
@@ -22,9 +24,13 @@ namespace DrvFtaeAlarm {
 		void CloseView() override;
 		void ShowView() override;
 		void HideView() override;
+		void LoadConditionsList(const std::vector<StatementCondition>& conditions) override;
+		void LoadFiltersList(const std::vector<std::string>& filters) override;
 		~FiltersViewController();
 	private:
 		std::shared_ptr<IFiltersViewOutput> presenter;
+		void CreateFiltersList();
+		void CreateConditionsList();
 	};
 }
 

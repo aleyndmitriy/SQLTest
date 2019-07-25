@@ -133,6 +133,7 @@
     <ClCompile Include="LoginInitializer.cpp" />
     <ClCompile Include="LoginPresenter.cpp" />
     <ClCompile Include="LoginViewController.cpp" />
+    <ClCompile Include="Record.cpp" />
     <ClCompile Include="SettingsInitializer.cpp" />
     <ClCompile Include="SettingsPresenter.cpp" />
     <ClCompile Include="SettingsViewController.cpp" />
@@ -140,6 +141,9 @@
     <ClCompile Include="SQLServerConnection.cpp" />
     <ClCompile Include="SQLServerDatabaseEngine.cpp" />
     <ClCompile Include="SQLServerEnvironment.cpp" />
+    <ClCompile Include="SQLServerStatement.cpp" />
+    <ClCompile Include="Statement.cpp" />
+    <ClCompile Include="StatementCondition.cpp" />
     <ClCompile Include="UIDialogViewController.cpp" />
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
@@ -165,6 +169,7 @@
     <ClInclude Include="LoginInitializer.h" />
     <ClInclude Include="LoginPresenter.h" />
     <ClInclude Include="LoginViewController.h" />
+    <ClInclude Include="Record.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SettingsInitializer.h" />
     <ClInclude Include="SettingsPresenter.h" />
@@ -172,6 +177,9 @@
     <ClInclude Include="SQLServerConnection.h" />
     <ClInclude Include="SQLServerDatabaseEngine.h" />
     <ClInclude Include="SQLServerEnvironment.h" />
+    <ClInclude Include="SQLServerStatement.h" />
+    <ClInclude Include="Statement.h" />
+    <ClInclude Include="StatementCondition.h" />
     <ClInclude Include="UIDialogViewController.h" />
     <ClInclude Include="Utils.h" />
   </ItemGroup>

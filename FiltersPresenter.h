@@ -1,7 +1,8 @@
 #pragma once
 #include"IFiltersViewOutput.h"
 #include"DatabaseEngine.h"
-
+#include"StatementCondition.h"
+#include<map>
 namespace DrvFtaeAlarm {
 	class FiltersPresenter final : public IFiltersViewOutput {
 	public:
@@ -12,5 +13,9 @@ namespace DrvFtaeAlarm {
 	private:
 		std::weak_ptr<IFiltersViewInput> view;
 		std::shared_ptr<DatabaseEngine> _database;
+		std::map< std::string, std::vector<StatementCondition> > filters;
+		std::string selectedFilter;
+		std::vector<StatementCondition> editableCondition;
+		size_t selectedCondition;
 	};
 }

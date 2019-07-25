@@ -2,7 +2,8 @@
 // Включаемый файл, созданный в Microsoft Visual C++.
 // Используется SQLTest.rc
 //
-#define IDD_SETTINGS_DIALOG                     101
+#define IDB_FILE_TYPES                  1
+#define IDD_SETTINGS_DIALOG             101
 #define IDC_TAB                         102
 #define IDD_TABPAGE1                    106
 #define IDD_TABPAGE_CONNSETTINGS        106
@@ -20,7 +21,7 @@
 #define IDC_BUTTON_BROSESERVERS         1005
 #define IDC_BUTTON_NEW_FILTER           1005
 #define IDC_EDIT2                       1006
-#define IDC_EDIT_VALUE                  1006
+#define IDC_EDIT_VALUE1                 1006
 #define IDC_RADIO3                      1007
 #define IDC_RADIO_WINDOWSAUTH           1007
 #define IDC_EDIT_VALUE2                 1007
@@ -41,7 +42,7 @@
 #define IDC_BUTTON_ADDCONDITION         1016
 #define IDC_BUTTON5                     1017
 #define IDC_BUTTON_REMOVECONDITION      1017
-#define IDC_BUTTON_REMOVECONDITION2     1018
+#define IDC_BUTTON_REMOVEALLCONDITIONS  1018
 #define IDC_COMBO2                      1019
 #define IDC_COMBO_PROPERTY              1019
 #define IDC_COMBO_AUTH_TYPE             1019
@@ -66,12 +67,12 @@
 #define IDC_BUTTON_TESTCONNECTION       3000
 #define IDC_LIST1                       3004
 #define IDI_ICON_SERVER                 3007
-#define IDB_FILE_TYPES                  1
+
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        103
+#define _APS_NEXT_RESOURCE_VALUE        105
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1001
 #define _APS_NEXT_SYMED_VALUE           101

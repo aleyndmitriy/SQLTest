@@ -82,6 +82,18 @@
     <Filter Include="Assemblies">
       <UniqueIdentifier>{f41999e1-dc5f-46d2-82d9-7970a35c34b2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DataAccessLayer\Record">
+      <UniqueIdentifier>{40b9aefd-9d21-454b-929c-6a1c30c00e23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DataAccessLayer\Statement">
+      <UniqueIdentifier>{4f4004fd-7230-4ec4-8a36-73787310a231}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DataAccessLayer\Statement\SQLServerStatement">
+      <UniqueIdentifier>{2487e591-58f5-4fff-a148-425c286adf7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DataAccessLayer\Statement\StatementCondition">
+      <UniqueIdentifier>{d8368578-e1ef-453a-a0f2-94730cac82d9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -134,6 +146,18 @@
     </ClCompile>
     <ClCompile Include="DataSQLServerAccessAssembly.cpp">
       <Filter>Assemblies</Filter>
+    </ClCompile>
+    <ClCompile Include="Record.cpp">
+      <Filter>DataAccessLayer\Record</Filter>
+    </ClCompile>
+    <ClCompile Include="Statement.cpp">
+      <Filter>DataAccessLayer\Statement</Filter>
+    </ClCompile>
+    <ClCompile Include="SQLServerStatement.cpp">
+      <Filter>DataAccessLayer\Statement\SQLServerStatement</Filter>
+    </ClCompile>
+    <ClCompile Include="StatementCondition.cpp">
+      <Filter>DataAccessLayer\Statement\StatementCondition</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -226,6 +250,18 @@
     </ClInclude>
     <ClInclude Include="DataSQLServerAccessAssembly.h">
       <Filter>Assemblies</Filter>
+    </ClInclude>
+    <ClInclude Include="Record.h">
+      <Filter>DataAccessLayer\Record</Filter>
+    </ClInclude>
+    <ClInclude Include="Statement.h">
+      <Filter>DataAccessLayer\Statement</Filter>
+    </ClInclude>
+    <ClInclude Include="SQLServerStatement.h">
+      <Filter>DataAccessLayer\Statement\SQLServerStatement</Filter>
+    </ClInclude>
+    <ClInclude Include="StatementCondition.h">
+      <Filter>DataAccessLayer\Statement\StatementCondition</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
