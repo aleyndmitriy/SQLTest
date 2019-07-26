@@ -26,11 +26,19 @@ namespace DrvFtaeAlarm {
 		void HideView() override;
 		void LoadConditionsList(const std::vector<StatementCondition>& conditions) override;
 		void LoadFiltersList(const std::vector<std::string>& filters) override;
+		void AddFilter();
+		void RemoveFilter();
+		void WarningMessage(std::string message) override;
+		void AddFilter(std::string filterName) override;
+		void SelectFilter(std::string filterName);
+		void ClearFilterView();
 		~FiltersViewController();
 	private:
 		std::shared_ptr<IFiltersViewOutput> presenter;
 		void CreateFiltersList();
 		void CreateConditionsList();
+		void ActivateFilterView(std::string filterName);
+		void EnableConditionView(BOOL bEnable);
 	};
 }
 

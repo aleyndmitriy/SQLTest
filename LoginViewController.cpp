@@ -153,6 +153,10 @@ void DrvFtaeAlarm::LoginViewController::SaveDatabaseName()
 	presenter->GetDatabaseName(Wstr2Str(wStr));
 }
 
+void DrvFtaeAlarm::LoginViewController::WarningMessage(std::string message)
+{
+
+}
 
 INT_PTR WINAPI LoginDlg_Proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
