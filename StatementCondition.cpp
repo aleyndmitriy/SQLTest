@@ -48,6 +48,75 @@ std::string DrvFtaeAlarm::StatementCondition::GetValue2() const
 	return _value2;
 }
 
+
+std::string DrvFtaeAlarm::StatementCondition::PropertyView() const
+{
+	std::string type;
+	switch (_propertyType)
+	{
+	case PropertyType::PROPTYPE_NUMERIC:
+		type = std::string("(NUMERIC)");
+		break;
+	case PropertyType::PROPTYPE_TEXT:
+		type = std::string("(TEXT)");
+		break;
+	case PropertyType::PROPTYPE_BOOLEAN:
+		type = std::string("(BOOLEAN)");
+		break;
+	case PropertyType::PROPTYPE_DATE:
+		type = std::string("(DATE)");
+		break;
+	default:
+		type = std::string("(NONE)");
+		break;
+	}
+	std::string res = _property + type;
+	return res;
+}
+
+std::string DrvFtaeAlarm::StatementCondition::ConditionView() const
+{
+	std::string type;
+	switch (_conditionType)
+	{
+	case ConditionType::CONDTYPE_EQUAL:
+		type = std::string("EQUAL TO ") + _value1;
+		break;
+	case ConditionType::CONDTYPE_LESS:
+		type = std::string("LESS THAN ") + _value1;
+		break;
+	case ConditionType::CONDTYPE_GREATER:
+		type = std::string("GREATER THAN ") + _value1;
+		break;
+	case ConditionType::CONDTYPE_LESSEQUAL:
+		type = std::string("LESS OR EQUAL THAN ") + _value1;
+		break;
+	case ConditionType::CONDTYPE_GREATEREQUAL:
+		type = std::string("GREATER OR EQUAL THAN ") + _value1;
+		break;
+	case ConditionType::CONDTYPE_NOTEQUAL:
+		type = std::string("NOT EQUAL ") + _value1;
+		break;
+	case ConditionType::CONDTYPE_BETWEEN:
+		type = std::string("BETWEEN ") + _value1 + std::string(" AND ") + _value2;
+		break;
+	case ConditionType::CONDTYPE_ISNULL:
+		type = std::string("IS NULL");
+		break;
+	case ConditionType::CONDTYPE_ISNOTNULL:
+		type = std::string("IS NOT NULL");
+		break;
+	case ConditionType::CONDTYPE_LIKE:
+		type = std::string("LIKE ") + _value1;
+		break;
+	default:
+		type = std::string("(NONE)");
+		break;
+	}
+	return type;
+}
+
+
 void DrvFtaeAlarm::StatementCondition::SetCombineOperation(CombineOperation operation)
 {
 	_combineOperation = operation;

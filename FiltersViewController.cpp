@@ -4,7 +4,7 @@
 
 //https://stackoverflow.com/questions/26323468/items-and-subitems-in-list-view-control
 
-DrvFtaeAlarm::FiltersViewController::FiltersViewController(const std::shared_ptr<UIDialogViewController>& parent, const std::shared_ptr<IFiltersViewOutput>& output): UIDialogViewController(parent), presenter(output)
+DrvFtaeAlarm::FiltersViewController::FiltersViewController(const std::shared_ptr<UIDialogViewController>& parent, const std::shared_ptr<IFiltersViewOutput>& output) : UIDialogViewController(parent), presenter(output), _properties{}
 {
 
 }
@@ -12,13 +12,13 @@ DrvFtaeAlarm::FiltersViewController::FiltersViewController(const std::shared_ptr
 void DrvFtaeAlarm::FiltersViewController::setupInitialState()
 {
 	presenter->SetViewInput(shared_from_this());
-
 	INITCOMMONCONTROLSEX icex; 
 	icex.dwICC = ICC_LISTVIEW_CLASSES;
 	InitCommonControlsEx(&icex);
 	CreateFiltersList();
 	CreateConditionsList();
 	EnableConditionView(FALSE);
+	presenter->viewIsReady();
 }
 
 
@@ -35,6 +35,7 @@ void DrvFtaeAlarm::FiltersViewController::AddToParentView()
 DrvFtaeAlarm::FiltersViewController::~FiltersViewController()
 {
 	presenter.reset();
+	_properties.clear();
 	if (window != NULL) {
 		DestroyWindow(window);
 		window = 0;
@@ -45,9 +46,15 @@ void DrvFtaeAlarm::FiltersViewController::LoadConditionsList(const std::vector<S
 {
 	for (std::vector<StatementCondition>::const_iterator itr = conditions.begin(); itr != conditions.end(); ++itr)
 	{
-
+		AddCondition(*itr);
 	}
 }
+
+void DrvFtaeAlarm::FiltersViewController::LoadPropertiesList(const std::map<std::string, DrvFtaeAlarm::PropertyType>& properties)
+{
+	_properties = properties;
+}
+
 void DrvFtaeAlarm::FiltersViewController::LoadFiltersList(const std::vector<std::string>& filters)
 {
 
@@ -66,7 +73,7 @@ void DrvFtaeAlarm::FiltersViewController::CreateFiltersList()
 	col.fmt = LVCFMT_LEFT;
 	col.pszText = wcColumnText;
 	col.cx = filterListRect.right - filterListRect.left;
-	int ind = ::SendMessage(hFilterListControl, LVM_INSERTCOLUMN, 0, (LPARAM)(&col));
+	SendMessage(hFilterListControl, LVM_INSERTCOLUMN, 0, (LPARAM)(&col));
 }
 
 void DrvFtaeAlarm::FiltersViewController::CreateConditionsList()
@@ -74,6 +81,7 @@ void DrvFtaeAlarm::FiltersViewController::CreateConditionsList()
 	LVCOLUMN col;
 	WCHAR wcColumnText[3][10] = { TEXT("Operation"),TEXT("Property"),TEXT("Condition") };
 	HWND hConditionListControl = GetDlgItem(window, IDC_LIST_CONDITIONS);
+	ListView_SetExtendedListViewStyle(hConditionListControl, LVS_EX_FULLROWSELECT);
 	RECT conditionListRect;
 	GetWindowRect(hConditionListControl, &conditionListRect);
 	for (int i = 0; i < 3; i++)
@@ -85,7 +93,6 @@ void DrvFtaeAlarm::FiltersViewController::CreateConditionsList()
 		col.cx = (conditionListRect.right - conditionListRect.left)/3;
 		int ind = SendMessage(hConditionListControl, LVM_INSERTCOLUMN, i, (LPARAM)(&col));
 	}
-	//ListView_SetItemState(hConditionListControl, 0, LVIS_SELECTED, LVIS_SELECTED);
 }
 
 
@@ -138,7 +145,7 @@ void DrvFtaeAlarm::FiltersViewController::AddFilter(std::string filterName)
 	item.iItem = 0;
 	item.cColumns = 1;
 	item.lParam = 0;
-	int index = SendMessage(hFilterListControl, LVM_INSERTITEM, 0,(LPARAM)&item);
+	SendMessage(hFilterListControl, LVM_INSERTITEM, 0,(LPARAM)&item);
 }
 
 void DrvFtaeAlarm::FiltersViewController::ClearFilterView()
@@ -149,6 +156,17 @@ void DrvFtaeAlarm::FiltersViewController::ClearFilterView()
 	SendDlgItemMessage(window, IDC_EDIT_INSTANCE, WM_CLEAR, 0, 0);
 	SendDlgItemMessage(window, IDC_LIST_CONDITIONS, LVM_DELETEALLITEMS, 0, 0);
 	EnableConditionView(FALSE);
+}
+
+void DrvFtaeAlarm::FiltersViewController::ClearConditionView()
+{
+	SendDlgItemMessage(window, IDC_COMBO_PROPERTY, CB_SETCURSEL, (WPARAM)-1, 0);
+	SendDlgItemMessage(window, IDC_COMBO_PROPERTYTYPE, CB_RESETCONTENT, 0, 0);
+	SendDlgItemMessage(window, IDC_COMBO_CONDITION, CB_RESETCONTENT, 0, 0);
+	SendDlgItemMessage(window, IDC_EDIT_VALUE1, EM_SETSEL, 0, -1);
+	SendDlgItemMessage(window, IDC_EDIT_VALUE1, WM_CLEAR, 0, 0);
+	SendDlgItemMessage(window, IDC_EDIT_VALUE2, EM_SETSEL, 0, -1);
+	SendDlgItemMessage(window, IDC_EDIT_VALUE2, WM_CLEAR, 0, 0);
 }
 
 void DrvFtaeAlarm::FiltersViewController::ActivateFilterView(std::string filterName)
@@ -185,6 +203,196 @@ void DrvFtaeAlarm::FiltersViewController::SelectFilter(std::string filterName)
 	presenter->SelectFilter(filterName);
 }
 
+void DrvFtaeAlarm::FiltersViewController::SelectCondition(int index)
+{
+	
+}
+
+void DrvFtaeAlarm::FiltersViewController::AddCondition(const StatementCondition& condition)
+{
+	HWND hConditionListControl = GetDlgItem(window, IDC_LIST_CONDITIONS);
+	LVITEM item;
+	wchar_t wchConditionOperation[4];
+	wchar_t wchConditionProperty[STR_LENGTH];
+	wchar_t wchConditionType[STR_LENGTH];
+	switch (condition.GetCombineOperation())
+	{
+	case CombineOperation::COMBINEOP_OR:
+		StringCchCopy(wchConditionOperation, 3, TEXT("OR"));
+		break;
+	case CombineOperation::COMBINEOP_AND:
+		StringCchCopy(wchConditionOperation, 4, TEXT("AND"));
+		break;
+	default:
+		break;
+	}
+	item.pszText = wchConditionOperation;
+	item.mask = LVIF_TEXT | LVIF_STATE;
+	item.stateMask = (UINT)-1;
+	item.cchTextMax = STR_LENGTH;
+	item.iSubItem = 0;
+	item.state = 0;// LVIS_FOCUSED | LVIS_SELECTED;
+	item.iItem = 0;
+	item.cColumns = 3;
+	item.lParam = 0;
+	SendMessage(hConditionListControl, LVM_INSERTITEM, 0, (LPARAM)& item);
+	std::wstring wConditionView = Str2Wstr(condition.PropertyView());
+	StringCchCopy(wchConditionProperty, STR_LENGTH, wConditionView.c_str());
+	item.iSubItem = 1;
+	item.pszText = wchConditionProperty;
+	SendMessage(hConditionListControl, LVM_SETITEM, 0, (LPARAM)& item);
+	std::wstring wConditionType = Str2Wstr(condition.ConditionView());
+	StringCchCopy(wchConditionType, STR_LENGTH, wConditionType.c_str());
+	item.iSubItem = 2;
+	item.pszText = wchConditionType;
+	SendMessage(hConditionListControl, LVM_SETITEM, 0, (LPARAM)& item);
+}
+
+
+void DrvFtaeAlarm::FiltersViewController::ChooseConditionProperty()
+{
+	wchar_t wchPropertyName[MAX_COLUMNS];
+	HWND hComboControl = GetDlgItem(window, IDC_COMBO_PROPERTY);
+	LRESULT index = SendMessage(hComboControl, CB_GETCURSEL, 0, 0);
+	LRESULT res = SendMessage(hComboControl, CB_GETLBTEXT, index, (LPARAM)wchPropertyName);
+	if (res < 1) {
+		return;
+	}
+	wchPropertyName[res + 1] = L'\0';
+	std::wstring wStr = std::wstring(wchPropertyName);
+	std::string propertyName = Wstr2Str(wStr);
+	std::map<std::string, PropertyType>::const_iterator itr = _properties.find(propertyName);
+	if (itr != _properties.cend()) {
+		index = SendDlgItemMessage(window, IDC_COMBO_PROPERTYTYPE, CB_GETCURSEL, 0, 0);
+		res = SendDlgItemMessage(window, IDC_COMBO_PROPERTYTYPE, CB_GETLBTEXT, 0, (LPARAM)wchPropertyName);
+		std::wstring woldStr = std::wstring(wchPropertyName);
+		std::string oldPropertyName = Wstr2Str(wStr);
+		if (oldPropertyName != propertyName) {
+			SendDlgItemMessage(window, IDC_COMBO_CONDITION, CB_RESETCONTENT, 0, 0);
+			CreatePropertyTypeCombo(itr->second);
+		}
+	}
+}
+
+void DrvFtaeAlarm::FiltersViewController::CreatePropertyTypeCombo(PropertyType propertyType)
+{
+	SendDlgItemMessage(window, IDC_COMBO_PROPERTYTYPE, CB_RESETCONTENT, 0, 0);
+	LRESULT pos = 0;
+	wchar_t wchConditionProperty[STR_LENGTH];
+	switch (propertyType)
+	{
+	case PropertyType::PROPTYPE_NUMERIC:
+		StringCchCopy(wchConditionProperty, STR_LENGTH, TEXT("NUMERIC"));
+		pos = SendDlgItemMessage(window, IDC_COMBO_PROPERTYTYPE, CB_ADDSTRING, 0, LPARAM(wchConditionProperty));
+		SendDlgItemMessage(window, IDC_COMBO_PROPERTYTYPE, CB_SETITEMDATA, pos, (LPARAM)0);
+		break;
+	case PropertyType::PROPTYPE_TEXT:
+		StringCchCopy(wchConditionProperty, STR_LENGTH, TEXT("TEXT"));
+		pos = SendDlgItemMessage(window, IDC_COMBO_PROPERTYTYPE, CB_ADDSTRING, 0, LPARAM(wchConditionProperty));
+		SendDlgItemMessage(window, IDC_COMBO_PROPERTYTYPE, CB_SETITEMDATA, pos, (LPARAM)1);
+		break;
+	case PropertyType::PROPTYPE_BOOLEAN:
+		StringCchCopy(wchConditionProperty, STR_LENGTH, TEXT("BOOLEAN"));
+		pos = SendDlgItemMessage(window, IDC_COMBO_PROPERTYTYPE, CB_ADDSTRING, 0, LPARAM(wchConditionProperty));
+		SendDlgItemMessage(window, IDC_COMBO_PROPERTYTYPE, CB_SETITEMDATA, pos, (LPARAM)2);
+		break;
+	case PropertyType::PROPTYPE_DATE:
+		StringCchCopy(wchConditionProperty, STR_LENGTH, TEXT("DATE"));
+		pos = SendDlgItemMessage(window, IDC_COMBO_PROPERTYTYPE, CB_ADDSTRING, 0, LPARAM(wchConditionProperty));
+		SendDlgItemMessage(window, IDC_COMBO_PROPERTYTYPE, CB_SETITEMDATA, pos, (LPARAM)3);
+		break;
+	}
+	
+}
+
+void DrvFtaeAlarm::FiltersViewController::ChooseConditionPropertyType()
+{
+	HWND hComboControl = GetDlgItem(window, IDC_COMBO_PROPERTYTYPE);
+	LRESULT index = SendMessage(hComboControl, CB_GETCURSEL, 0, 0);
+	LRESULT res = SendMessage(hComboControl, CB_GETITEMDATA, index, 0);
+	switch (res)
+	{
+	case 0:
+		CreateConditionCombo(PropertyType::PROPTYPE_NUMERIC);
+		break;
+	case 1:
+		CreateConditionCombo(PropertyType::PROPTYPE_TEXT);
+		break;
+	case 2:
+		CreateConditionCombo(PropertyType::PROPTYPE_BOOLEAN);
+		break;
+	case 3:
+		CreateConditionCombo(PropertyType::PROPTYPE_DATE);
+		break;
+	}
+}
+
+void DrvFtaeAlarm::FiltersViewController::ChooseCondition()
+{
+
+}
+
+void DrvFtaeAlarm::FiltersViewController::CreateConditionCombo(PropertyType propertyType)
+{
+	LRESULT pos = 0;
+	HWND hComboControl = GetDlgItem(window, IDC_COMBO_CONDITION);
+	SendMessage(hComboControl, CB_RESETCONTENT, 0, 0);
+	switch (propertyType)
+	{
+	case PropertyType::PROPTYPE_NUMERIC:
+	case PropertyType::PROPTYPE_DATE:
+		CreateConditionComboNumeric();
+		break;
+	case PropertyType::PROPTYPE_TEXT:
+		CreateConditionComboNumeric();
+		pos = SendMessage(hComboControl, CB_ADDSTRING, 0, (LPARAM)TEXT("LIKE"));
+		SendMessage(hComboControl, CB_SETITEMDATA, pos, (LPARAM)ConditionType::CONDTYPE_LIKE);
+		break;
+	case PropertyType::PROPTYPE_BOOLEAN:
+		CreateConditionComboBoolean();
+			break;
+		default:
+			break;
+	}
+}
+
+
+void DrvFtaeAlarm::FiltersViewController::CreateConditionComboNumeric()
+{
+	HWND hComboControl = GetDlgItem(window, IDC_COMBO_CONDITION);
+	LRESULT pos = SendMessage(hComboControl, CB_ADDSTRING, 0, (LPARAM)TEXT("EQUAL"));
+	SendMessage(hComboControl, CB_SETITEMDATA, pos, (LPARAM)ConditionType::CONDTYPE_EQUAL);
+	pos = SendMessage(hComboControl, CB_ADDSTRING, 0, (LPARAM)TEXT("LESS"));
+	SendMessage(hComboControl, CB_SETITEMDATA, pos, (LPARAM)ConditionType::CONDTYPE_LESS);
+	pos = SendMessage(hComboControl, CB_ADDSTRING, 0, (LPARAM)TEXT("GREATER"));
+	SendMessage(hComboControl, CB_SETITEMDATA, pos, (LPARAM)ConditionType::CONDTYPE_GREATER);
+	pos = SendMessage(hComboControl, CB_ADDSTRING, 0, (LPARAM)TEXT("LESS OR EQUAL"));
+	SendMessage(hComboControl, CB_SETITEMDATA, pos, (LPARAM)ConditionType::CONDTYPE_LESSEQUAL);
+	pos = SendMessage(hComboControl, CB_ADDSTRING, 0, (LPARAM)TEXT("GREATER OR EQUAL"));
+	SendMessage(hComboControl, CB_SETITEMDATA, pos, (LPARAM)ConditionType::CONDTYPE_GREATEREQUAL);
+	pos = SendMessage(hComboControl, CB_ADDSTRING, 0, (LPARAM)TEXT("NOT EQUAL"));
+	SendMessage(hComboControl, CB_SETITEMDATA, pos, (LPARAM)ConditionType::CONDTYPE_NOTEQUAL);
+	pos = SendMessage(hComboControl, CB_ADDSTRING, 0, (LPARAM)TEXT("BETWEEN"));
+	SendMessage(hComboControl, CB_SETITEMDATA, pos, (LPARAM)ConditionType::CONDTYPE_BETWEEN);
+	pos = SendMessage(hComboControl, CB_ADDSTRING, 0, (LPARAM)TEXT("IS NULL"));
+	SendMessage(hComboControl, CB_SETITEMDATA, pos, (LPARAM)ConditionType::CONDTYPE_ISNULL);
+	pos = SendMessage(hComboControl, CB_ADDSTRING, 0, (LPARAM)TEXT("IS NOT NULL"));
+	SendMessage(hComboControl, CB_SETITEMDATA, pos, (LPARAM)ConditionType::CONDTYPE_ISNOTNULL);
+}
+
+void DrvFtaeAlarm::FiltersViewController::CreateConditionComboBoolean()
+{
+	HWND hComboControl = GetDlgItem(window, IDC_COMBO_CONDITION);
+	LRESULT pos = SendMessage(hComboControl, CB_ADDSTRING, 0, (LPARAM)TEXT("TRUE"));
+	SendMessage(hComboControl, CB_SETITEMDATA, pos, (LPARAM)ConditionType::CONDTYPE_EQUAL);
+	pos = SendMessage(hComboControl, CB_ADDSTRING, 0, (LPARAM)TEXT("FALSE"));
+	SendMessage(hComboControl, CB_SETITEMDATA, pos, (LPARAM)ConditionType::CONDTYPE_NOTEQUAL);
+	pos = SendMessage(hComboControl, CB_ADDSTRING, 0, (LPARAM)TEXT("IS NULL"));
+	SendMessage(hComboControl, CB_SETITEMDATA, pos, (LPARAM)ConditionType::CONDTYPE_ISNULL);
+	pos = SendMessage(hComboControl, CB_ADDSTRING, 0, (LPARAM)TEXT("IS NOT NULL"));
+	SendMessage(hComboControl, CB_SETITEMDATA, pos, (LPARAM)ConditionType::CONDTYPE_ISNOTNULL);
+}
+
 INT_PTR WINAPI FiltersDlg_Proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	LPNMLISTVIEW itemView;
@@ -211,13 +419,28 @@ INT_PTR WINAPI FiltersDlg_Proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 		switch (LOWORD(wParam))
 		{
 		case IDC_COMBO_PROPERTY:
-			iItem = 0;
+			switch (HIWORD(wParam))
+			{
+			case CBN_SELCHANGE:
+				controller->ChooseConditionProperty();
+				break;
+			}
 			break;
 		case IDC_COMBO_PROPERTYTYPE:
-
+			switch (HIWORD(wParam))
+			{
+			case CBN_SELCHANGE:
+				controller->ChooseConditionPropertyType();
+				break;
+			}
 			break;
 		case IDC_COMBO_CONDITION:
-
+			switch (HIWORD(wParam))
+			{
+			case CBN_SELCHANGE:
+				controller->ChooseCondition();
+				break;
+			}
 			break;
 		case IDC_EDIT_VALUE1:
 
@@ -295,12 +518,30 @@ INT_PTR WINAPI FiltersDlg_Proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 		case IDC_LIST_CONDITIONS:
 			switch (uNotifyCode)
 			{
-			case LVN_GETDISPINFO:
-				NMLVDISPINFO* plvdi = (NMLVDISPINFO*)lParam;
-
+			case LVN_INSERTITEM:
+				controller->ClearConditionView();
+				break;
+			case  LVN_ITEMCHANGED:
+				itemView = (LPNMLISTVIEW)lParam;
+				iItem = itemView->iItem;
+				if ((itemView->uNewState & LVIS_FOCUSED) && (itemView->uNewState & LVIS_SELECTED)) {
+					controller->SelectCondition(iItem);
+				}
+				break;
+			case LVN_ITEMCHANGING:
+				itemView = (LPNMLISTVIEW)lParam;
+				iItem = itemView->iItem;
+				if ((itemView->uOldState & LVIS_SELECTED) && (itemView->uNewState == 0)) {
+					controller->ClearConditionView();
+				}
+				break;
+			case LVN_DELETEALLITEMS:
+				controller->ClearConditionView();
+				break;
+			case LVN_DELETEITEM:
+				controller->ClearConditionView();
 				break;
 			}
-
 			break;
 		default:
 

@@ -12,7 +12,6 @@ std::string Wstr2Str(const std::wstring& wStr)
 
 std::wstring Str2Wstr(const std::string& str)
 {
-	size_t chStrSz = str.size() + 1;
 	int bufSize = MultiByteToWideChar(CP_ACP, 0, str.c_str(), -1, NULL, 0);
 	std::unique_ptr<wchar_t[]> wBuffer = std::make_unique<wchar_t[]>(bufSize);
 	MultiByteToWideChar(CP_ACP, 0, str.c_str(), -1, wBuffer.get(), bufSize);

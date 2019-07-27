@@ -26,19 +26,31 @@ namespace DrvFtaeAlarm {
 		void HideView() override;
 		void LoadConditionsList(const std::vector<StatementCondition>& conditions) override;
 		void LoadFiltersList(const std::vector<std::string>& filters) override;
+		void LoadPropertiesList(const std::map<std::string, PropertyType>& properties) override;
 		void AddFilter();
 		void RemoveFilter();
 		void WarningMessage(std::string message) override;
 		void AddFilter(std::string filterName) override;
 		void SelectFilter(std::string filterName);
+		void SelectCondition(int index);
 		void ClearFilterView();
+		void ClearConditionView();
+		void AddCondition(const StatementCondition& condition);
+		void ChooseConditionProperty();
+		void ChooseConditionPropertyType();
+		void ChooseCondition();
 		~FiltersViewController();
 	private:
 		std::shared_ptr<IFiltersViewOutput> presenter;
+		std::map<std::string, PropertyType> _properties;
 		void CreateFiltersList();
 		void CreateConditionsList();
 		void ActivateFilterView(std::string filterName);
 		void EnableConditionView(BOOL bEnable);
+		void CreateConditionCombo(PropertyType propertyType);
+		void CreateConditionComboNumeric();
+		void CreateConditionComboBoolean();
+		void CreatePropertyTypeCombo(PropertyType propertyType);
 	};
 }
 

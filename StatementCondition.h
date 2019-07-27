@@ -3,15 +3,16 @@
 
 namespace DrvFtaeAlarm {
 
-	enum class PropertyType
+	enum class PropertyType : long
 	{
 		PROPTYPE_NONE = -1,
 		PROPTYPE_NUMERIC = 0,
 		PROPTYPE_TEXT = 1,
-		PROPTYPE_BOOLEAN = 2
+		PROPTYPE_BOOLEAN = 2,
+		PROPTYPE_DATE = 3
 	};
 
-	enum class ConditionType
+	enum class ConditionType : long
 	{
 		CONDTYPE_NONE = -1,
 		CONDTYPE_EQUAL = 0,
@@ -55,6 +56,8 @@ namespace DrvFtaeAlarm {
 		PropertyType GetPropertyType() const;
 		std::string GetValue1() const;
 		std::string GetValue2() const;
+		std::string PropertyView() const;
+		std::string ConditionView() const;
 		void SetCombineOperation(CombineOperation operation);
 		void SetConditionType(ConditionType conditionType);
 		void SetProperty(std::string property);
