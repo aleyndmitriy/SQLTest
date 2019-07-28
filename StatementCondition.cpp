@@ -80,25 +80,25 @@ std::string DrvFtaeAlarm::StatementCondition::ConditionView() const
 	switch (_conditionType)
 	{
 	case ConditionType::CONDTYPE_EQUAL:
-		type = std::string("EQUAL TO ") + _value1;
+		type = std::string("EQUAL TO ");
 		break;
 	case ConditionType::CONDTYPE_LESS:
-		type = std::string("LESS THAN ") + _value1;
+		type = std::string("LESS THAN ");
 		break;
 	case ConditionType::CONDTYPE_GREATER:
-		type = std::string("GREATER THAN ") + _value1;
+		type = std::string("GREATER THAN ");
 		break;
 	case ConditionType::CONDTYPE_LESSEQUAL:
-		type = std::string("LESS OR EQUAL THAN ") + _value1;
+		type = std::string("LESS OR EQUAL THAN ");
 		break;
 	case ConditionType::CONDTYPE_GREATEREQUAL:
-		type = std::string("GREATER OR EQUAL THAN ") + _value1;
+		type = std::string("GREATER OR EQUAL THAN ");
 		break;
 	case ConditionType::CONDTYPE_NOTEQUAL:
-		type = std::string("NOT EQUAL ") + _value1;
+		type = std::string("NOT EQUAL ");
 		break;
 	case ConditionType::CONDTYPE_BETWEEN:
-		type = std::string("BETWEEN ") + _value1 + std::string(" AND ") + _value2;
+		type = std::string("BETWEEN ");
 		break;
 	case ConditionType::CONDTYPE_ISNULL:
 		type = std::string("IS NULL");
@@ -107,7 +107,7 @@ std::string DrvFtaeAlarm::StatementCondition::ConditionView() const
 		type = std::string("IS NOT NULL");
 		break;
 	case ConditionType::CONDTYPE_LIKE:
-		type = std::string("LIKE ") + _value1;
+		type = std::string("LIKE ");
 		break;
 	default:
 		type = std::string("(NONE)");

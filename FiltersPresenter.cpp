@@ -1,6 +1,6 @@
 #include"FiltersPresenter.h"
 
-DrvFtaeAlarm::FiltersPresenter::FiltersPresenter(const std::shared_ptr<DatabaseEngine>& database) :view(), _database(database),selectedFilter(std::string()),selectedCondition(-1)
+DrvFtaeAlarm::FiltersPresenter::FiltersPresenter(const std::shared_ptr<DatabaseEngine>& database) :view(), _database(database)
 {
 	
 }
@@ -17,7 +17,37 @@ void DrvFtaeAlarm::FiltersPresenter::SetViewInput(std::shared_ptr<IFiltersViewIn
 
 void DrvFtaeAlarm::FiltersPresenter::viewIsReady()
 {
+	std::map< std::string, PropertyType> properties;
+	std::pair<std::string, PropertyType> pair1 = std::make_pair<std::string, PropertyType>(std::string("columnName1"),PropertyType::PROPTYPE_TEXT);
+	properties.insert(pair1);
+	std::pair<std::string, PropertyType> pair2 = std::make_pair<std::string, PropertyType>(std::string("columnName2"), PropertyType::PROPTYPE_NUMERIC);
+	properties.insert(pair2);
+	std::pair<std::string, PropertyType> pair3 = std::make_pair<std::string, PropertyType>(std::string("columnName3"), PropertyType::PROPTYPE_BOOLEAN);
+	properties.insert(pair3);
+	std::pair<std::string, PropertyType> pair4 = std::make_pair<std::string, PropertyType>(std::string("columnName4"), PropertyType::PROPTYPE_DATE);
+	properties.insert(pair4);
+	std::pair<std::string, PropertyType> pair5 = std::make_pair<std::string, PropertyType>(std::string("columnName4"), PropertyType::PROPTYPE_TEXT);
+	properties.insert(pair5);
+		std::shared_ptr<IFiltersViewInput> ptrView = view.lock();
+	if (ptrView) {
+		ptrView->LoadPropertiesList(properties);
+	}
+}
 
+void DrvFtaeAlarm::FiltersPresenter::AddCondition(StatementCondition&& condition, std::string filterName)
+{
+	std::shared_ptr<IFiltersViewInput> ptrView = view.lock();
+	if (ptrView) {
+		FiltersIterator itr = filters.find(filterName);
+		if (itr != filters.end()) {
+			itr->second.push_back(condition);
+			ptrView->AddCondition(condition);
+		}
+		else {
+			ptrView->WarningMessage(std::string("There is not such filter in list!"));
+
+		}
+	}
 }
 
 void DrvFtaeAlarm::FiltersPresenter::AddFilter(std::string filterName)
@@ -46,11 +76,31 @@ void DrvFtaeAlarm::FiltersPresenter::SelectFilter(std::string filterName)
 	if (ptrView) {
 		FiltersIterator itr = filters.find(filterName);
 		if (itr != filters.end()) {
-			ptrView->LoadConditionsList(itr->second);
+			for (std::vector<StatementCondition>::const_iterator statementItr = itr->second.cbegin(); statementItr != itr->second.cend(); ++statementItr)
+			{
+				ptrView->AddCondition(*statementItr);
+			}
 		}
 		else {
 			ptrView->WarningMessage(std::string("There is not such filter in list!"));
 			
+		}
+	}
+}
+
+void DrvFtaeAlarm::FiltersPresenter::SelectCondition(size_t index, std::string filterName)
+{
+	std::shared_ptr<IFiltersViewInput> ptrView = view.lock();
+	if (ptrView) {
+		FiltersIterator itr = filters.find(filterName);
+		if (itr != filters.end()) {
+			if (index < itr->second.size()) {
+				ptrView->SelectedCondition(itr->second.at(index));
+			}
+		}
+		else {
+			ptrView->WarningMessage(std::string("There is not such filter in list!"));
+
 		}
 	}
 }

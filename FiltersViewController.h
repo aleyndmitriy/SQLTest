@@ -24,8 +24,6 @@ namespace DrvFtaeAlarm {
 		void CloseView() override;
 		void ShowView() override;
 		void HideView() override;
-		void LoadConditionsList(const std::vector<StatementCondition>& conditions) override;
-		void LoadFiltersList(const std::vector<std::string>& filters) override;
 		void LoadPropertiesList(const std::map<std::string, PropertyType>& properties) override;
 		void AddFilter();
 		void RemoveFilter();
@@ -35,7 +33,11 @@ namespace DrvFtaeAlarm {
 		void SelectCondition(int index);
 		void ClearFilterView();
 		void ClearConditionView();
-		void AddCondition(const StatementCondition& condition);
+		void SelectCondition();
+		void UnselectCondition();
+		void AddCondition(const StatementCondition& condition) override;
+		void SelectedCondition(const StatementCondition& condition) override;
+		void AddCondition();
 		void ChooseConditionProperty();
 		void ChooseConditionPropertyType();
 		void ChooseCondition();
@@ -47,10 +49,17 @@ namespace DrvFtaeAlarm {
 		void CreateConditionsList();
 		void ActivateFilterView(std::string filterName);
 		void EnableConditionView(BOOL bEnable);
+		void CreatePropertiesCombo();
 		void CreateConditionCombo(PropertyType propertyType);
 		void CreateConditionComboNumeric();
 		void CreateConditionComboBoolean();
 		void CreatePropertyTypeCombo(PropertyType propertyType);
+		void ShowEditValuesControls();
+		void ClearEditValue1Control();
+		void ClearEditValue2Control();
+		std::string GetSelectedConditionProperty();
+		PropertyType GetSelectedConditionPropertyType();
+		ConditionType GetSelectedConditionType();
 	};
 }
 

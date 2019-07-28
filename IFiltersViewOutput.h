@@ -10,6 +10,8 @@ namespace DrvFtaeAlarm {
 		virtual void SetViewInput(std::shared_ptr<IFiltersViewInput> input) = 0;
 		virtual void AddFilter(std::string filterName) = 0;
 		virtual void SelectFilter(std::string filterName) = 0;
+		virtual void AddCondition(StatementCondition&& condition, std::string filterName) = 0;
+		virtual void SelectCondition(size_t index, std::string filterName) = 0;
 		virtual ~IFiltersViewOutput() {};
 	};
 }

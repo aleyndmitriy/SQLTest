@@ -64,7 +64,6 @@ void DrvFtaeAlarm::LoginViewController::SavePassword()
 
 void DrvFtaeAlarm::LoginViewController::ChooseServer()
 {
-	wchar_t server[STR_LENGTH];
 	HWND hComboControl = GetDlgItem(window, IDC_COMBO_SERVER_NAME);
 	int index = (int)SendMessage(hComboControl, CB_GETCURSEL, 0, 0);
 	int res = SendMessage(hComboControl, CB_GETITEMDATA, index, 0);
@@ -83,10 +82,9 @@ void DrvFtaeAlarm::LoginViewController::ChooseAuthentication()
 
 void DrvFtaeAlarm::LoginViewController::ChooseDatabase()
 {
-	wchar_t server[STR_LENGTH];
 	HWND hComboControl = GetDlgItem(window, IDC_COMBO_CONFIG_DATABASE_NAME);
-	int index = (int)SendMessage(hComboControl, CB_GETCURSEL, 0, 0);
-	int res = SendMessage(hComboControl, CB_GETITEMDATA, index, 0);
+	LRESULT index = (int)SendMessage(hComboControl, CB_GETCURSEL, 0, 0);
+	LRESULT res = SendMessage(hComboControl, CB_GETITEMDATA, (WPARAM)index, 0);
 	presenter->GetDatabaseIndex(res);
 }
 
