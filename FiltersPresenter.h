@@ -14,6 +14,7 @@ namespace DrvFtaeAlarm {
 		void AddFilter(std::string filterName) override;
 		void SelectFilter(std::string filterName) override;
 		void AddCondition(StatementCondition&& condition, std::string filterName) override;
+		void RemoveCondition(size_t index, std::string filterName) override;
 		void SelectCondition(size_t index, std::string filterName) override;
 		~FiltersPresenter();
 	private:

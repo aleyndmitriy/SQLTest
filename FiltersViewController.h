@@ -35,9 +35,10 @@ namespace DrvFtaeAlarm {
 		void ClearConditionView();
 		void SelectCondition();
 		void UnselectCondition();
-		void AddCondition(const StatementCondition& condition) override;
+		void AddCondition(const StatementCondition& condition, int index) override;
 		void SelectedCondition(const StatementCondition& condition) override;
 		void AddCondition();
+		void RemoveCondition();
 		void ChooseConditionProperty();
 		void ChooseConditionPropertyType();
 		void ChooseCondition();
@@ -59,7 +60,7 @@ namespace DrvFtaeAlarm {
 		void ClearEditValue2Control();
 		std::string GetSelectedConditionProperty();
 		PropertyType GetSelectedConditionPropertyType();
-		ConditionType GetSelectedConditionType();
+		ConditionType GetSelectedConditionType(); 
 	};
 }
 

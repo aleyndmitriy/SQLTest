@@ -89,7 +89,10 @@ void DrvFtaeAlarm::FiltersViewController::CreateConditionsList()
 		col.mask = LVCF_TEXT | LVCF_FMT | LVCF_WIDTH;
 		col.fmt = LVCFMT_LEFT;
 		col.pszText = wcColumnText[i];
-		col.cx = (conditionListRect.right - conditionListRect.left)/3;
+		if (i == 0) {
+			col.cx = (conditionListRect.right - conditionListRect.left) / 10;
+		}
+		col.cx = 9*(conditionListRect.right - conditionListRect.left)/20; 
 		int ind = SendMessage(hConditionListControl, LVM_INSERTCOLUMN, i, (LPARAM)(&col));
 	}
 }
@@ -124,6 +127,21 @@ void DrvFtaeAlarm::FiltersViewController::AddCondition()
 	GetDlgItemText(window, IDC_EDIT_VALUE2, wchValue, STR_LENGTH);
 	std::string value2 = Wstr2Str(std::wstring(wchValue));
 	presenter->AddCondition(StatementCondition(selectedOperation, selectedProperty, selectedPropertyType, selectedCondition, value1, value2),filterName);
+}
+
+
+void DrvFtaeAlarm::FiltersViewController::RemoveCondition()
+{
+	WCHAR wchFilterName[MAX_FILTERNAME_LENGTH];
+	GetDlgItemText(window, IDC_EDIT_INSTANCE, wchFilterName, MAX_FILTERNAME_LENGTH);
+	std::string filterName = Wstr2Str(std::wstring(wchFilterName));
+	LRESULT res = SendDlgItemMessage(window, IDC_LIST_CONDITIONS, LVM_GETNEXTITEM, (WPARAM)-1, (LPARAM)LVNI_FOCUSED);
+	if (res > -1)
+	{
+		presenter->RemoveCondition(res, filterName);
+		SendDlgItemMessage(window, IDC_LIST_CONDITIONS, LVM_DELETEITEM, (WPARAM)res, (LPARAM)0);
+	}
+	
 }
 
 void DrvFtaeAlarm::FiltersViewController::RemoveFilter()
@@ -211,6 +229,7 @@ void DrvFtaeAlarm::FiltersViewController::EnableConditionView(BOOL bEnable)
 	EnableWindow(GetDlgItem(window, IDC_BUTTON_REMOVEFILTER), bEnable);
 	EnableWindow(GetDlgItem(window, IDC_LIST_CONDITIONS), bEnable);
 	EnableWindow(GetDlgItem(window, IDC_BUTTON_ADDCONDITION), bEnable);
+	EnableWindow(GetDlgItem(window, IDC_BUTTON_REMOVEALLCONDITIONS), bEnable);
 	EnableWindow(GetDlgItem(window, IDC_COMBO_PROPERTY), bEnable);
 	EnableWindow(GetDlgItem(window, IDC_COMBO_PROPERTYTYPE), bEnable);
 	EnableWindow(GetDlgItem(window, IDC_COMBO_CONDITION), bEnable);
@@ -240,16 +259,24 @@ void DrvFtaeAlarm::FiltersViewController::SelectedCondition(const StatementCondi
 	std::wstring wProperty = Str2Wstr(condition.GetProperty());
 	LRESULT index = SendDlgItemMessage(window, IDC_COMBO_PROPERTY, CB_FINDSTRING, 0, (LPARAM)wProperty.c_str());
 	SendDlgItemMessage(window, IDC_COMBO_PROPERTY, CB_SETCURSEL, (WPARAM)index, 0);
-	wProperty = Str2Wstr(condition.PropertyView());
-	index = SendDlgItemMessage(window, IDC_COMBO_PROPERTYTYPE, CB_FINDSTRING, 0, (LPARAM)wProperty.c_str());
+	if (condition.GetCombineOperation() == CombineOperation::COMBINEOP_OR) {
+		CheckRadioButton(window, IDC_RADIO_AND, IDC_RADIO_OR, IDC_RADIO_OR);
+	}
+	else {
+		CheckRadioButton(window, IDC_RADIO_AND, IDC_RADIO_OR, IDC_RADIO_AND);
+	}
+	wProperty = Str2Wstr(PropertyTypeToStr(condition.GetPropertyType()));
+	index = SendDlgItemMessage(window, IDC_COMBO_PROPERTYTYPE, CB_ADDSTRING, 0, (LPARAM)wProperty.c_str());
 	SendDlgItemMessage(window, IDC_COMBO_PROPERTYTYPE, CB_SETCURSEL, (WPARAM)index, 0);
 	wProperty = Str2Wstr(condition.ConditionView());
-	index = SendDlgItemMessage(window, IDC_COMBO_CONDITION, CB_FINDSTRING, 0, (LPARAM)wProperty.c_str());
+	index = SendDlgItemMessage(window, IDC_COMBO_CONDITION, CB_ADDSTRING, 0, (LPARAM)wProperty.c_str());
 	SendDlgItemMessage(window, IDC_COMBO_CONDITION, CB_SETCURSEL, (WPARAM)index, 0);
 	ClearEditValue1Control();
-	SendDlgItemMessage(window, IDC_EDIT_VALUE1, WM_SETTEXT, 0, (LPARAM)condition.GetValue1().c_str());
-	ClearEditValue1Control();
-	SendDlgItemMessage(window, IDC_EDIT_VALUE2, WM_SETTEXT, 0, (LPARAM)condition.GetValue2().c_str());
+	std::wstring wVal1 = Str2Wstr(condition.GetValue1());
+	SendDlgItemMessage(window, IDC_EDIT_VALUE1, WM_SETTEXT, 0, (LPARAM)wVal1.c_str());
+	ClearEditValue2Control();
+	std::wstring wVal2 = Str2Wstr(condition.GetValue2());
+	SendDlgItemMessage(window, IDC_EDIT_VALUE2, WM_SETTEXT, 0, (LPARAM)wVal2.c_str());
 	SelectCondition();
 }
 
@@ -262,10 +289,14 @@ void DrvFtaeAlarm::FiltersViewController::SelectCondition()
 	EnableWindow(GetDlgItem(window, IDC_EDIT_VALUE2), FALSE);
 	EnableWindow(GetDlgItem(window, IDC_RADIO_AND), FALSE);
 	EnableWindow(GetDlgItem(window, IDC_RADIO_OR), FALSE);
+	EnableWindow(GetDlgItem(window, IDC_BUTTON_ADDCONDITION), FALSE);
+	EnableWindow(GetDlgItem(window, IDC_BUTTON_REMOVECONDITION), TRUE);
+
 }
 
 void DrvFtaeAlarm::FiltersViewController::UnselectCondition()
 {
+	SendDlgItemMessage(window, IDC_COMBO_PROPERTY, CB_SETCURSEL, (WPARAM)-1, 0);
 	EnableWindow(GetDlgItem(window, IDC_COMBO_PROPERTY), TRUE);
 	EnableWindow(GetDlgItem(window, IDC_COMBO_PROPERTYTYPE), TRUE);
 	EnableWindow(GetDlgItem(window, IDC_COMBO_CONDITION), TRUE);
@@ -273,9 +304,15 @@ void DrvFtaeAlarm::FiltersViewController::UnselectCondition()
 	EnableWindow(GetDlgItem(window, IDC_EDIT_VALUE2), TRUE);
 	EnableWindow(GetDlgItem(window, IDC_RADIO_AND), TRUE);
 	EnableWindow(GetDlgItem(window, IDC_RADIO_OR), TRUE);
+	EnableWindow(GetDlgItem(window, IDC_BUTTON_ADDCONDITION), TRUE);
+	EnableWindow(GetDlgItem(window, IDC_BUTTON_REMOVECONDITION), FALSE);
+	SendDlgItemMessage(window, IDC_COMBO_PROPERTYTYPE, CB_RESETCONTENT, 0, 0);
+	SendDlgItemMessage(window, IDC_COMBO_CONDITION, CB_RESETCONTENT, 0, 0);
+	ClearEditValue1Control();
+	ClearEditValue2Control();
 }
 
-void DrvFtaeAlarm::FiltersViewController::AddCondition(const StatementCondition& condition)
+void DrvFtaeAlarm::FiltersViewController::AddCondition(const StatementCondition& condition, int index)
 {
 	HWND hConditionListControl = GetDlgItem(window, IDC_LIST_CONDITIONS);
 	LVITEM item;
@@ -299,7 +336,7 @@ void DrvFtaeAlarm::FiltersViewController::AddCondition(const StatementCondition&
 	item.cchTextMax = STR_LENGTH;
 	item.iSubItem = 0;
 	item.state = 0;// LVIS_FOCUSED | LVIS_SELECTED;
-	item.iItem = 0;
+	item.iItem = index;
 	item.cColumns = 3;
 	item.lParam = 0;
 	SendMessage(hConditionListControl, LVM_INSERTITEM, 0, (LPARAM)& item);
@@ -635,7 +672,7 @@ INT_PTR WINAPI FiltersDlg_Proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 			controller->AddCondition();
 			break;
 		case IDC_BUTTON_REMOVECONDITION:
-
+			controller->RemoveCondition();
 			break;
 		case IDC_BUTTON_REMOVEALLCONDITIONS:
 

@@ -79,4 +79,6 @@ namespace DrvFtaeAlarm {
 	bool operator<=(const StatementCondition& lhs, const StatementCondition& rhs);
 	bool operator>(const StatementCondition& lhs, const StatementCondition& rhs);
 	bool operator>=(const StatementCondition& lhs, const StatementCondition& rhs);
+
+	std::string PropertyTypeToStr(PropertyType type);
 }

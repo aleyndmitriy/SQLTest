@@ -41,7 +41,7 @@ void DrvFtaeAlarm::FiltersPresenter::AddCondition(StatementCondition&& condition
 		FiltersIterator itr = filters.find(filterName);
 		if (itr != filters.end()) {
 			itr->second.push_back(condition);
-			ptrView->AddCondition(condition);
+			ptrView->AddCondition(condition, itr->second.size() - 1);
 		}
 		else {
 			ptrView->WarningMessage(std::string("There is not such filter in list!"));
@@ -76,9 +76,10 @@ void DrvFtaeAlarm::FiltersPresenter::SelectFilter(std::string filterName)
 	if (ptrView) {
 		FiltersIterator itr = filters.find(filterName);
 		if (itr != filters.end()) {
+			int index = 0;
 			for (std::vector<StatementCondition>::const_iterator statementItr = itr->second.cbegin(); statementItr != itr->second.cend(); ++statementItr)
 			{
-				ptrView->AddCondition(*statementItr);
+				ptrView->AddCondition(*statementItr, index++);
 			}
 		}
 		else {
@@ -96,6 +97,30 @@ void DrvFtaeAlarm::FiltersPresenter::SelectCondition(size_t index, std::string f
 		if (itr != filters.end()) {
 			if (index < itr->second.size()) {
 				ptrView->SelectedCondition(itr->second.at(index));
+			}
+		}
+		else {
+			ptrView->WarningMessage(std::string("There is not such filter in list!"));
+
+		}
+	}
+}
+
+void DrvFtaeAlarm::FiltersPresenter::RemoveCondition(size_t index, std::string filterName)
+{
+	std::shared_ptr<IFiltersViewInput> ptrView = view.lock();
+	if (ptrView) {
+		FiltersIterator itr = filters.find(filterName);
+		if (itr != filters.end()) {
+			if (index < itr->second.size()) {
+				int searchIndex = 0;
+				std::vector<StatementCondition>::const_iterator statementItr = itr->second.cbegin();
+				while (searchIndex < index)
+				{
+					++statementItr;
+					++searchIndex;
+				}
+				itr->second.erase(statementItr);
 			}
 		}
 		else {

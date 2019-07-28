@@ -55,19 +55,19 @@ std::string DrvFtaeAlarm::StatementCondition::PropertyView() const
 	switch (_propertyType)
 	{
 	case PropertyType::PROPTYPE_NUMERIC:
-		type = std::string("(NUMERIC)");
+		type = std::string(" (NUMERIC)");
 		break;
 	case PropertyType::PROPTYPE_TEXT:
-		type = std::string("(TEXT)");
+		type = std::string(" (TEXT)");
 		break;
 	case PropertyType::PROPTYPE_BOOLEAN:
-		type = std::string("(BOOLEAN)");
+		type = std::string(" (BOOLEAN)");
 		break;
 	case PropertyType::PROPTYPE_DATE:
-		type = std::string("(DATE)");
+		type = std::string(" (DATE)");
 		break;
 	default:
-		type = std::string("(NONE)");
+		type = std::string(" (NONE)");
 		break;
 	}
 	std::string res = _property + type;
@@ -80,25 +80,25 @@ std::string DrvFtaeAlarm::StatementCondition::ConditionView() const
 	switch (_conditionType)
 	{
 	case ConditionType::CONDTYPE_EQUAL:
-		type = std::string("EQUAL TO ");
+		type = std::string("EQUAL TO");
 		break;
 	case ConditionType::CONDTYPE_LESS:
-		type = std::string("LESS THAN ");
+		type = std::string("LESS THAN");
 		break;
 	case ConditionType::CONDTYPE_GREATER:
-		type = std::string("GREATER THAN ");
+		type = std::string("GREATER THAN");
 		break;
 	case ConditionType::CONDTYPE_LESSEQUAL:
-		type = std::string("LESS OR EQUAL THAN ");
+		type = std::string("LESS OR EQUAL");
 		break;
 	case ConditionType::CONDTYPE_GREATEREQUAL:
-		type = std::string("GREATER OR EQUAL THAN ");
+		type = std::string("GREATER OR EQUAL");
 		break;
 	case ConditionType::CONDTYPE_NOTEQUAL:
-		type = std::string("NOT EQUAL ");
+		type = std::string("NOT EQUAL");
 		break;
 	case ConditionType::CONDTYPE_BETWEEN:
-		type = std::string("BETWEEN ");
+		type = std::string("BETWEEN");
 		break;
 	case ConditionType::CONDTYPE_ISNULL:
 		type = std::string("IS NULL");
@@ -107,7 +107,7 @@ std::string DrvFtaeAlarm::StatementCondition::ConditionView() const
 		type = std::string("IS NOT NULL");
 		break;
 	case ConditionType::CONDTYPE_LIKE:
-		type = std::string("LIKE ");
+		type = std::string("LIKE");
 		break;
 	default:
 		type = std::string("(NONE)");
@@ -176,4 +176,28 @@ bool DrvFtaeAlarm::operator>(const DrvFtaeAlarm::StatementCondition& lhs, const 
 bool DrvFtaeAlarm::operator>=(const DrvFtaeAlarm::StatementCondition& lhs, const DrvFtaeAlarm::StatementCondition& rhs)
 {
 	return lhs.GetProperty() >= rhs.GetProperty();
+}
+
+std::string DrvFtaeAlarm::PropertyTypeToStr(PropertyType type)
+{
+	std::string strType;
+	switch (type)
+	{
+	case PropertyType::PROPTYPE_NUMERIC:
+		strType = std::string(" (NUMERIC)");
+		break;
+	case PropertyType::PROPTYPE_TEXT:
+		strType = std::string(" (TEXT)");
+		break;
+	case PropertyType::PROPTYPE_BOOLEAN:
+		strType = std::string(" (BOOLEAN)");
+		break;
+	case PropertyType::PROPTYPE_DATE:
+		strType = std::string(" (DATE)");
+		break;
+	default:
+		strType = std::string(" (NONE)");
+		break;
+	}
+	return strType;
 }
