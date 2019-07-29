@@ -28,7 +28,9 @@ void DrvFtaeAlarm::SQLServerDatabaseEngine::loadDatabaseInstances(std::string se
 
 bool DrvFtaeAlarm::SQLServerDatabaseEngine::ChooseDatabase(std::string databaseName)
 {
-	return connection->ConnectToDatabase(databaseName);
+	bool bConnected = connection->ConnectToDatabase(databaseName);
+	
+	return bConnected;
 }
 
 void DrvFtaeAlarm::SQLServerDatabaseEngine::CloseConnection()

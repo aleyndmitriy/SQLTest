@@ -3,7 +3,7 @@
 
 void DrvFtaeAlarm::LoginInitializer::CreateModule(HINSTANCE hInstance, const std::shared_ptr<UIDialogViewController>& parent)
 {
-	std::shared_ptr<ILoginViewOutput> presenter = std::make_shared<LoginPresenter>(DataSQLServerAccessAssembly::instance().GetDataBaseEngine());
+	std::shared_ptr<ILoginViewOutput> presenter = std::make_shared<LoginPresenter>(DataSQLServerAccessAssembly::instance().GetDataBaseEngine(), DataSQLServerAccessAssembly::instance().GetSettingDataSource());
 	LoginViewController* controller = new LoginViewController(parent, presenter);
 	HWND hParentHandle = NULL;
 	if (parent) {

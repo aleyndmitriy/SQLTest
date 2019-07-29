@@ -94,6 +94,12 @@
     <Filter Include="DataAccessLayer\Statement\StatementCondition">
       <UniqueIdentifier>{d8368578-e1ef-453a-a0f2-94730cac82d9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DataAccessLayer\Tables">
+      <UniqueIdentifier>{4aa5ad9f-6073-4c28-b996-d3dcb84ec5fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SettingsDataSource\XMLDataSource">
+      <UniqueIdentifier>{14f71846-2004-475b-9802-e6c8f0dad8c2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -158,6 +164,15 @@
     </ClCompile>
     <ClCompile Include="StatementCondition.cpp">
       <Filter>DataAccessLayer\Statement\StatementCondition</Filter>
+    </ClCompile>
+    <ClCompile Include="SQLTable.cpp">
+      <Filter>DataAccessLayer\Tables</Filter>
+    </ClCompile>
+    <ClCompile Include="SQLServerType.cpp">
+      <Filter>DataAccessLayer\Tables</Filter>
+    </ClCompile>
+    <ClCompile Include="XMLSettingsDataSource.cpp">
+      <Filter>SettingsDataSource\XMLDataSource</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -262,6 +277,15 @@
     </ClInclude>
     <ClInclude Include="StatementCondition.h">
       <Filter>DataAccessLayer\Statement\StatementCondition</Filter>
+    </ClInclude>
+    <ClInclude Include="SQLTable.h">
+      <Filter>DataAccessLayer\Tables</Filter>
+    </ClInclude>
+    <ClInclude Include="SQLServerType.h">
+      <Filter>DataAccessLayer\Tables</Filter>
+    </ClInclude>
+    <ClInclude Include="XMLSettingsDataSource.h">
+      <Filter>SettingsDataSource\XMLDataSource</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

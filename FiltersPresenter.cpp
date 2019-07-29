@@ -1,6 +1,6 @@
 #include"FiltersPresenter.h"
 
-DrvFtaeAlarm::FiltersPresenter::FiltersPresenter(const std::shared_ptr<DatabaseEngine>& database) :view(), _database(database)
+DrvFtaeAlarm::FiltersPresenter::FiltersPresenter(const std::shared_ptr<DatabaseEngine>& database, const std::shared_ptr<ISettingsDataSource>& settingsDataSource) :view(), _database(database), _settingsDataSource(settingsDataSource)
 {
 	
 }
@@ -8,6 +8,8 @@ DrvFtaeAlarm::FiltersPresenter::FiltersPresenter(const std::shared_ptr<DatabaseE
 DrvFtaeAlarm::FiltersPresenter::~FiltersPresenter()
 {
 	view.reset();
+	_database.reset();
+	_settingsDataSource.reset();
 }
 
 void DrvFtaeAlarm::FiltersPresenter::SetViewInput(std::shared_ptr<IFiltersViewInput> input)
@@ -28,9 +30,14 @@ void DrvFtaeAlarm::FiltersPresenter::viewIsReady()
 	properties.insert(pair4);
 	std::pair<std::string, PropertyType> pair5 = std::make_pair<std::string, PropertyType>(std::string("columnName4"), PropertyType::PROPTYPE_TEXT);
 	properties.insert(pair5);
-		std::shared_ptr<IFiltersViewInput> ptrView = view.lock();
+	_settingsDataSource->Load(filters);
+	std::shared_ptr<IFiltersViewInput> ptrView = view.lock();
 	if (ptrView) {
 		ptrView->LoadPropertiesList(properties);
+		for (FiltersIterator itr = filters.begin(); itr != filters.end(); ++itr)
+		{
+			ptrView->AddFilter(itr->first);
+		}
 	}
 }
 
@@ -127,5 +134,14 @@ void DrvFtaeAlarm::FiltersPresenter::RemoveCondition(size_t index, std::string f
 			ptrView->WarningMessage(std::string("There is not such filter in list!"));
 
 		}
+	}
+}
+
+void DrvFtaeAlarm::FiltersPresenter::SaveFilters()
+{
+	bool bSaved = false;
+	for (FiltersIterator itr = filters.begin(); itr != filters.end(); ++itr)
+	{
+		bSaved = _settingsDataSource->Save(itr->first, itr->second, true);
 	}
 }

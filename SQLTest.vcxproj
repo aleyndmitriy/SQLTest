@@ -142,10 +142,13 @@
     <ClCompile Include="SQLServerDatabaseEngine.cpp" />
     <ClCompile Include="SQLServerEnvironment.cpp" />
     <ClCompile Include="SQLServerStatement.cpp" />
+    <ClCompile Include="SQLServerType.cpp" />
+    <ClCompile Include="SQLTable.cpp" />
     <ClCompile Include="Statement.cpp" />
     <ClCompile Include="StatementCondition.cpp" />
     <ClCompile Include="UIDialogViewController.cpp" />
     <ClCompile Include="Utils.cpp" />
+    <ClCompile Include="XMLSettingsDataSource.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Connection.h" />
@@ -178,10 +181,13 @@
     <ClInclude Include="SQLServerDatabaseEngine.h" />
     <ClInclude Include="SQLServerEnvironment.h" />
     <ClInclude Include="SQLServerStatement.h" />
+    <ClInclude Include="SQLServerType.h" />
+    <ClInclude Include="SQLTable.h" />
     <ClInclude Include="Statement.h" />
     <ClInclude Include="StatementCondition.h" />
     <ClInclude Include="UIDialogViewController.h" />
     <ClInclude Include="Utils.h" />
+    <ClInclude Include="XMLSettingsDataSource.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SQLTest.rc" />

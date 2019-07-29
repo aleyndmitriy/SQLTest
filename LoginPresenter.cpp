@@ -1,11 +1,6 @@
 #include"LoginPresenter.h"
 #include "SQLServerConnection.h"
-DrvFtaeAlarm::LoginPresenter::LoginPresenter(const std::shared_ptr<DatabaseEngine> &database):view(),_database(database)
-{
-
-}
-
-DrvFtaeAlarm::LoginPresenter::LoginPresenter(std::shared_ptr<DatabaseEngine>&& database) : view(), _database(std::move(database))
+DrvFtaeAlarm::LoginPresenter::LoginPresenter(const std::shared_ptr<DatabaseEngine> &database, const std::shared_ptr<ISettingsDataSource>& settingsDataSource):view(),_database(database),_settingsDataSource(settingsDataSource)
 {
 
 }
@@ -14,6 +9,7 @@ DrvFtaeAlarm::LoginPresenter::~LoginPresenter()
 {
 	view.reset();
 	_database.reset();
+	_settingsDataSource.reset();
 }
 
 void DrvFtaeAlarm::LoginPresenter::SetViewInput(std::shared_ptr<ILoginViewInput> input)

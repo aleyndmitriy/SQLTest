@@ -3,7 +3,7 @@
 
 void DrvFtaeAlarm::FiltersInitializer::CreateModule(HINSTANCE hInstance, const std::shared_ptr<UIDialogViewController>& parent)
 {
-	std::shared_ptr<IFiltersViewOutput> presenter = std::make_shared<FiltersPresenter>(DataSQLServerAccessAssembly::instance().GetDataBaseEngine());
+	std::shared_ptr<IFiltersViewOutput> presenter = std::make_shared<FiltersPresenter>(DataSQLServerAccessAssembly::instance().GetDataBaseEngine(), DataSQLServerAccessAssembly::instance().GetSettingDataSource());
 	FiltersViewController* controller = new FiltersViewController(parent, presenter);
 	HWND hParentHandle = NULL;
 	if (parent) {
