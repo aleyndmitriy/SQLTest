@@ -27,7 +27,7 @@ namespace DrvFtaeAlarm {
 		CONDTYPE_LIKE = 9
 	};
 
-	enum class CombineOperation
+	enum class CombineOperation : long
 	{
 		COMBINEOP_OR = 0,
 		COMBINEOP_AND = 1

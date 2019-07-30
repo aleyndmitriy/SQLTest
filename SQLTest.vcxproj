@@ -88,6 +88,8 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -133,6 +135,7 @@
     <ClCompile Include="LoginInitializer.cpp" />
     <ClCompile Include="LoginPresenter.cpp" />
     <ClCompile Include="LoginViewController.cpp" />
+    <ClCompile Include="pugixml.cpp" />
     <ClCompile Include="Record.cpp" />
     <ClCompile Include="SettingsInitializer.cpp" />
     <ClCompile Include="SettingsPresenter.cpp" />
@@ -172,6 +175,8 @@
     <ClInclude Include="LoginInitializer.h" />
     <ClInclude Include="LoginPresenter.h" />
     <ClInclude Include="LoginViewController.h" />
+    <ClInclude Include="pugiconfig.hpp" />
+    <ClInclude Include="pugixml.hpp" />
     <ClInclude Include="Record.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SettingsInitializer.h" />

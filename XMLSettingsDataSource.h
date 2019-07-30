@@ -11,11 +11,11 @@ namespace DrvFtaeAlarm {
 		XMLSettingsDataSource(XMLSettingsDataSource&& src) = delete;
 		XMLSettingsDataSource& operator=(const XMLSettingsDataSource& rhs) = delete;
 		XMLSettingsDataSource& operator=(XMLSettingsDataSource&& rhs) = delete;
-		bool Save(const std::string& filterName, const std::vector<StatementCondition>& conditions, bool selected) override;
+		bool Save(const std::map<std::pair<std::string, bool>, std::vector<StatementCondition> >& filters) override;
 		bool Save(const ConnectionAttributes& attributes) override;
-		bool Load(std::map<std::string, std::vector<StatementCondition> >& filters) override;
-		bool Load(std::map<std::string, bool>& selectedFilters) override;
+		bool Load(std::map<std::pair<std::string, bool>, std::vector<StatementCondition> >& filters) override;
 		bool Load(ConnectionAttributes& attributes) override;
 		~XMLSettingsDataSource() {};
+	private:
 	};
 }

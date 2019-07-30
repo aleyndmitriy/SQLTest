@@ -30,7 +30,11 @@ void DrvFtaeAlarm::FiltersPresenter::viewIsReady()
 	properties.insert(pair4);
 	std::pair<std::string, PropertyType> pair5 = std::make_pair<std::string, PropertyType>(std::string("columnName4"), PropertyType::PROPTYPE_TEXT);
 	properties.insert(pair5);
-	_settingsDataSource->Load(filters);
+	std::map<std::pair<std::string, bool>, std::vector<StatementCondition> > loadFilters;
+	_settingsDataSource->Load(loadFilters);
+	for (std::map<std::pair<std::string, bool>, std::vector<StatementCondition> >::const_iterator itr = loadFilters.cbegin(); itr != loadFilters.cend(); ++itr) {
+		filters.insert(std::make_pair<std::string, ConditionsVector>(std::string(itr->first.first), ConditionsVector(itr->second)));
+	}
 	std::shared_ptr<IFiltersViewInput> ptrView = view.lock();
 	if (ptrView) {
 		ptrView->LoadPropertiesList(properties);
@@ -140,8 +144,12 @@ void DrvFtaeAlarm::FiltersPresenter::RemoveCondition(size_t index, std::string f
 void DrvFtaeAlarm::FiltersPresenter::SaveFilters()
 {
 	bool bSaved = false;
+	std::map<std::pair<std::string, bool>, ConditionsVector> savingFilters;
 	for (FiltersIterator itr = filters.begin(); itr != filters.end(); ++itr)
 	{
-		bSaved = _settingsDataSource->Save(itr->first, itr->second, true);
+		std::pair<std::pair<std::string, bool>, ConditionsVector> val = 
+			std::make_pair<std::pair<std::string, bool>, ConditionsVector>(std::make_pair<std::string, bool>(std::string(itr->first), true), ConditionsVector(itr->second));
+		savingFilters.insert(val);
 	}
+	bSaved = _settingsDataSource->Save(savingFilters);
 }

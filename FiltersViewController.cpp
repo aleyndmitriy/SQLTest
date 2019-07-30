@@ -151,6 +151,7 @@ void DrvFtaeAlarm::FiltersViewController::RemoveFilter()
 
 void DrvFtaeAlarm::FiltersViewController::CloseView()
 {
+	presenter->SaveFilters();
 	SendMessage(window, WM_CLOSE, 0, 0);
 }
 
