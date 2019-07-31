@@ -17,6 +17,8 @@ namespace DrvFtaeAlarm {
 		virtual void GetDatabaseIndex(int index) = 0;
 		virtual void ConnectToServer() = 0;
 		virtual void ConnectToDatabase() = 0;
+		virtual void SaveSettings() = 0;
+		virtual void SetConnection() = 0;
 		virtual ~ILoginViewOutput() {};
 	};
 }

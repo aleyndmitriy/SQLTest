@@ -95,6 +95,7 @@ void DrvFtaeAlarm::LoginViewController::ConnectToDatabase()
 
 void DrvFtaeAlarm::LoginViewController::CloseView()
 {
+	presenter->SaveSettings();
 	SendMessage(window, WM_CLOSE, 0, 0);
 }
 
@@ -134,6 +135,32 @@ void DrvFtaeAlarm::LoginViewController::LoadDatabasesList(const std::vector<std:
 	}
 }
 
+void DrvFtaeAlarm::LoginViewController::LoadConnectionSettings(const ConnectionAttributes& attributes)
+{
+	if (!attributes.loginName.empty()) {
+		std::wstring wLogin = Str2Wstr(attributes.loginName);
+		SendDlgItemMessage(window, IDC_EDIT_USERNAME, EM_SETSEL, 0, -1);
+		SendDlgItemMessage(window, IDC_EDIT_USERNAME, WM_CLEAR, 0, 0);
+		SendDlgItemMessage(window, IDC_EDIT_USERNAME, WM_SETTEXT, 0, (LPARAM)wLogin.c_str());
+	}
+	if (!attributes.password.empty()) {
+		std::wstring wPassword = Str2Wstr(attributes.password);
+		SendDlgItemMessage(window, IDC_EDIT_PASSWORD, EM_SETSEL, 0, -1);
+		SendDlgItemMessage(window, IDC_EDIT_PASSWORD, WM_CLEAR, 0, 0);
+		SendDlgItemMessage(window, IDC_EDIT_PASSWORD, WM_SETTEXT, 0, (LPARAM)wPassword.c_str());
+	}
+	if (!attributes.serverName.empty()) {
+		std::wstring wServer = Str2Wstr(attributes.serverName);
+		LRESULT index = SendDlgItemMessage(window, IDC_COMBO_SERVER_NAME, CB_ADDSTRING, 0, (LPARAM)wServer.c_str());
+		SendDlgItemMessage(window, IDC_COMBO_SERVER_NAME, CB_SETCURSEL, (WPARAM)index, 0);
+	}
+	if (!attributes.databaseName.empty()) {
+		std::wstring wDatabase = Str2Wstr(attributes.databaseName);
+		LRESULT index = SendDlgItemMessage(window, IDC_COMBO_CONFIG_DATABASE_NAME, CB_ADDSTRING, 0, (LPARAM)wDatabase.c_str());
+		SendDlgItemMessage(window, IDC_COMBO_CONFIG_DATABASE_NAME, CB_SETCURSEL, (WPARAM)index, 0);
+	}
+	presenter->SetConnection();
+}
 
 void DrvFtaeAlarm::LoginViewController::SaveServerName()
 {

@@ -30,6 +30,15 @@ bool DrvFtaeAlarm::XMLSettingsDataSource::Save(const std::map<std::pair<std::str
 
 bool DrvFtaeAlarm::XMLSettingsDataSource::Save(const ConnectionAttributes& attributes)
 {
+	pugi::xml_document doc;
+	pugi::xml_node rootNode = doc.append_child("Settings");
+	pugi::xml_node connectionNode = rootNode.append_child("Connection");
+	connectionNode.append_attribute("Version").set_value(attributes.driver.c_str());
+	connectionNode.append_attribute("Server").set_value(attributes.serverName.c_str());
+	connectionNode.append_attribute("ConfigDataBase").set_value(attributes.databaseName.c_str());
+	connectionNode.append_attribute("User").set_value(attributes.loginName.c_str());
+	connectionNode.append_attribute("Password").set_value(attributes.password.c_str());
+	doc.save_file("Settings.xml");
 	return true;
 }
 
@@ -61,6 +70,18 @@ bool DrvFtaeAlarm::XMLSettingsDataSource::Load(std::map<std::pair<std::string, b
 
 bool DrvFtaeAlarm::XMLSettingsDataSource::Load(ConnectionAttributes& attributes)
 {
+	pugi::xml_document doc;
+	pugi::xml_parse_result res = doc.load_file("Settings.xml");
+	if (!res) {
+		return false;
+	}
+	pugi::xml_node rootNode = doc.child("Settings");
+	pugi::xml_node connectionNode = rootNode.child("Connection");
+	attributes.driver = std::string(connectionNode.attribute("Version").as_string());
+	attributes.serverName = std::string(connectionNode.attribute("Server").as_string());
+	attributes.databaseName = std::string(connectionNode.attribute("ConfigDataBase").as_string());
+	attributes.loginName = std::string(connectionNode.attribute("User").as_string());
+	attributes.password = std::string(connectionNode.attribute("Password").as_string());
 	return true;
 }
 

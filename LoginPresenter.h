@@ -19,6 +19,8 @@ namespace DrvFtaeAlarm {
 		 void GetDatabaseIndex(int index) override;
 		 void ConnectToServer() override;
 		 void ConnectToDatabase() override;
+		 void SaveSettings() override;
+		 void SetConnection() override;
 	private:
 		std::weak_ptr<ILoginViewInput> view;
 		std::shared_ptr<DatabaseEngine> _database;

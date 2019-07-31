@@ -19,6 +19,7 @@ namespace DrvFtaeAlarm {
 		void AddChildViewController(const std::shared_ptr<UIDialogViewController>& child) override;
 		void LoadServerList(const std::vector<std::string>& servers) override;
 		void LoadDatabasesList(const std::vector<std::string>& databases) override;
+		void LoadConnectionSettings(const ConnectionAttributes& attributes) override;
 		void WarningMessage(std::string message) override;
 		void AddToParentView() override;
 		void CloseView() override;

@@ -21,6 +21,11 @@ void DrvFtaeAlarm::LoginPresenter::viewIsReady()
 {
 	_database->OpenConnection();
 	_database->loadServerInstances("SQL Server Native Client 11.0");
+	_settingsDataSource->Load(attributes);
+	std::shared_ptr< ILoginViewInput> ptrView = view.lock();
+	if (ptrView) {
+		ptrView->LoadConnectionSettings(attributes);
+	}
 }
 
 void DrvFtaeAlarm::LoginPresenter::FindServerList()
@@ -72,7 +77,7 @@ void DrvFtaeAlarm::LoginPresenter::ConnectToServer()
 {
 	if (!attributes.serverName.empty() && !attributes.loginName.empty() && !attributes.password.empty()) {
 		_database->loadDatabaseInstances(attributes.serverName, DrvFtaeAlarm::DatabaseEngine::AuthenticationType::Server, attributes.loginName, attributes.password);
-		std::shared_ptr< ILoginViewInput> ptrView = view.lock();
+		std::shared_ptr<ILoginViewInput> ptrView = view.lock();
 		if (ptrView) {
 			databaseNames = _database->GetDatabasesList();
 			ptrView->LoadDatabasesList(databaseNames);
@@ -86,4 +91,32 @@ void DrvFtaeAlarm::LoginPresenter::ConnectToDatabase()
 		bool isOpened = _database->ChooseDatabase(attributes.databaseName);
 		
 	}
+}
+
+void  DrvFtaeAlarm::LoginPresenter::SetConnection()
+{
+	if (!attributes.serverName.empty() && !attributes.loginName.empty() && !attributes.password.empty()) {
+		_database->loadDatabaseInstances(attributes.serverName, DrvFtaeAlarm::DatabaseEngine::AuthenticationType::Server, attributes.loginName, attributes.password);
+		std::shared_ptr<ILoginViewInput> ptrView = view.lock();
+		if (ptrView) {
+			databaseNames = _database->GetDatabasesList();
+			if (attributes.databaseName.empty()) {
+				ptrView->LoadDatabasesList(databaseNames);
+			}
+			else {
+				std::vector<std::string>::const_iterator itr = std::find(databaseNames.cbegin(), databaseNames.cend(), attributes.databaseName);
+				if (itr != databaseNames.cend()) {
+					bool isOpened = _database->ChooseDatabase(attributes.databaseName);
+				}
+				else {
+					ptrView->LoadDatabasesList(databaseNames);
+				}
+			}
+		}
+	}
+}
+
+void DrvFtaeAlarm::LoginPresenter::SaveSettings()
+{
+	_settingsDataSource->Save(attributes);
 }
