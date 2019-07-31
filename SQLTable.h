@@ -21,7 +21,7 @@ namespace DrvFtaeAlarm {
 		~SQLTable();
 		std::string GetTableName() const;
 		bool InsertColumn(const std::string& columnName, const std::string& columnType);
-		std::pair<std::string,std::string> operator[](std::string columnName);
+		std::string& at(std::string columnName);
 		const_iterator cbegin() const;
 		const_iterator cend() const;
 	private:

@@ -103,6 +103,9 @@
     <Filter Include="Pugixml">
       <UniqueIdentifier>{81ac9e7e-6722-409a-8ba7-0b44256da8f4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DataAccessLayer\Databases">
+      <UniqueIdentifier>{1413489d-c1ad-42fe-993d-9b467f9b10f8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -179,6 +182,9 @@
     </ClCompile>
     <ClCompile Include="pugixml.cpp">
       <Filter>Pugixml</Filter>
+    </ClCompile>
+    <ClCompile Include="SQLDatabase.cpp">
+      <Filter>DataAccessLayer\Databases</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -298,6 +304,9 @@
     </ClInclude>
     <ClInclude Include="pugixml.hpp">
       <Filter>Pugixml</Filter>
+    </ClInclude>
+    <ClInclude Include="SQLDatabase.h">
+      <Filter>DataAccessLayer\Databases</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

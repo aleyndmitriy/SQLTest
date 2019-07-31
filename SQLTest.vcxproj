@@ -141,6 +141,7 @@
     <ClCompile Include="SettingsPresenter.cpp" />
     <ClCompile Include="SettingsViewController.cpp" />
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="SQLDatabase.cpp" />
     <ClCompile Include="SQLServerConnection.cpp" />
     <ClCompile Include="SQLServerDatabaseEngine.cpp" />
     <ClCompile Include="SQLServerEnvironment.cpp" />
@@ -182,6 +183,7 @@
     <ClInclude Include="SettingsInitializer.h" />
     <ClInclude Include="SettingsPresenter.h" />
     <ClInclude Include="SettingsViewController.h" />
+    <ClInclude Include="SQLDatabase.h" />
     <ClInclude Include="SQLServerConnection.h" />
     <ClInclude Include="SQLServerDatabaseEngine.h" />
     <ClInclude Include="SQLServerEnvironment.h" />

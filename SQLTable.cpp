@@ -5,6 +5,7 @@ DrvFtaeAlarm::SQLTable::SQLTable(std::string tableName) :_tableName(tableName), 
 
 }
 
+
 DrvFtaeAlarm::SQLTable::~SQLTable()
 {
 	_tableName.clear();
@@ -33,15 +34,9 @@ DrvFtaeAlarm::SQLTable::const_iterator DrvFtaeAlarm::SQLTable::cend() const
 	return columns.cend();
 }
 
-DrvFtaeAlarm::SQLTable::value_type DrvFtaeAlarm::SQLTable::operator[](std::string columnName)
+std::string& DrvFtaeAlarm::SQLTable::at(std::string columnName)
 {
-	const_iterator itr = columns.find(columnName);
-	if (itr != columns.cend()) {
-		return *itr;
-	}
-	else {
-		return value_type{};
-	}
+	return columns.at(columnName);
 }
 
 
