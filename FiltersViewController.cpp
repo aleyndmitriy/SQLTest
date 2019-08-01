@@ -62,7 +62,7 @@ void DrvFtaeAlarm::FiltersViewController::CreatePropertiesCombo()
 void DrvFtaeAlarm::FiltersViewController::CreateFiltersList()
 {
 	LVCOLUMN col;
-	WCHAR wcColumnText[12] = TEXT("Filter Name");
+	TCHAR wcColumnText[12] = TEXT("Filter Name");
 	HWND hFilterListControl = GetDlgItem(window, IDC_LIST_FILTERS);
 	RECT filterListRect;
 	GetWindowRect(hFilterListControl, &filterListRect);
@@ -78,7 +78,7 @@ void DrvFtaeAlarm::FiltersViewController::CreateFiltersList()
 void DrvFtaeAlarm::FiltersViewController::CreateConditionsList()
 {
 	LVCOLUMN col;
-	WCHAR wcColumnText[3][10] = { TEXT("Operation"),TEXT("Property"),TEXT("Condition") };
+	TCHAR wcColumnText[3][10] = { TEXT("Operation"),TEXT("Property"),TEXT("Condition") };
 	HWND hConditionListControl = GetDlgItem(window, IDC_LIST_CONDITIONS);
 	ListView_SetExtendedListViewStyle(hConditionListControl, LVS_EX_FULLROWSELECT);
 	RECT conditionListRect;
@@ -100,16 +100,16 @@ void DrvFtaeAlarm::FiltersViewController::CreateConditionsList()
 
 void DrvFtaeAlarm::FiltersViewController::AddFilter()
 {
-	WCHAR wchFilterName[MAX_FILTERNAME_LENGTH];
+	TCHAR wchFilterName[MAX_FILTERNAME_LENGTH];
 	GetDlgItemText(window, IDC_EDIT_INSTANCE, wchFilterName, MAX_FILTERNAME_LENGTH);
-	presenter->AddFilter(Wstr2Str(std::wstring(wchFilterName)));
+	presenter->AddFilter(std::string(wchFilterName));
 }
 
 void DrvFtaeAlarm::FiltersViewController::AddCondition()
 {
-	WCHAR wchFilterName[MAX_FILTERNAME_LENGTH];
+	TCHAR wchFilterName[MAX_FILTERNAME_LENGTH];
 	GetDlgItemText(window, IDC_EDIT_INSTANCE, wchFilterName, MAX_FILTERNAME_LENGTH);
-	std::string filterName = Wstr2Str(std::wstring(wchFilterName));
+	std::string filterName = std::string(wchFilterName);
 	CombineOperation selectedOperation = CombineOperation::COMBINEOP_OR;
 	if (IsDlgButtonChecked(window, IDC_RADIO_AND)) {
 		selectedOperation = CombineOperation::COMBINEOP_AND;
@@ -121,20 +121,20 @@ void DrvFtaeAlarm::FiltersViewController::AddCondition()
 	}
 	PropertyType selectedPropertyType = GetSelectedConditionPropertyType();
 	ConditionType selectedCondition = GetSelectedConditionType();
-	WCHAR wchValue[STR_LENGTH];
+	TCHAR wchValue[STR_LENGTH];
 	GetDlgItemText(window, IDC_EDIT_VALUE1, wchValue, STR_LENGTH);
-	std::string value1 = Wstr2Str(std::wstring(wchValue));
+	std::string value1 = std::string(wchValue);
 	GetDlgItemText(window, IDC_EDIT_VALUE2, wchValue, STR_LENGTH);
-	std::string value2 = Wstr2Str(std::wstring(wchValue));
+	std::string value2 = std::string(wchValue);
 	presenter->AddCondition(StatementCondition(selectedOperation, selectedProperty, selectedPropertyType, selectedCondition, value1, value2),filterName);
 }
 
 
 void DrvFtaeAlarm::FiltersViewController::RemoveCondition()
 {
-	WCHAR wchFilterName[MAX_FILTERNAME_LENGTH];
+	TCHAR wchFilterName[MAX_FILTERNAME_LENGTH];
 	GetDlgItemText(window, IDC_EDIT_INSTANCE, wchFilterName, MAX_FILTERNAME_LENGTH);
-	std::string filterName = Wstr2Str(std::wstring(wchFilterName));
+	std::string filterName = std::string(wchFilterName);
 	LRESULT res = SendDlgItemMessage(window, IDC_LIST_CONDITIONS, LVM_GETNEXTITEM, (WPARAM)-1, (LPARAM)LVNI_FOCUSED);
 	if (res > -1)
 	{
@@ -174,14 +174,13 @@ void DrvFtaeAlarm::FiltersViewController::AddFilter(std::string filterName)
 {
 	HWND hFilterListControl = GetDlgItem(window, IDC_LIST_FILTERS);
 	LVITEM item;
-	wchar_t wchfilterName[STR_LENGTH];
+	TCHAR wchfilterName[STR_LENGTH];
 	
-	std::wstring wFilterName = Str2Wstr(filterName);
-	StringCchCopy(wchfilterName, wFilterName.length() + 1, wFilterName.c_str());
+	StringCchCopy(wchfilterName, filterName.length() + 1, filterName.c_str());
 	item.pszText = wchfilterName;
 	item.mask = LVIF_TEXT | LVIF_STATE;
 	item.stateMask = (UINT)-1;
-	item.cchTextMax = wFilterName.length() + 1;
+	item.cchTextMax = filterName.length() + 1;
 	item.iSubItem = 0;
 	item.state = 0;// LVIS_FOCUSED | LVIS_SELECTED;
 	item.iItem = 0;
@@ -249,9 +248,9 @@ void DrvFtaeAlarm::FiltersViewController::SelectFilter(std::string filterName)
 
 void DrvFtaeAlarm::FiltersViewController::SelectCondition(int index)
 {
-	WCHAR wchFilterName[MAX_FILTERNAME_LENGTH];
+	TCHAR wchFilterName[MAX_FILTERNAME_LENGTH];
 	GetDlgItemText(window, IDC_EDIT_INSTANCE, wchFilterName, MAX_FILTERNAME_LENGTH);
-	std::string filterName = Wstr2Str(std::wstring(wchFilterName));
+	std::string filterName = std::string(wchFilterName);
 	presenter->SelectCondition(index, filterName);
 }
 
@@ -317,9 +316,9 @@ void DrvFtaeAlarm::FiltersViewController::AddCondition(const StatementCondition&
 {
 	HWND hConditionListControl = GetDlgItem(window, IDC_LIST_CONDITIONS);
 	LVITEM item;
-	wchar_t wchConditionOperation[4];
-	wchar_t wchConditionProperty[STR_LENGTH];
-	wchar_t wchConditionType[STR_LENGTH];
+	TCHAR wchConditionOperation[4];
+	TCHAR wchConditionProperty[STR_LENGTH];
+	TCHAR wchConditionType[STR_LENGTH];
 	switch (condition.GetCombineOperation())
 	{
 	case CombineOperation::COMBINEOP_OR:
@@ -341,12 +340,12 @@ void DrvFtaeAlarm::FiltersViewController::AddCondition(const StatementCondition&
 	item.cColumns = 3;
 	item.lParam = 0;
 	SendMessage(hConditionListControl, LVM_INSERTITEM, 0, (LPARAM)& item);
-	std::wstring wConditionView = Str2Wstr(condition.PropertyView());
+	std::string wConditionView = condition.PropertyView();
 	StringCchCopy(wchConditionProperty, STR_LENGTH, wConditionView.c_str());
 	item.iSubItem = 1;
 	item.pszText = wchConditionProperty;
 	SendMessage(hConditionListControl, LVM_SETITEM, 0, (LPARAM)& item);
-	std::wstring wConditionType = Str2Wstr(condition.ConditionView());
+	std::string wConditionType = condition.ConditionView();
 	StringCchCopy(wchConditionType, STR_LENGTH, wConditionType.c_str());
 	item.iSubItem = 2;
 	item.pszText = wchConditionType;
@@ -459,7 +458,7 @@ void DrvFtaeAlarm::FiltersViewController::CreatePropertyTypeCombo(PropertyType p
 {
 	SendDlgItemMessage(window, IDC_COMBO_PROPERTYTYPE, CB_RESETCONTENT, 0, 0);
 	LRESULT pos = 0;
-	wchar_t wchConditionProperty[STR_LENGTH];
+	TCHAR wchConditionProperty[STR_LENGTH];
 	switch (propertyType)
 	{
 	case PropertyType::PROPTYPE_NUMERIC:
@@ -705,12 +704,12 @@ INT_PTR WINAPI FiltersDlg_Proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 				itemView = (LPNMLISTVIEW)lParam;
 				iItem = itemView->iItem;
 				if ((itemView->uNewState & LVIS_FOCUSED) && (itemView->uNewState & LVIS_SELECTED)) {
-					wchar_t wchfilterName[MAX_FILTERNAME_LENGTH];
+					TCHAR wchfilterName[MAX_FILTERNAME_LENGTH];
 					itemList.pszText = wchfilterName;
 					itemList.cchTextMax = MAX_FILTERNAME_LENGTH;
 					size_t nameLength = SendMessage(GetDlgItem(hwnd, IDC_LIST_FILTERS), LVM_GETITEMTEXT, iItem, LPARAM(&itemList));
 					wchfilterName[nameLength + 1] = L'\0';
-					controller->SelectFilter(Wstr2Str(std::wstring(wchfilterName)));
+					controller->SelectFilter(std::string(wchfilterName));
 					/*if(SendDlgItemMessage(hwnd, IDC_LIST_FILTERS, LVM_GETSELECTEDCOUNT, 0, 0) > 1) {
 						itemList.state = 0;
 						itemList.stateMask = LVIS_SELECTED | LVIS_FOCUSED;

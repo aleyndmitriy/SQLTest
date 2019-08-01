@@ -3,7 +3,7 @@
 
 namespace DrvFtaeAlarm {
 
-	enum class PropertyType : long
+	enum class PropertyType : int
 	{
 		PROPTYPE_NONE = -1,
 		PROPTYPE_NUMERIC = 0,
@@ -12,7 +12,7 @@ namespace DrvFtaeAlarm {
 		PROPTYPE_DATE = 3
 	};
 
-	enum class ConditionType : long
+	enum class ConditionType : int
 	{
 		CONDTYPE_NONE = -1,
 		CONDTYPE_EQUAL = 0,
@@ -27,7 +27,7 @@ namespace DrvFtaeAlarm {
 		CONDTYPE_LIKE = 9
 	};
 
-	enum class CombineOperation : long
+	enum class CombineOperation : int
 	{
 		COMBINEOP_OR = 0,
 		COMBINEOP_AND = 1
@@ -81,4 +81,7 @@ namespace DrvFtaeAlarm {
 	bool operator>=(const StatementCondition& lhs, const StatementCondition& rhs);
 
 	std::string PropertyTypeToStr(PropertyType type);
+	PropertyType IntToPropertyType(int type);
+	ConditionType IntToConditionType(int type);
+	CombineOperation IntToCombineType(int type);
 }

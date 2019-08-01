@@ -48,18 +48,16 @@ void DrvFtaeAlarm::LoginViewController::VerifyPassword()
 
 void DrvFtaeAlarm::LoginViewController::SaveLogin()
 {
-	wchar_t login[STR_LENGTH];
+	TCHAR login[STR_LENGTH];
 	GetDlgItemText(window, IDC_EDIT_USERNAME, login, STR_LENGTH);
-	std::wstring wStr(login);
-	presenter->GetLogin(Wstr2Str(wStr));
+	presenter->GetLogin(std::string(login));
 }
 
 void DrvFtaeAlarm::LoginViewController::SavePassword()
 {
-	wchar_t password[STR_LENGTH];
+	TCHAR password[STR_LENGTH];
 	GetDlgItemText(window, IDC_EDIT_PASSWORD, password, STR_LENGTH);
-	std::wstring wStr(password);
-	presenter->GetPassword(Wstr2Str(wStr));
+	presenter->GetPassword(std::string(password));
 }
 
 void DrvFtaeAlarm::LoginViewController::ChooseServer()
@@ -116,8 +114,7 @@ void DrvFtaeAlarm::LoginViewController::LoadServerList(const std::vector<std::st
 	size_t index = 0;
 	for (std::vector<std::string>::const_iterator itr = servers.cbegin(); itr != servers.cend(); ++itr)
 	{
-		std::wstring str = Str2Wstr(*itr);
-		int pos = SendMessage(hComboControl, CB_ADDSTRING, 0, (LPARAM)str.c_str());
+		int pos = SendMessage(hComboControl, CB_ADDSTRING, 0, (LPARAM)itr->c_str());
 		SendMessage(hComboControl, CB_SETITEMDATA, pos, (LPARAM)index++);
 	}
 }
@@ -129,8 +126,7 @@ void DrvFtaeAlarm::LoginViewController::LoadDatabasesList(const std::vector<std:
 	size_t index = 0;
 	for (std::vector<std::string>::const_iterator itr = databases.cbegin(); itr != databases.cend(); ++itr)
 	{
-		std::wstring str = Str2Wstr(*itr);
-		int pos = SendMessage(hComboControl, CB_ADDSTRING, 0, (LPARAM)str.c_str());
+		int pos = SendMessage(hComboControl, CB_ADDSTRING, 0, (LPARAM)itr->c_str());
 		SendMessage(hComboControl, CB_SETITEMDATA, pos, (LPARAM)index++);
 	}
 }
@@ -138,25 +134,21 @@ void DrvFtaeAlarm::LoginViewController::LoadDatabasesList(const std::vector<std:
 void DrvFtaeAlarm::LoginViewController::LoadConnectionSettings(const ConnectionAttributes& attributes)
 {
 	if (!attributes.loginName.empty()) {
-		std::wstring wLogin = Str2Wstr(attributes.loginName);
 		SendDlgItemMessage(window, IDC_EDIT_USERNAME, EM_SETSEL, 0, -1);
 		SendDlgItemMessage(window, IDC_EDIT_USERNAME, WM_CLEAR, 0, 0);
-		SendDlgItemMessage(window, IDC_EDIT_USERNAME, WM_SETTEXT, 0, (LPARAM)wLogin.c_str());
+		SendDlgItemMessage(window, IDC_EDIT_USERNAME, WM_SETTEXT, 0, (LPARAM)(attributes.loginName.c_str()));
 	}
 	if (!attributes.password.empty()) {
-		std::wstring wPassword = Str2Wstr(attributes.password);
 		SendDlgItemMessage(window, IDC_EDIT_PASSWORD, EM_SETSEL, 0, -1);
 		SendDlgItemMessage(window, IDC_EDIT_PASSWORD, WM_CLEAR, 0, 0);
-		SendDlgItemMessage(window, IDC_EDIT_PASSWORD, WM_SETTEXT, 0, (LPARAM)wPassword.c_str());
+		SendDlgItemMessage(window, IDC_EDIT_PASSWORD, WM_SETTEXT, 0, (LPARAM)(attributes.password.c_str()));
 	}
 	if (!attributes.serverName.empty()) {
-		std::wstring wServer = Str2Wstr(attributes.serverName);
-		LRESULT index = SendDlgItemMessage(window, IDC_COMBO_SERVER_NAME, CB_ADDSTRING, 0, (LPARAM)wServer.c_str());
+		LRESULT index = SendDlgItemMessage(window, IDC_COMBO_SERVER_NAME, CB_ADDSTRING, 0, (LPARAM)(attributes.serverName.c_str()));
 		SendDlgItemMessage(window, IDC_COMBO_SERVER_NAME, CB_SETCURSEL, (WPARAM)index, 0);
 	}
 	if (!attributes.databaseName.empty()) {
-		std::wstring wDatabase = Str2Wstr(attributes.databaseName);
-		LRESULT index = SendDlgItemMessage(window, IDC_COMBO_CONFIG_DATABASE_NAME, CB_ADDSTRING, 0, (LPARAM)wDatabase.c_str());
+		LRESULT index = SendDlgItemMessage(window, IDC_COMBO_CONFIG_DATABASE_NAME, CB_ADDSTRING, 0, (LPARAM)(attributes.databaseName.c_str()));
 		SendDlgItemMessage(window, IDC_COMBO_CONFIG_DATABASE_NAME, CB_SETCURSEL, (WPARAM)index, 0);
 	}
 	presenter->SetConnection();
@@ -164,18 +156,16 @@ void DrvFtaeAlarm::LoginViewController::LoadConnectionSettings(const ConnectionA
 
 void DrvFtaeAlarm::LoginViewController::SaveServerName()
 {
-	wchar_t server[STR_LENGTH];
+	TCHAR server[STR_LENGTH];
 	GetDlgItemText(window, IDC_COMBO_SERVER_NAME, server, STR_LENGTH);
-	std::wstring wStr(server);
-	presenter->GetServerName(Wstr2Str(wStr));
+	presenter->GetServerName(std::string(server));
 }
 
 void DrvFtaeAlarm::LoginViewController::SaveDatabaseName()
 {
-	wchar_t base[STR_LENGTH];
+	TCHAR base[STR_LENGTH];
 	GetDlgItemText(window, IDC_COMBO_CONFIG_DATABASE_NAME, base, STR_LENGTH);
-	std::wstring wStr(base);
-	presenter->GetDatabaseName(Wstr2Str(wStr));
+	presenter->GetDatabaseName(std::string(base));
 }
 
 void DrvFtaeAlarm::LoginViewController::WarningMessage(std::string message)

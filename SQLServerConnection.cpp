@@ -71,17 +71,16 @@ void DrvFtaeAlarm::SQLServerConnection::allocateConnection() {
 
 void DrvFtaeAlarm::SQLServerConnection::ConnectToServerInstances(std::string driverName) {
 	
-	wchar_t wchDriverName[MAX_DRIVERNAME_LENGTH];
-	wchar_t wStrOut[STR_LENGTH];
+	TCHAR wchDriverName[MAX_DRIVERNAME_LENGTH];
+	TCHAR wStrOut[STR_LENGTH];
 	SQLSMALLINT shBrowseResultLen = 0;
 	std::string strDriver = std::string("DRIVER={") + driverName + std::string("};");
 	std::wstring wDrwName = Str2Wstr(strDriver);
-	StringCchCopy(wchDriverName, wDrwName.length() + 1, wDrwName.c_str());
-	SQLSMALLINT res = SQLBrowseConnect(sqlDBC, reinterpret_cast<SQLWCHAR*>(wchDriverName), SQL_NTS,
-		wStrOut, STR_LENGTH, &shBrowseResultLen);
+	StringCchCopy(wchDriverName, wDrwName.length() + 1, strDriver.c_str());
+	SQLSMALLINT res = SQLBrowseConnect(sqlDBC, reinterpret_cast<SQLCHAR*>(wchDriverName), SQL_NTS,
+		reinterpret_cast<SQLCHAR*>(wStrOut), STR_LENGTH, &shBrowseResultLen);
 	if (SQL_SUCCEEDED(res) || res == SQL_NEED_DATA) {
-		std::wstring wStr(wStrOut);
-		std::string strRes = Wstr2Str(wStr);
+		std::string strRes = std::string(wStrOut);
 		size_t firstPos = strRes.find_first_of("{",0);
 		size_t lastPos = strRes.find_first_of("}", 0);
 		if (firstPos != std::string::npos && lastPos != std::string::npos) {
@@ -105,17 +104,15 @@ void DrvFtaeAlarm::SQLServerConnection::ConnectToServerInstances(std::string dri
 
 void DrvFtaeAlarm::SQLServerConnection::ConnectToDatabaseInstances(std::string serverName, std::string login, std::string password)
 {
-	wchar_t whUserInfo[SQL_MAX_MESSAGE_LENGTH];
-	wchar_t wStrOut[STR_LENGTH];
+	TCHAR whUserInfo[SQL_MAX_MESSAGE_LENGTH];
+	TCHAR wStrOut[STR_LENGTH];
 	SQLSMALLINT shBrowseResultLen = 0;
 	std::string strServerData = std::string("SERVER=") + serverName + std::string(";UID=") + login + std::string(";PWD=") + password;
-	std::wstring wStrServerData = Str2Wstr(strServerData);
-	StringCchCopy(whUserInfo, wStrServerData.length() + 1, wStrServerData.c_str());
-	SQLSMALLINT res = SQLBrowseConnect(sqlDBC, reinterpret_cast<SQLWCHAR*>(whUserInfo), SQL_NTS,
-		wStrOut, STR_LENGTH, &shBrowseResultLen);
+	StringCchCopy(whUserInfo, strServerData.length() + 1, strServerData.c_str());
+	SQLSMALLINT res = SQLBrowseConnect(sqlDBC, reinterpret_cast<SQLCHAR*>(whUserInfo), SQL_NTS,
+		reinterpret_cast<SQLCHAR*>(wStrOut), STR_LENGTH, &shBrowseResultLen);
 	if (SQL_SUCCEEDED(res) || res == SQL_NEED_DATA) {
-		std::wstring wStr(wStrOut);
-		std::string strRes = Wstr2Str(wStr);
+		std::string strRes(wStrOut);
 		size_t firstPos = strRes.find_first_of("{", 0);
 		size_t lastPos = strRes.find_first_of("}", 0);
 		if (firstPos != std::string::npos && lastPos != std::string::npos) {
@@ -139,14 +136,13 @@ void DrvFtaeAlarm::SQLServerConnection::ConnectToDatabaseInstances(std::string s
 
 bool DrvFtaeAlarm::SQLServerConnection::ConnectToDatabase(std::string databaseName)
 {
-	wchar_t wchDataBaseName[MAX_DATABASENAME_LENGTH];
-	wchar_t wStrOut[STR_LENGTH];
+	TCHAR wchDataBaseName[MAX_DATABASENAME_LENGTH];
+	TCHAR wStrOut[STR_LENGTH];
 	SQLSMALLINT shBrowseResultLen = 0;
 	std::string strDatabase = std::string("DATABASE=") + databaseName + std::string(";");
-	std::wstring wDatabaseName = Str2Wstr(strDatabase);
-	StringCchCopy(wchDataBaseName, wDatabaseName.length() + 1, wDatabaseName.c_str());
-	SQLSMALLINT res = SQLBrowseConnect(sqlDBC, reinterpret_cast<SQLWCHAR*>(wchDataBaseName), SQL_NTS,
-		wStrOut, STR_LENGTH, &shBrowseResultLen);
+	StringCchCopy(wchDataBaseName, strDatabase.length() + 1, strDatabase.c_str());
+	SQLSMALLINT res = SQLBrowseConnect(sqlDBC, reinterpret_cast<SQLCHAR*>(wchDataBaseName), SQL_NTS,
+		reinterpret_cast<SQLCHAR*>(wStrOut), STR_LENGTH, &shBrowseResultLen);
 	if (!SQL_SUCCEEDED(res)) {
 		freeConnection();
 		return false;

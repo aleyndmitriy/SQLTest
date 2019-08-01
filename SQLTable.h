@@ -15,7 +15,7 @@ namespace DrvFtaeAlarm {
 		using difference_type = ptrdiff_t;
 		SQLTable(std::string tableName);
 		SQLTable(const SQLTable& src) = default;
-		SQLTable(SQLTable&& src) = default;
+		SQLTable(SQLTable&& src) noexcept = default;
 		SQLTable& operator=(const SQLTable& src) = default;
 		SQLTable& operator=(SQLTable&& src) = default;
 		~SQLTable();

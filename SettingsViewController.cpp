@@ -21,11 +21,11 @@ void DrvFtaeAlarm::SettingsViewController::setupInitialState()
 	LoginInitializer::CreateModule(GetModuleHandle(NULL), shared_from_this());
 	TCITEM tia;
 	tia.mask = TCIF_TEXT;
-	wchar_t header1[] = L"Configuration";
+	TCHAR header1[] = "Configuration";
 	tia.pszText = header1;
 	TabCtrl_InsertItem(hTabControl, 0, &tia);
 	FiltersInitializer::CreateModule(GetModuleHandle(NULL), shared_from_this());
-	wchar_t header2[] = L"Filters";
+	TCHAR header2[] = "Filters";
 	tia.pszText = header2;
 	TabCtrl_InsertItem(hTabControl, 1, &tia);
 	TabCtrl_SetCurSel(hTabControl, 0);

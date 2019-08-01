@@ -201,3 +201,78 @@ std::string DrvFtaeAlarm::PropertyTypeToStr(PropertyType type)
 	}
 	return strType;
 }
+
+DrvFtaeAlarm::PropertyType DrvFtaeAlarm::IntToPropertyType(int type)
+{
+	PropertyType res;
+	switch(type)
+	{
+	case 0:
+		res = PropertyType::PROPTYPE_NUMERIC;
+		break;
+	case 1:
+		res = PropertyType::PROPTYPE_TEXT;
+		break;
+	case 2:
+		res = PropertyType::PROPTYPE_BOOLEAN;
+		break;
+	case 3:
+		res = PropertyType::PROPTYPE_DATE;
+		break;
+	default:
+		res = PropertyType::PROPTYPE_NONE;
+		break;
+	}
+	return res;
+}
+
+DrvFtaeAlarm::ConditionType DrvFtaeAlarm::IntToConditionType(int type)
+{
+	ConditionType res;
+	switch (type)
+	{
+	case 0:
+		res = ConditionType::CONDTYPE_EQUAL;
+		break;
+	case 1:
+		res = ConditionType::CONDTYPE_LESS;
+		break;
+	case 2:
+		res = ConditionType::CONDTYPE_GREATER;
+		break;
+	case 3:
+		res = ConditionType::CONDTYPE_LESSEQUAL;
+		break;
+	case 4:
+		res = ConditionType::CONDTYPE_GREATEREQUAL;
+		break;
+	case 5:
+		res = ConditionType::CONDTYPE_NOTEQUAL;
+		break;
+	case 6:
+		res = ConditionType::CONDTYPE_BETWEEN;
+		break;
+	case 7:
+		res = ConditionType::CONDTYPE_ISNULL;
+		break;
+	case 8:
+		res = ConditionType::CONDTYPE_ISNOTNULL;
+		break;
+	case 9:
+		res = ConditionType::CONDTYPE_LIKE;
+		break;
+	default:
+		res = ConditionType::CONDTYPE_NONE;
+		break;
+	}
+	return res;
+}
+
+DrvFtaeAlarm::CombineOperation DrvFtaeAlarm::IntToCombineType(int type)
+{
+	CombineOperation res = CombineOperation::COMBINEOP_OR;
+	if (type > 0) {
+		res = CombineOperation::COMBINEOP_AND;
+	}
+	return res;
+}

@@ -78,7 +78,9 @@
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;comctl32.lib;OdsCoreLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\VisualStudioProjects\SQLTest\LibD;..\SQLTest\LibD;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -93,7 +95,8 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Comctl32.lib;OdsCoreLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\SQLTest\LibD;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -129,12 +132,14 @@
   <ItemGroup>
     <ClCompile Include="Connection.cpp" />
     <ClCompile Include="DataSQLServerAccessAssembly.cpp" />
+    <ClCompile Include="Export.cpp" />
     <ClCompile Include="FiltersInitializer.cpp" />
     <ClCompile Include="FiltersPresenter.cpp" />
     <ClCompile Include="FiltersViewController.cpp" />
     <ClCompile Include="LoginInitializer.cpp" />
     <ClCompile Include="LoginPresenter.cpp" />
     <ClCompile Include="LoginViewController.cpp" />
+    <ClCompile Include="PluginObjectFactory.cpp" />
     <ClCompile Include="pugixml.cpp" />
     <ClCompile Include="Record.cpp" />
     <ClCompile Include="SettingsInitializer.cpp" />
@@ -161,6 +166,7 @@
     <ClInclude Include="DataAccessAssembly.h" />
     <ClInclude Include="DatabaseEngine.h" />
     <ClInclude Include="DataSQLServerAccessAssembly.h" />
+    <ClInclude Include="Export.h" />
     <ClInclude Include="FiltersInitializer.h" />
     <ClInclude Include="FiltersPresenter.h" />
     <ClInclude Include="FiltersViewController.h" />
@@ -170,12 +176,21 @@
     <ClInclude Include="IFiltersViewOutput.h" />
     <ClInclude Include="ILoginViewInput.h" />
     <ClInclude Include="ILoginViewOutput.h" />
+    <ClInclude Include="IPluginHost.h" />
+    <ClInclude Include="IPluginObj.h" />
+    <ClInclude Include="IPluginObjectFactory.h" />
+    <ClInclude Include="IPropertySet.h" />
     <ClInclude Include="ISettingsDataSource.h" />
     <ClInclude Include="ISettingsViewInput.h" />
     <ClInclude Include="ISettingsViewOutput.h" />
     <ClInclude Include="LoginInitializer.h" />
     <ClInclude Include="LoginPresenter.h" />
     <ClInclude Include="LoginViewController.h" />
+    <ClInclude Include="OdsCoreLib.h" />
+    <ClInclude Include="OdsErr.h" />
+    <ClInclude Include="OdsIID.h" />
+    <ClInclude Include="PluginObjectFactory.h" />
+    <ClInclude Include="Property.h" />
     <ClInclude Include="pugiconfig.hpp" />
     <ClInclude Include="pugixml.hpp" />
     <ClInclude Include="Record.h" />

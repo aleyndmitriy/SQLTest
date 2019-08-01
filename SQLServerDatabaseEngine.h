@@ -1,7 +1,7 @@
 #pragma once
 #include"DatabaseEngine.h"
 #include"SQLServerConnection.h"
-
+#include"SQLDatabase.h"
 namespace DrvFtaeAlarm {
 	class SQLServerDatabaseEngine final: public DatabaseEngine
 	{
@@ -23,5 +23,6 @@ namespace DrvFtaeAlarm {
 	private:
 		std::shared_ptr<SQLServerEnvironment> environment;
 		std::shared_ptr<SQLServerConnection> connection;
+		std::map<std::string, SQLDatabase> databases;
 	};
 }

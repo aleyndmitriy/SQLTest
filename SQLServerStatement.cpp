@@ -89,20 +89,7 @@ void DrvFtaeAlarm::SQLServerStatement::allocateStatement()
 		strQuery = FindAndReplace(strQuery, std::string("?"), *constItr);
 	}
 
-	int sizeWcharbuff = MultiByteToWideChar(CP_ACP, 0, strQuery.c_str(), -1, NULL, 0);
-	if (sizeWcharbuff < 0)
-	{
-		freeStatement();
-		return;
-	}
-	std::unique_ptr<wchar_t[]> ptrQuery = std::make_unique<wchar_t[]>(sizeWcharbuff);
-	sizeWcharbuff = MultiByteToWideChar(CP_ACP, 0, strQuery.c_str(), -1, ptrQuery.get(), sizeWcharbuff);
-	if (sizeWcharbuff < 0)
-	{
-		freeStatement();
-		return;
-	}
-	res = SQLPrepare(sqlStmt, ptrQuery.get(), SQL_NTS);
+	res = SQLPrepare(sqlStmt, (SQLCHAR*)(strQuery.c_str()), SQL_NTS);
 	if (!SQL_SUCCEEDED(res)) {
 		freeStatement();
 		return;
@@ -122,7 +109,7 @@ std::vector<DrvFtaeAlarm::Record> DrvFtaeAlarm::SQLServerStatement::Execute()
 	SQLSMALLINT     coltype = 0;
 	SQLSMALLINT     colnamelen = 0;
 	SQLULEN     collen[MAX_COLUMNS];
-	SQLWCHAR         colname[STR_LENGTH];
+	SQLCHAR         colname[STR_LENGTH];
 	SQLLEN      displaysize = 0;
 	SQLSMALLINT     scale = 0;
 	std::unique_ptr<DataBinding[]> bindingArray(new DataBinding[shNumberOfColumns]);
@@ -132,8 +119,8 @@ std::vector<DrvFtaeAlarm::Record> DrvFtaeAlarm::SQLServerStatement::Execute()
 		colname[colnamelen] = L'\0';
 		res = SQLColAttributes(sqlStmt, colIndex + 1, SQL_DESC_DISPLAY_SIZE, NULL, 0, NULL, &displaysize);
 		//size_t len = wcslen(colname) + 1;
-		std::wstring wideStr = std::wstring(colname);
-		bindingArray[colIndex].colName = Wstr2Str(wideStr);
+		std::string wideStr = std::string((TCHAR*)colname);
+		bindingArray[colIndex].colName = wideStr;
 		bindingArray[colIndex].dataType = coltype;
 		bindingArray[colIndex].iBufferLength = max(displaysize, colnamelen);
 		bindingArray[colIndex].ptrDataValue = std::unique_ptr<char[]>(new char[bindingArray[colIndex].iBufferLength]);

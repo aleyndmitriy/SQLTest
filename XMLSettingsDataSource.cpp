@@ -12,10 +12,10 @@ bool DrvFtaeAlarm::XMLSettingsDataSource::Save(const std::map<std::pair<std::str
 		alarmNode.append_attribute("Selected").set_value(filterItr->first.second);
 		for (std::vector<StatementCondition>::const_iterator conditionItr = filterItr->second.cbegin(); conditionItr != filterItr->second.cend(); ++conditionItr) {
 			pugi::xml_node conditionNode = alarmNode.append_child("Condition");
-			conditionNode.append_attribute("CombineOperation").set_value(static_cast<long>(conditionItr->GetCombineOperation()));
+			conditionNode.append_attribute("CombineOperation").set_value(static_cast<int>(conditionItr->GetCombineOperation()));
 			conditionNode.append_attribute("Property").set_value(conditionItr->GetProperty().c_str());
-			conditionNode.append_attribute("PropertyType").set_value(static_cast<long>(conditionItr->GetPropertyType()));
-			conditionNode.append_attribute("ConditionType").set_value(static_cast<long>(conditionItr->GetConditionType()));
+			conditionNode.append_attribute("PropertyType").set_value(static_cast<int>(conditionItr->GetPropertyType()));
+			conditionNode.append_attribute("ConditionType").set_value(static_cast<int>(conditionItr->GetConditionType()));
 			if (conditionItr->GetValue1().empty() == false) {
 				conditionNode.append_attribute("Value1").set_value(conditionItr->GetValue1().c_str());
 			}
@@ -55,9 +55,9 @@ bool DrvFtaeAlarm::XMLSettingsDataSource::Load(std::map<std::pair<std::string, b
 		std::vector<StatementCondition> conditions;
 		for (pugi::xml_node conditionNode = alarmNode.child("Condition"); conditionNode; conditionNode = conditionNode.next_sibling("Condition"))
 		{
-			CombineOperation combine{conditionNode.attribute("CombineOperation").as_int()};
-			PropertyType propertyType{conditionNode.attribute("PropertyType").as_int()};
-			ConditionType conditionType{conditionNode.attribute("ConditionType").as_int()};
+			CombineOperation combine = IntToCombineType(conditionNode.attribute("CombineOperation").as_int());
+			PropertyType propertyType = IntToPropertyType(conditionNode.attribute("PropertyType").as_int());
+			ConditionType conditionType = IntToConditionType(conditionNode.attribute("ConditionType").as_int());
 			conditions.push_back(StatementCondition(combine, std::string(conditionNode.attribute("Property").as_string()),propertyType,conditionType, std::string(conditionNode.attribute("Value1").as_string()), std::string(conditionNode.attribute("Value2").as_string())));
 		}
 		std::pair<std::pair<std::string, bool>, std::vector<StatementCondition> > mapVal =

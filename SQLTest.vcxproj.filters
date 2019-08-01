@@ -106,6 +106,21 @@
     <Filter Include="DataAccessLayer\Databases">
       <UniqueIdentifier>{1413489d-c1ad-42fe-993d-9b467f9b10f8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Export">
+      <UniqueIdentifier>{7e303895-4df6-4511-a942-3c7bba1f1e32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Export\ExportInterface">
+      <UniqueIdentifier>{354342c2-3e52-4fef-b55e-3decb30e1953}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Export\Headers">
+      <UniqueIdentifier>{9af0c53b-63d9-4f3d-9e98-962a88a583d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Export\PluginObjectFactory">
+      <UniqueIdentifier>{e88ae676-3970-40e0-bef7-7ae76f724f65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Export\Property">
+      <UniqueIdentifier>{4875c329-b6ca-4c49-b87d-06e41dbf6a61}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -185,6 +200,12 @@
     </ClCompile>
     <ClCompile Include="SQLDatabase.cpp">
       <Filter>DataAccessLayer\Databases</Filter>
+    </ClCompile>
+    <ClCompile Include="Export.cpp">
+      <Filter>Export</Filter>
+    </ClCompile>
+    <ClCompile Include="PluginObjectFactory.cpp">
+      <Filter>Export\PluginObjectFactory</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -307,6 +328,36 @@
     </ClInclude>
     <ClInclude Include="SQLDatabase.h">
       <Filter>DataAccessLayer\Databases</Filter>
+    </ClInclude>
+    <ClInclude Include="IPluginHost.h">
+      <Filter>Export\ExportInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="IPluginObjectFactory.h">
+      <Filter>Export\ExportInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="IPluginObj.h">
+      <Filter>Export\ExportInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="OdsIID.h">
+      <Filter>Export\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="IPropertySet.h">
+      <Filter>Export\ExportInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="OdsErr.h">
+      <Filter>Export\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="PluginObjectFactory.h">
+      <Filter>Export\PluginObjectFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="Export.h">
+      <Filter>Export</Filter>
+    </ClInclude>
+    <ClInclude Include="OdsCoreLib.h">
+      <Filter>Export\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Property.h">
+      <Filter>Export\Property</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
