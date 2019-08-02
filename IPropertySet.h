@@ -12,6 +12,7 @@
 */
 
 #pragma once
+#include <Windows.h>
 
 #pragma pack(8)
 

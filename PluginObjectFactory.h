@@ -6,6 +6,8 @@
 #include<string>
 #include<map>
 #include<memory>
+#include"PropertySet.h"
+
 struct SDsRegInfo
 {
 	std::string m_szVendorName;
@@ -21,7 +23,7 @@ struct SDsRegInfo
 
 	ODS::RegisterInfo m_InfoDS;
 
-	//CPropSet m_PropSet;
+	PropertySet m_PropSet;
 };
 
 class PluginObjectFactory final: public ODS::IPluginObjectFactory

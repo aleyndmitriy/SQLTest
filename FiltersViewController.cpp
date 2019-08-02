@@ -54,7 +54,7 @@ void DrvFtaeAlarm::FiltersViewController::CreatePropertiesCombo()
 	HWND hComboControl = GetDlgItem(window, IDC_COMBO_PROPERTY);
 	for(std::map<std::string, PropertyType>::const_iterator itr = _properties.cbegin(); itr != _properties.cend(); ++itr)
 	{
-		std::wstring wProperty = Str2Wstr(itr->first);
+		std::string wProperty = itr->first;
 		LRESULT pos = SendMessage(hComboControl, CB_ADDSTRING, 0, (LPARAM)wProperty.c_str());
 	}
 }
@@ -215,11 +215,10 @@ void DrvFtaeAlarm::FiltersViewController::ClearConditionView()
 
 void DrvFtaeAlarm::FiltersViewController::ActivateFilterView(std::string filterName)
 {
-	std::wstring wFilterName = Str2Wstr(filterName);
 	SendDlgItemMessage(window, IDC_EDIT_INSTANCE, EM_SETSEL, 0, -1);
 	SendDlgItemMessage(window, IDC_EDIT_INSTANCE, WM_CLEAR, 0, 0);
 	EnableWindow(GetDlgItem(window, IDC_BUTTON_ADDFILTER), FALSE);
-	SendDlgItemMessage(window, IDC_EDIT_INSTANCE, WM_SETTEXT, 0, (LPARAM)wFilterName.c_str());
+	SendDlgItemMessage(window, IDC_EDIT_INSTANCE, WM_SETTEXT, 0, (LPARAM)filterName.c_str());
 	EnableWindow(GetDlgItem(window, IDC_EDIT_INSTANCE), FALSE);
 	EnableConditionView(TRUE);
 }
@@ -256,8 +255,7 @@ void DrvFtaeAlarm::FiltersViewController::SelectCondition(int index)
 
 void DrvFtaeAlarm::FiltersViewController::SelectedCondition(const StatementCondition& condition)
 {
-	std::wstring wProperty = Str2Wstr(condition.GetProperty());
-	LRESULT index = SendDlgItemMessage(window, IDC_COMBO_PROPERTY, CB_FINDSTRING, 0, (LPARAM)wProperty.c_str());
+	LRESULT index = SendDlgItemMessage(window, IDC_COMBO_PROPERTY, CB_FINDSTRING, 0, (LPARAM)condition.GetProperty().c_str());
 	SendDlgItemMessage(window, IDC_COMBO_PROPERTY, CB_SETCURSEL, (WPARAM)index, 0);
 	if (condition.GetCombineOperation() == CombineOperation::COMBINEOP_OR) {
 		CheckRadioButton(window, IDC_RADIO_AND, IDC_RADIO_OR, IDC_RADIO_OR);
@@ -265,18 +263,16 @@ void DrvFtaeAlarm::FiltersViewController::SelectedCondition(const StatementCondi
 	else {
 		CheckRadioButton(window, IDC_RADIO_AND, IDC_RADIO_OR, IDC_RADIO_AND);
 	}
-	wProperty = Str2Wstr(PropertyTypeToStr(condition.GetPropertyType()));
+	std::string wProperty = PropertyTypeToStr(condition.GetPropertyType());
 	index = SendDlgItemMessage(window, IDC_COMBO_PROPERTYTYPE, CB_ADDSTRING, 0, (LPARAM)wProperty.c_str());
 	SendDlgItemMessage(window, IDC_COMBO_PROPERTYTYPE, CB_SETCURSEL, (WPARAM)index, 0);
-	wProperty = Str2Wstr(condition.ConditionView());
+	wProperty = condition.ConditionView();
 	index = SendDlgItemMessage(window, IDC_COMBO_CONDITION, CB_ADDSTRING, 0, (LPARAM)wProperty.c_str());
 	SendDlgItemMessage(window, IDC_COMBO_CONDITION, CB_SETCURSEL, (WPARAM)index, 0);
 	ClearEditValue1Control();
-	std::wstring wVal1 = Str2Wstr(condition.GetValue1());
-	SendDlgItemMessage(window, IDC_EDIT_VALUE1, WM_SETTEXT, 0, (LPARAM)wVal1.c_str());
+	SendDlgItemMessage(window, IDC_EDIT_VALUE1, WM_SETTEXT, 0, (LPARAM)condition.GetValue1().c_str());
 	ClearEditValue2Control();
-	std::wstring wVal2 = Str2Wstr(condition.GetValue2());
-	SendDlgItemMessage(window, IDC_EDIT_VALUE2, WM_SETTEXT, 0, (LPARAM)wVal2.c_str());
+	SendDlgItemMessage(window, IDC_EDIT_VALUE2, WM_SETTEXT, 0, (LPARAM)condition.GetValue2().c_str());
 	SelectCondition();
 }
 
@@ -354,16 +350,15 @@ void DrvFtaeAlarm::FiltersViewController::AddCondition(const StatementCondition&
 
 std::string DrvFtaeAlarm::FiltersViewController::GetSelectedConditionProperty()
 {
-	wchar_t wchPropertyName[MAX_COLUMNS];
+	TCHAR wchPropertyName[MAX_COLUMNS];
 	HWND hComboControl = GetDlgItem(window, IDC_COMBO_PROPERTY);
 	LRESULT index = SendMessage(hComboControl, CB_GETCURSEL, 0, 0);
 	LRESULT res = SendMessage(hComboControl, CB_GETLBTEXT, index, (LPARAM)wchPropertyName);
 	if (res < 1) {
 		return std::string();
 	}
-	wchPropertyName[res + 1] = L'\0';
-	std::wstring wStr = std::wstring(wchPropertyName);
-	std::string propertyName = Wstr2Str(wStr);
+	wchPropertyName[res + 1] = '\0';
+	std::string propertyName = std::string(wchPropertyName);
 	return propertyName;
 }
 

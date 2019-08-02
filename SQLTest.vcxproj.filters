@@ -207,6 +207,9 @@
     <ClCompile Include="PluginObjectFactory.cpp">
       <Filter>Export\PluginObjectFactory</Filter>
     </ClCompile>
+    <ClCompile Include="PropertySet.cpp">
+      <Filter>Export\Property</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -357,6 +360,15 @@
       <Filter>Export\Headers</Filter>
     </ClInclude>
     <ClInclude Include="Property.h">
+      <Filter>Export\Property</Filter>
+    </ClInclude>
+    <ClInclude Include="IDataSource.h">
+      <Filter>Export\ExportInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="PropertySet.h">
+      <Filter>Export\Property</Filter>
+    </ClInclude>
+    <ClInclude Include="PropertyInfo.h">
       <Filter>Export\Property</Filter>
     </ClInclude>
   </ItemGroup>
