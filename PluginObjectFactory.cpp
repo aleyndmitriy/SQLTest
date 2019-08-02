@@ -8,7 +8,7 @@ int PluginObjectFactory::CreateObject(const TCHAR* szObjKey, void* pObjCreationP
 	if (itr == regInfoDSList.cend()) {
 		return ODS::ERR::NOT_FOUND;
 	}
-	ODS::Property oproperty;
+	
 	return 0;
 }
 

@@ -162,6 +162,7 @@
     <ClCompile Include="XMLSettingsDataSource.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Alarm.h" />
     <ClInclude Include="Connection.h" />
     <ClInclude Include="ConnectionAttributes.h" />
     <ClInclude Include="Constants.h" />
@@ -172,7 +173,15 @@
     <ClInclude Include="FiltersInitializer.h" />
     <ClInclude Include="FiltersPresenter.h" />
     <ClInclude Include="FiltersViewController.h" />
+    <ClInclude Include="HdaBatchIdInfo.h" />
+    <ClInclude Include="HdaCommand.h" />
+    <ClInclude Include="HdaFunctionResult.h" />
+    <ClInclude Include="IBrowserEvent.h" />
     <ClInclude Include="IDataSource.h" />
+    <ClInclude Include="IDsBrowser.h" />
+    <ClInclude Include="IDsConfigurator.h" />
+    <ClInclude Include="IDsConfiguratorEvent.h" />
+    <ClInclude Include="IDsServer.h" />
     <ClInclude Include="IEnvironment.h" />
     <ClInclude Include="IExtensible.h" />
     <ClInclude Include="IFiltersViewInput.h" />
@@ -183,15 +192,18 @@
     <ClInclude Include="IPluginObj.h" />
     <ClInclude Include="IPluginObjectFactory.h" />
     <ClInclude Include="IPropertySet.h" />
+    <ClInclude Include="IServerFtae.h" />
     <ClInclude Include="ISettingsDataSource.h" />
     <ClInclude Include="ISettingsViewInput.h" />
     <ClInclude Include="ISettingsViewOutput.h" />
+    <ClInclude Include="ISourceFtaeEvent.h" />
     <ClInclude Include="LoginInitializer.h" />
     <ClInclude Include="LoginPresenter.h" />
     <ClInclude Include="LoginViewController.h" />
     <ClInclude Include="OdsCoreLib.h" />
     <ClInclude Include="OdsErr.h" />
     <ClInclude Include="OdsIID.h" />
+    <ClInclude Include="OdsString.h" />
     <ClInclude Include="PluginObjectFactory.h" />
     <ClInclude Include="Property.h" />
     <ClInclude Include="PropertyInfo.h" />
@@ -212,8 +224,13 @@
     <ClInclude Include="SQLTable.h" />
     <ClInclude Include="Statement.h" />
     <ClInclude Include="StatementCondition.h" />
+    <ClInclude Include="TimeValue.h" />
+    <ClInclude Include="Tvr.h" />
     <ClInclude Include="UIDialogViewController.h" />
     <ClInclude Include="Utils.h" />
+    <ClInclude Include="Uuid.h" />
+    <ClInclude Include="Value.h" />
+    <ClInclude Include="ValueType.h" />
     <ClInclude Include="XMLSettingsDataSource.h" />
   </ItemGroup>
   <ItemGroup>

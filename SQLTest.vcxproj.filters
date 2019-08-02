@@ -121,6 +121,21 @@
     <Filter Include="Export\Property">
       <UniqueIdentifier>{4875c329-b6ca-4c49-b87d-06e41dbf6a61}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Export\ExportInterface\DataSourceInterface">
+      <UniqueIdentifier>{36996c2c-c18f-4d84-bcac-54ae3bf73139}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Export\ExportInterface\DataSourceInterface\Server">
+      <UniqueIdentifier>{6054abf2-18f9-4b65-ba7f-93edd90fc391}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Export\ExportInterface\DataSourceInterface\Browser">
+      <UniqueIdentifier>{664253db-ee01-4013-9ad9-1ffaaaa9cc8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Export\ExportInterface\DataSourceInterface\Configurator">
+      <UniqueIdentifier>{73c422c6-16f5-4831-ae94-9bf01ee5e8ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Export\ExportInterface\DataSourceInterface\Server\ServersQuery">
+      <UniqueIdentifier>{c5ebfe74-4bc7-408d-ba90-0e6674b8a15e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -362,14 +377,65 @@
     <ClInclude Include="Property.h">
       <Filter>Export\Property</Filter>
     </ClInclude>
-    <ClInclude Include="IDataSource.h">
-      <Filter>Export\ExportInterface</Filter>
-    </ClInclude>
     <ClInclude Include="PropertySet.h">
       <Filter>Export\Property</Filter>
     </ClInclude>
     <ClInclude Include="PropertyInfo.h">
       <Filter>Export\Property</Filter>
+    </ClInclude>
+    <ClInclude Include="ISourceFtaeEvent.h">
+      <Filter>Export\ExportInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="IDataSource.h">
+      <Filter>Export\ExportInterface\DataSourceInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="IDsServer.h">
+      <Filter>Export\ExportInterface\DataSourceInterface\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="IServerFtae.h">
+      <Filter>Export\ExportInterface\DataSourceInterface\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="IDsBrowser.h">
+      <Filter>Export\ExportInterface\DataSourceInterface\Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="IBrowserEvent.h">
+      <Filter>Export\ExportInterface\DataSourceInterface\Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="IDsConfigurator.h">
+      <Filter>Export\ExportInterface\DataSourceInterface\Configurator</Filter>
+    </ClInclude>
+    <ClInclude Include="IDsConfiguratorEvent.h">
+      <Filter>Export\ExportInterface\DataSourceInterface\Configurator</Filter>
+    </ClInclude>
+    <ClInclude Include="HdaCommand.h">
+      <Filter>Export\ExportInterface\DataSourceInterface\Server\ServersQuery</Filter>
+    </ClInclude>
+    <ClInclude Include="HdaFunctionResult.h">
+      <Filter>Export\ExportInterface\DataSourceInterface\Server\ServersQuery</Filter>
+    </ClInclude>
+    <ClInclude Include="Uuid.h">
+      <Filter>Export\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="OdsString.h">
+      <Filter>Export\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Alarm.h">
+      <Filter>Export\ExportInterface\DataSourceInterface\Server\ServersQuery</Filter>
+    </ClInclude>
+    <ClInclude Include="Value.h">
+      <Filter>Export\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ValueType.h">
+      <Filter>Export\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeValue.h">
+      <Filter>Export\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Tvr.h">
+      <Filter>Export\ExportInterface\DataSourceInterface\Server\ServersQuery</Filter>
+    </ClInclude>
+    <ClInclude Include="HdaBatchIdInfo.h">
+      <Filter>Export\ExportInterface\DataSourceInterface\Server\ServersQuery</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
