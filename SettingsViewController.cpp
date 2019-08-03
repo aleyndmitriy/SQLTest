@@ -74,18 +74,20 @@ DrvFtaeAlarm::SettingsViewController::~SettingsViewController()
 {
 	presenter.reset();
 	childs.clear();
-	EndDialog(window, 0);
+	EndDialog(window, bOK);
 	window = NULL;
 }
 
 
 void DrvFtaeAlarm::SettingsViewController::OnBtnOkTouched()
 {
+	bOK = true;
 	CloseView();
 }
 
 void DrvFtaeAlarm::SettingsViewController::OnBtnCancelTouched()
 {
+	bOK = false;
 	CloseView();
 }
 

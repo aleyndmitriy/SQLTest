@@ -3,7 +3,7 @@
 
 namespace DrvFtaeAlarm {
 
-	class XMLSettingsDataSource final : public ISettingsDataSource
+	class XMLSettingsDataSource: public ISettingsDataSource
 	{
 	public:
 		XMLSettingsDataSource() = default;
@@ -16,6 +16,7 @@ namespace DrvFtaeAlarm {
 		bool Load(std::map<std::pair<std::string, bool>, std::vector<StatementCondition> >& filters) override;
 		bool Load(ConnectionAttributes& attributes) override;
 		~XMLSettingsDataSource() {};
-	private:
+		bool LoadXMLString(const char* source, size_t length);
+		bool SaveXMLString(const char* fileName);
 	};
 }

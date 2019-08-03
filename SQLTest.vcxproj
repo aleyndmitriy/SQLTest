@@ -158,11 +158,14 @@
     <ClCompile Include="Statement.cpp" />
     <ClCompile Include="StatementCondition.cpp" />
     <ClCompile Include="UIDialogViewController.cpp" />
+    <ClCompile Include="UISettingsConfigurator.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="XMLSettingsDataSource.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Alarm.h" />
+    <ClInclude Include="AlarmFilter.h" />
+    <ClInclude Include="AlarmPropertyId.h" />
     <ClInclude Include="Connection.h" />
     <ClInclude Include="ConnectionAttributes.h" />
     <ClInclude Include="Constants.h" />
@@ -175,7 +178,9 @@
     <ClInclude Include="FiltersViewController.h" />
     <ClInclude Include="HdaBatchIdInfo.h" />
     <ClInclude Include="HdaCommand.h" />
+    <ClInclude Include="HdaCommandParam.h" />
     <ClInclude Include="HdaFunctionResult.h" />
+    <ClInclude Include="HdaFunctionType.h" />
     <ClInclude Include="IBrowserEvent.h" />
     <ClInclude Include="IDataSource.h" />
     <ClInclude Include="IDsBrowser.h" />
@@ -227,6 +232,7 @@
     <ClInclude Include="TimeValue.h" />
     <ClInclude Include="Tvr.h" />
     <ClInclude Include="UIDialogViewController.h" />
+    <ClInclude Include="UISettingsConfigurator.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Uuid.h" />
     <ClInclude Include="Value.h" />

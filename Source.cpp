@@ -1,6 +1,6 @@
 
 #include"SettingsInitializer.h"
-
+#include"UISettingsConfigurator.h"
 const TCHAR g_szAppName[] = TEXT("SQL Test");
 
 
@@ -17,8 +17,12 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance,
 		return 0;
 	}
 	else {
-		DrvFtaeAlarm::SettingsInitializer::CreateModule(hInstance,std::shared_ptr<DrvFtaeAlarm::UIDialogViewController>());
+		UISettingsConfigurator config;
+		char* output = nullptr;
+		char** ptrOutput = &output;
+		config.Configure(NULL, ptrOutput);
 
+		config.Configure(*ptrOutput, ptrOutput);
 		return 0;
 	}
 }

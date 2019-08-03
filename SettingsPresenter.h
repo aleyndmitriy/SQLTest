@@ -12,5 +12,6 @@ namespace DrvFtaeAlarm {
 		void viewIsReady() override;
 	private:
 		std::weak_ptr<ISettingsViewInput> view;
+
 	};
 }
