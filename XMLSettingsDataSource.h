@@ -18,5 +18,6 @@ namespace DrvFtaeAlarm {
 		~XMLSettingsDataSource() {};
 		bool LoadXMLString(const char* source, size_t length);
 		bool SaveXMLString(const char* fileName);
+		std::vector<std::string> GetFiltersName();
 	};
 }

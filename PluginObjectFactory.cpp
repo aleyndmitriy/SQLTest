@@ -1,20 +1,52 @@
 #include"PluginObjectFactory.h"
 #include "Property.h"
+#include "FtaeSource.h"
+
+PluginObjectFactory::~PluginObjectFactory()
+{
+	
+}
 
 int PluginObjectFactory::CreateObject(const TCHAR* szObjKey, void* pObjCreationParam, ODS::IPluginObj** ppPluginObj)
 {
+	int iRes = ODS::ERR::OK;
 	std::string wObjKey = std::string(szObjKey);
 	std::map<std::string, std::unique_ptr<SDsRegInfo> >::const_iterator itr = regInfoDSList.find(wObjKey);
 	if (itr == regInfoDSList.cend()) {
 		return ODS::ERR::NOT_FOUND;
 	}
-	
-	return 0;
+	if (itr->second) {
+		FtaeSource* source = new FtaeSource();
+		if (source) {
+			source->SetRegInfo(itr->second.get());
+			*ppPluginObj = source;
+		}
+		else {
+			iRes = ODS::ERR::MEMORY_ALLOCATION_ERR;
+		}
+	}
+	else {
+		iRes = ODS::ERR::BAD_PARAM;
+	}
+	return iRes;
 }
 
 int PluginObjectFactory::DestroyObject(ODS::IPluginObj* pPluginObj)
 {
-	return 0;
+	int iRes = ODS::ERR::OK;
+
+	if (pPluginObj)
+	{
+		FtaeSource* pDSource = (FtaeSource*)pPluginObj;
+
+		delete pDSource;
+	}
+	else
+	{
+		iRes = ODS::ERR::BAD_PARAM;
+	}
+
+	return iRes;
 }
 
 void* PluginObjectFactory::GetInterface()

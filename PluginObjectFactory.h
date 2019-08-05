@@ -29,6 +29,8 @@ struct SDsRegInfo
 class PluginObjectFactory final: public ODS::IPluginObjectFactory
 {
 public:
+	PluginObjectFactory() = default;
+	~PluginObjectFactory();
 	int CreateObject(const TCHAR* szObjKey, void* pObjCreationParam, ODS::IPluginObj** ppPluginObj) override;
 	int DestroyObject(ODS::IPluginObj* pPluginObj) override;
 	void* GetInterface() override;

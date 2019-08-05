@@ -131,12 +131,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BrowserEvent.cpp" />
     <ClCompile Include="Connection.cpp" />
     <ClCompile Include="DataSQLServerAccessAssembly.cpp" />
     <ClCompile Include="Export.cpp" />
     <ClCompile Include="FiltersInitializer.cpp" />
     <ClCompile Include="FiltersPresenter.cpp" />
     <ClCompile Include="FiltersViewController.cpp" />
+    <ClCompile Include="FtaeSource.cpp" />
     <ClCompile Include="LoginInitializer.cpp" />
     <ClCompile Include="LoginPresenter.cpp" />
     <ClCompile Include="LoginViewController.cpp" />
@@ -166,6 +168,7 @@
     <ClInclude Include="Alarm.h" />
     <ClInclude Include="AlarmFilter.h" />
     <ClInclude Include="AlarmPropertyId.h" />
+    <ClInclude Include="BrowserEvent.h" />
     <ClInclude Include="Connection.h" />
     <ClInclude Include="ConnectionAttributes.h" />
     <ClInclude Include="Constants.h" />
@@ -176,6 +179,7 @@
     <ClInclude Include="FiltersInitializer.h" />
     <ClInclude Include="FiltersPresenter.h" />
     <ClInclude Include="FiltersViewController.h" />
+    <ClInclude Include="FtaeSource.h" />
     <ClInclude Include="HdaBatchIdInfo.h" />
     <ClInclude Include="HdaCommand.h" />
     <ClInclude Include="HdaCommandParam.h" />

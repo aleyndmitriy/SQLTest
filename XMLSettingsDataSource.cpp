@@ -171,3 +171,17 @@ bool DrvFtaeAlarm::XMLSettingsDataSource::SaveXMLString(const char* fileName)
 	}
 	return true;
 }
+
+std::vector<std::string> DrvFtaeAlarm::XMLSettingsDataSource::GetFiltersName()
+{
+	std::map<std::pair<std::string, bool>, std::vector<StatementCondition> > filters;
+	std::vector<std::string> vec;
+	if (!Load(filters)) {
+		return std::vector<std::string>{};
+	}
+	for (std::map<std::pair<std::string, bool>, std::vector<StatementCondition> >::const_iterator filterItr = filters.cbegin(); filterItr != filters.cend(); ++filterItr)
+	{
+		vec.push_back(filterItr->first.first);
+	}
+	return vec;
+}

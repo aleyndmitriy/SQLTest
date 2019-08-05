@@ -228,6 +228,12 @@
     <ClCompile Include="UISettingsConfigurator.cpp">
       <Filter>Export\ExportInterface\DataSourceInterface\Configurator</Filter>
     </ClCompile>
+    <ClCompile Include="BrowserEvent.cpp">
+      <Filter>Export\ExportInterface\DataSourceInterface\Browser</Filter>
+    </ClCompile>
+    <ClCompile Include="FtaeSource.cpp">
+      <Filter>Export\ExportInterface</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -454,6 +460,12 @@
     </ClInclude>
     <ClInclude Include="UISettingsConfigurator.h">
       <Filter>Export\ExportInterface\DataSourceInterface\Configurator</Filter>
+    </ClInclude>
+    <ClInclude Include="BrowserEvent.h">
+      <Filter>Export\ExportInterface\DataSourceInterface\Browser</Filter>
+    </ClInclude>
+    <ClInclude Include="FtaeSource.h">
+      <Filter>Export\ExportInterface</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
