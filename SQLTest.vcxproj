@@ -138,6 +138,7 @@
     <ClCompile Include="FiltersInitializer.cpp" />
     <ClCompile Include="FiltersPresenter.cpp" />
     <ClCompile Include="FiltersViewController.cpp" />
+    <ClCompile Include="FtaeServer.cpp" />
     <ClCompile Include="FtaeSource.cpp" />
     <ClCompile Include="LoginInitializer.cpp" />
     <ClCompile Include="LoginPresenter.cpp" />
@@ -179,10 +180,12 @@
     <ClInclude Include="FiltersInitializer.h" />
     <ClInclude Include="FiltersPresenter.h" />
     <ClInclude Include="FiltersViewController.h" />
+    <ClInclude Include="FtaeServer.h" />
     <ClInclude Include="FtaeSource.h" />
     <ClInclude Include="HdaBatchIdInfo.h" />
     <ClInclude Include="HdaCommand.h" />
     <ClInclude Include="HdaCommandParam.h" />
+    <ClInclude Include="HdaFunctionParam.h" />
     <ClInclude Include="HdaFunctionResult.h" />
     <ClInclude Include="HdaFunctionType.h" />
     <ClInclude Include="IBrowserEvent.h" />

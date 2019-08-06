@@ -2,13 +2,15 @@
 #include"OdsErr.h"
 #include"StatementCondition.h"
 #include"Property.h"
-BrowserEvent::BrowserEvent():cfgString()
+BrowserEvent::BrowserEvent(const std::shared_ptr<DrvFtaeAlarm::ISettingsDataSource>& settingsDataSource, const std::shared_ptr<DrvFtaeAlarm::DatabaseEngine>& database):_settingsDataSource(settingsDataSource),_database(database),cfgString()
 {
 
 }
 
 BrowserEvent::~BrowserEvent()
 {
+	_settingsDataSource.reset();
+	_database.reset();
 	cfgString.clear();
 }
 
@@ -44,9 +46,17 @@ int BrowserEvent::GetFilterList(TCHAR*** ppszFilterList, ULONG* pulCount)
 	if (!cfgString.empty())
 	{
 		size_t len = cfgString.size();
-		LoadXMLString(cfgString.c_str(), len);
+		if (_settingsDataSource) {
+			_settingsDataSource->LoadSettingsString(cfgString.c_str(), len);
+		}
+		else {
+			return ODS::ERR::OK;
+		}
 	}
-	std::vector<std::string> filterNameList = GetFiltersName();
+	else {
+		return ODS::ERR::OK;
+	}
+	std::vector<std::string> filterNameList = _settingsDataSource->GetFiltersName();
 	ULONG count = filterNameList.size();
 	*pulCount = count;
 	*ppszFilterList = new TCHAR * [count];

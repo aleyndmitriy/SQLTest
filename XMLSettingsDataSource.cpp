@@ -85,7 +85,7 @@ bool DrvFtaeAlarm::XMLSettingsDataSource::Load(ConnectionAttributes& attributes)
 	return true;
 }
 
-bool DrvFtaeAlarm::XMLSettingsDataSource::LoadXMLString(const char* source, size_t length)
+bool DrvFtaeAlarm::XMLSettingsDataSource::LoadSettingsString(const char* source, size_t length)
 {
 	pugi::xml_document doc;
 	pugi::xml_parse_result res = doc.load_buffer(source, length);
@@ -126,7 +126,7 @@ bool DrvFtaeAlarm::XMLSettingsDataSource::LoadXMLString(const char* source, size
 	return true;
 }
 
-bool DrvFtaeAlarm::XMLSettingsDataSource::SaveXMLString(const char* fileName)
+bool DrvFtaeAlarm::XMLSettingsDataSource::SaveSettingsString(const char* fileName)
 {
 	ConnectionAttributes attributes;
 	if (!Load(attributes)) {

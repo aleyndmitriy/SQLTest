@@ -5,6 +5,7 @@
 namespace DrvFtaeAlarm {
 
 	class SQLServerStatement final : public Statement {
+	public:
 		SQLServerStatement() = delete;
 		SQLServerStatement(const SQLServerStatement& src) = delete;
 		SQLServerStatement& operator=(const SQLServerStatement& src) = delete;

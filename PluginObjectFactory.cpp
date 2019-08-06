@@ -1,6 +1,7 @@
 #include"PluginObjectFactory.h"
 #include "Property.h"
 #include "FtaeSource.h"
+#include"DataSQLServerAccessAssembly.h"
 
 PluginObjectFactory::~PluginObjectFactory()
 {
@@ -16,7 +17,7 @@ int PluginObjectFactory::CreateObject(const TCHAR* szObjKey, void* pObjCreationP
 		return ODS::ERR::NOT_FOUND;
 	}
 	if (itr->second) {
-		FtaeSource* source = new FtaeSource();
+		FtaeSource* source = new FtaeSource(DrvFtaeAlarm::DataSQLServerAccessAssembly::instance().GetSettingDataSource(), DrvFtaeAlarm::DataSQLServerAccessAssembly::instance().GetDataBaseEngine());
 		if (source) {
 			source->SetRegInfo(itr->second.get());
 			*ppPluginObj = source;

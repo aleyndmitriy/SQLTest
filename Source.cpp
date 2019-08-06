@@ -17,12 +17,11 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance,
 		return 0;
 	}
 	else {
-		UISettingsConfigurator config;
-		char* output = nullptr;
-		char** ptrOutput = &output;
-		config.Configure(NULL, ptrOutput);
+		//UISettingsConfigurator config;
+		//char* output = nullptr;
+		//char** ptrOutput = &output;
+		//config.Configure(NULL, ptrOutput);
 
-		config.Configure(*ptrOutput, ptrOutput);
 		return 0;
 	}
 }

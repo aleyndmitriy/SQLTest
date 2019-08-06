@@ -2,12 +2,15 @@
 #include<string>
 #include"IBrowserEvent.h"
 #include"PropertyInfo.h"
-#include "XMLSettingsDataSource.h"
+#include "ISettingsDataSource.h"
+#include<memory>
+#include"DatabaseEngine.h"
 
-class BrowserEvent final : public ODS::IBrowserEvent, public DrvFtaeAlarm::XMLSettingsDataSource
+class BrowserEvent final : public ODS::IBrowserEvent
 {
 public:
-	BrowserEvent();
+	BrowserEvent() = delete;
+	BrowserEvent(const std::shared_ptr<DrvFtaeAlarm::ISettingsDataSource>& settingsDataSource, const std::shared_ptr<DrvFtaeAlarm::DatabaseEngine>& database);
 	BrowserEvent(const BrowserEvent& src) = delete;
 	BrowserEvent(BrowserEvent&& src) = delete;
 	BrowserEvent& operator=(const BrowserEvent& rhs) = delete;
@@ -22,5 +25,7 @@ public:
 	int GetAlarmPropertyInfoList(ODS::PropertyInfo** ppPropertyInfoList, ULONG* pulCount) override;
 	int DestroyAlarmPropertyInfoList(ODS::PropertyInfo* pPropertyInfoList, ULONG ulCount) override;
 private:
+	std::shared_ptr<DrvFtaeAlarm::ISettingsDataSource> _settingsDataSource;
+	std::shared_ptr<DrvFtaeAlarm::DatabaseEngine> _database;
 	std::string cfgString;
 };

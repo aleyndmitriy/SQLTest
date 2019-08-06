@@ -2,6 +2,21 @@
 #include"OdsErr.h"
 
 
+FtaeSource::FtaeSource(const std::shared_ptr<DrvFtaeAlarm::ISettingsDataSource>& settingsDataSource, const std::shared_ptr<DrvFtaeAlarm::DatabaseEngine>& database):
+	_settingsDataSource(settingsDataSource), _database(database),configurator(settingsDataSource), browser(settingsDataSource,database),server(settingsDataSource,database), m_pRegInfo(nullptr), m_pHost(nullptr)
+{
+
+}
+
+FtaeSource::~FtaeSource()
+{
+	_settingsDataSource.reset();
+	_database.reset();
+	m_pRegInfo = nullptr;
+	m_pHost = nullptr;
+}
+
+
 int FtaeSource::Attach(const ODS::IPluginHost* pHost)
 {
 	if (!pHost)
@@ -54,7 +69,7 @@ ODS::IDsConfiguratorEvent* FtaeSource::GetConfigurator()
 
 ODS::IServerFtae* FtaeSource::GetServer()
 {
-	return NULL;
+	return &server;
 }
 
 

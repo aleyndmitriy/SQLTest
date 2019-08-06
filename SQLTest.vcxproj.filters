@@ -234,6 +234,9 @@
     <ClCompile Include="FtaeSource.cpp">
       <Filter>Export\ExportInterface</Filter>
     </ClCompile>
+    <ClCompile Include="FtaeServer.cpp">
+      <Filter>Export\ExportInterface\DataSourceInterface\Server</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -466,6 +469,12 @@
     </ClInclude>
     <ClInclude Include="FtaeSource.h">
       <Filter>Export\ExportInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="FtaeServer.h">
+      <Filter>Export\ExportInterface\DataSourceInterface\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="HdaFunctionParam.h">
+      <Filter>Export\ExportInterface\DataSourceInterface\Server\ServersQuery</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

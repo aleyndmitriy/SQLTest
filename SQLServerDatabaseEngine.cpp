@@ -52,3 +52,8 @@ std::vector<std::string> DrvFtaeAlarm::SQLServerDatabaseEngine::GetDatabasesList
 {
 	return connection->GetDatabaseList();
 }
+
+std::vector<DrvFtaeAlarm::Record> DrvFtaeAlarm::SQLServerDatabaseEngine::ExecuteStatement(const std::vector<DrvFtaeAlarm::StatementCondition>& conditions)
+{
+	return std::vector<DrvFtaeAlarm::Record>{};
+}

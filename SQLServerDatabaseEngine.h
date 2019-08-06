@@ -1,6 +1,7 @@
 #pragma once
 #include"DatabaseEngine.h"
 #include"SQLServerConnection.h"
+#include"SQLServerStatement.h"
 #include"SQLDatabase.h"
 namespace DrvFtaeAlarm {
 	class SQLServerDatabaseEngine final: public DatabaseEngine
@@ -19,10 +20,12 @@ namespace DrvFtaeAlarm {
 		void CloseConnection() override;
 		std::vector<std::string> GetServersList() const override;
 		std::vector<std::string> GetDatabasesList() const override;
+		std::vector<Record> ExecuteStatement(const std::vector<StatementCondition>& conditions) override;
 		~SQLServerDatabaseEngine();
 	private:
 		std::shared_ptr<SQLServerEnvironment> environment;
 		std::shared_ptr<SQLServerConnection> connection;
 		std::map<std::string, SQLDatabase> databases;
+		std::unique_ptr<SQLServerStatement> statement;
 	};
 }

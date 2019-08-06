@@ -1,6 +1,8 @@
 #pragma once
 #include<vector>
 #include<string>
+#include"Record.h"
+#include "StatementCondition.h"
 #include"ConnectionAttributes.h"
 
 namespace DrvFtaeAlarm {
@@ -20,6 +22,7 @@ namespace DrvFtaeAlarm {
 		virtual void CloseConnection() = 0;
 		virtual std::vector<std::string> GetServersList() const = 0;
 		virtual std::vector<std::string> GetDatabasesList() const = 0;
+		virtual std::vector<Record> ExecuteStatement(const std::vector<StatementCondition>& conditions) = 0;
 		virtual ~DatabaseEngine() {};
 	};
 }

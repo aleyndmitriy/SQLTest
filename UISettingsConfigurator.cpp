@@ -1,6 +1,17 @@
 #include"UISettingsConfigurator.h"
 #include "OdsErr.h"
 #include"SettingsInitializer.h"
+
+UISettingsConfigurator::UISettingsConfigurator(const std::shared_ptr<DrvFtaeAlarm::ISettingsDataSource>& settingsDataSource):_settingsDataSource(settingsDataSource)
+{
+
+}
+
+UISettingsConfigurator::~UISettingsConfigurator() 
+{
+	_settingsDataSource.reset();
+}
+
 int UISettingsConfigurator::Configure(const TCHAR* szCfgInString, TCHAR** pszCfgOutString)
 {
 	int iRes = ODS::ERR::FILE;
@@ -8,11 +19,16 @@ int UISettingsConfigurator::Configure(const TCHAR* szCfgInString, TCHAR** pszCfg
 	if (szCfgInString != NULL)
 	{
 		size_t len = _tcslen(szCfgInString);
-		LoadXMLString(szCfgInString, len);
+		if (_settingsDataSource) {
+			_settingsDataSource->LoadSettingsString(szCfgInString, len);
+		}
 	}
 
 	DrvFtaeAlarm::SettingsInitializer::CreateModule(GetModuleHandle(NULL), std::shared_ptr<DrvFtaeAlarm::UIDialogViewController>());
-	SaveXMLString("OutputXML.xml");
+	if (_settingsDataSource) {
+		_settingsDataSource->SaveSettingsString("OutputXML.xml");
+	}
+	
 	HANDLE hFile = CreateFile("OutputXML.xml", GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (hFile != INVALID_HANDLE_VALUE)
 	{
