@@ -72,7 +72,7 @@
   <PropertyGroup />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
@@ -133,6 +133,7 @@
   <ItemGroup>
     <ClCompile Include="BrowserEvent.cpp" />
     <ClCompile Include="Connection.cpp" />
+    <ClCompile Include="ConnectionAttributes.cpp" />
     <ClCompile Include="DataSQLServerAccessAssembly.cpp" />
     <ClCompile Include="Export.cpp" />
     <ClCompile Include="FiltersInitializer.cpp" />
@@ -185,9 +186,10 @@
     <ClInclude Include="HdaBatchIdInfo.h" />
     <ClInclude Include="HdaCommand.h" />
     <ClInclude Include="HdaCommandParam.h" />
+    <ClInclude Include="HdaFunction.h" />
     <ClInclude Include="HdaFunctionParam.h" />
     <ClInclude Include="HdaFunctionResult.h" />
-    <ClInclude Include="HdaFunctionType.h" />
+    <ClInclude Include="HdaFunctionTypes.h" />
     <ClInclude Include="IBrowserEvent.h" />
     <ClInclude Include="IDataSource.h" />
     <ClInclude Include="IDsBrowser.h" />

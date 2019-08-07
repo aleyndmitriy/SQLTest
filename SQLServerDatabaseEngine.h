@@ -12,15 +12,15 @@ namespace DrvFtaeAlarm {
 		SQLServerDatabaseEngine(SQLServerDatabaseEngine&& src) = delete;
 		SQLServerDatabaseEngine& operator=(const SQLServerDatabaseEngine& rhs) = delete;
 		SQLServerDatabaseEngine& operator=(SQLServerDatabaseEngine&& rhs) = delete;
-		void OpenConnection() override;
-		void OpenConnection(const ConnectionAttributes& attributes) override;
-		void loadServerInstances(std::string driverName) override;
-		void loadDatabaseInstances(std::string serverName, AuthenticationType type, std::string user, std::string password) override;
+		bool OpenConnection() override;
+		bool OpenConnection(const ConnectionAttributes& attributes) override;
+		bool loadServerInstances(std::string driverName) override;
+		bool loadDatabaseInstances(std::string serverName, AuthenticationType type, std::string user, std::string password) override;
 		bool ChooseDatabase(std::string databaseName) override;
 		void CloseConnection() override;
 		std::vector<std::string> GetServersList() const override;
 		std::vector<std::string> GetDatabasesList() const override;
-		std::vector<Record> ExecuteStatement(const std::vector<StatementCondition>& conditions) override;
+		std::vector<Record> ExecuteStatement(const std::string& query, const std::vector<std::string>& parameters) override;
 		~SQLServerDatabaseEngine();
 	private:
 		std::shared_ptr<SQLServerEnvironment> environment;

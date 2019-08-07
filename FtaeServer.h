@@ -3,6 +3,8 @@
 #include "ISettingsDataSource.h"
 #include<memory>
 #include"DatabaseEngine.h"
+#include "HdaFunction.h"
+#include "HdaFunctionResult.h"
 
 class FtaeServer final : public ODS::IServerFtae {
 public:
@@ -23,4 +25,6 @@ private:
 	std::shared_ptr<DrvFtaeAlarm::ISettingsDataSource> _settingsDataSource;
 	std::shared_ptr<DrvFtaeAlarm::DatabaseEngine> _database;
 	std::string cfgString;
+	int GetCmdParameterList(ODS::HdaCommand* pCommand, SYSTEMTIME& rStartTime, SYSTEMTIME& rEndTime);
+	bool OpenConnection();
 };

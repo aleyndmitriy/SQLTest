@@ -1,7 +1,6 @@
 #pragma once
 #include<string>
 namespace DrvFtaeAlarm {
-
 	struct ConnectionAttributes {
 		std::string driver;
 		std::string serverName;
@@ -10,4 +9,6 @@ namespace DrvFtaeAlarm {
 		std::string password;
 	};
 
+	bool operator==(const ConnectionAttributes& lhs, const ConnectionAttributes& rhs);
+	bool operator!=(const ConnectionAttributes& lhs, const ConnectionAttributes& rhs);
 }

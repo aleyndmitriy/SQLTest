@@ -1,7 +1,7 @@
 #include"SQLServerConnection.h"
 #include"Constants.h"
 #include "Utils.h"
-
+#include<tchar.h>
 DrvFtaeAlarm::SQLServerConnection::SQLServerConnection(const std::shared_ptr<SQLServerEnvironment>& environment, const ConnectionAttributes& attributes) :Connection(environment, attributes), sqlDBC(SQL_NULL_HDBC)
 {
 	allocateConnection();
@@ -40,27 +40,34 @@ void DrvFtaeAlarm::SQLServerConnection::freeConnection() {
 	ptrEnvironment.reset();
 	databaseList.clear();
 	serverList.clear();
+	connectionAttributes.driver.clear();
+	connectionAttributes.serverName.clear();
+	connectionAttributes.loginName.clear();
+	connectionAttributes.password.clear();
+	connectionAttributes.databaseName.clear();
 }
 
 void DrvFtaeAlarm::SQLServerConnection::allocateConnection() {
 	SQLSMALLINT res = SQLAllocHandle(SQL_HANDLE_DBC, ptrEnvironment->GetInterface(), &sqlDBC);
 	if (res == SQL_ERROR)
 	{
+		HandleDiagnosticRecord();
 		freeConnection();
 		return;
 	}
+	bool isConnect = false;
 	if (connectionAttributes.driver.empty()) {
 		return;
 	}
-	ConnectToServerInstances(connectionAttributes.driver);
-	if (serverList.empty()) {
+	isConnect = ConnectToServerInstances(connectionAttributes.driver);
+	if (serverList.empty() || !isConnect) {
 		return;
 	}
 	if (connectionAttributes.serverName.empty() || connectionAttributes.loginName.empty() || connectionAttributes.password.empty()) {
 		return;
 	}
-	ConnectToDatabaseInstances(connectionAttributes.serverName, connectionAttributes.loginName, connectionAttributes.password);
-	if (databaseList.empty()) {
+	isConnect = ConnectToDatabaseInstances(connectionAttributes.serverName, connectionAttributes.loginName, connectionAttributes.password);
+	if (databaseList.empty() || !isConnect) {
 		return;
 	}
 	if (connectionAttributes.databaseName.empty()) {
@@ -69,14 +76,13 @@ void DrvFtaeAlarm::SQLServerConnection::allocateConnection() {
 	ConnectToDatabase(connectionAttributes.databaseName);
 }
 
-void DrvFtaeAlarm::SQLServerConnection::ConnectToServerInstances(std::string driverName) {
+bool DrvFtaeAlarm::SQLServerConnection::ConnectToServerInstances(std::string driverName) {
 	
 	TCHAR wchDriverName[MAX_DRIVERNAME_LENGTH];
 	TCHAR wStrOut[STR_LENGTH];
 	SQLSMALLINT shBrowseResultLen = 0;
 	std::string strDriver = std::string("DRIVER={") + driverName + std::string("};");
-	std::wstring wDrwName = Str2Wstr(strDriver);
-	StringCchCopy(wchDriverName, wDrwName.length() + 1, strDriver.c_str());
+	StringCchCopy(wchDriverName, strDriver.length() + 1, strDriver.c_str());
 	SQLSMALLINT res = SQLBrowseConnect(sqlDBC, reinterpret_cast<SQLCHAR*>(wchDriverName), SQL_NTS,
 		reinterpret_cast<SQLCHAR*>(wStrOut), STR_LENGTH, &shBrowseResultLen);
 	if (SQL_SUCCEEDED(res) || res == SQL_NEED_DATA) {
@@ -88,21 +94,26 @@ void DrvFtaeAlarm::SQLServerConnection::ConnectToServerInstances(std::string dri
 			std::vector<std::string> servers = split(serversString, std::string(","));
 			if (servers.empty()) {
 				freeConnection();
+				return false;
 			}
 			else {
 				serverList.assign(servers.begin(), servers.end());
+				return true;
 			}
 		}
 		else {
 			freeConnection();
+			return false;
 		}
 	}
 	else {
+		HandleDiagnosticRecord();
 		freeConnection();
+		return false;
 	}
 }
 
-void DrvFtaeAlarm::SQLServerConnection::ConnectToDatabaseInstances(std::string serverName, std::string login, std::string password)
+bool DrvFtaeAlarm::SQLServerConnection::ConnectToDatabaseInstances(std::string serverName, std::string login, std::string password)
 {
 	TCHAR whUserInfo[SQL_MAX_MESSAGE_LENGTH];
 	TCHAR wStrOut[STR_LENGTH];
@@ -120,17 +131,22 @@ void DrvFtaeAlarm::SQLServerConnection::ConnectToDatabaseInstances(std::string s
 			std::vector<std::string> databases = split(databaseString, std::string(","));
 			if (databases.empty()) {
 				freeConnection();
+				return true;
 			}
 			else {
 				databaseList.assign(databases.begin(), databases.end());
+				return true;
 			}
 		}
 		else {
 			freeConnection();
+			return false;
 		}
 	}
 	else {
+		HandleDiagnosticRecord();
 		freeConnection();
+		return false;
 	}
 }
 
@@ -144,6 +160,7 @@ bool DrvFtaeAlarm::SQLServerConnection::ConnectToDatabase(std::string databaseNa
 	SQLSMALLINT res = SQLBrowseConnect(sqlDBC, reinterpret_cast<SQLCHAR*>(wchDataBaseName), SQL_NTS,
 		reinterpret_cast<SQLCHAR*>(wStrOut), STR_LENGTH, &shBrowseResultLen);
 	if (!SQL_SUCCEEDED(res)) {
+		HandleDiagnosticRecord();
 		freeConnection();
 		return false;
 	}
@@ -158,4 +175,25 @@ std::vector<std::string> DrvFtaeAlarm::SQLServerConnection::GetServerList() cons
 std::vector<std::string> DrvFtaeAlarm::SQLServerConnection::GetDatabaseList() const
 {
 	return databaseList;
+}
+
+bool DrvFtaeAlarm::SQLServerConnection::IsValidConnection() const
+{
+	return (sqlDBC != SQL_NULL_HDBC);
+}
+
+void DrvFtaeAlarm::SQLServerConnection::HandleDiagnosticRecord()
+{
+	SQLSMALLINT iRec = 0;
+	SQLINTEGER  iError;
+	TCHAR       wszMessage[SQL_MAX_MESSAGE_LENGTH];
+	TCHAR       wszState[SQL_SQLSTATE_SIZE + 1];
+	while (SQLGetDiagRec(SQL_HANDLE_DBC, sqlDBC, ++iRec, reinterpret_cast<SQLCHAR*>(wszState), &iError, reinterpret_cast<SQLCHAR*>(wszMessage),
+		(SQLSMALLINT)(sizeof(wszMessage) / sizeof(TCHAR)), (SQLSMALLINT*)NULL) == SQL_SUCCESS)
+	{
+		if (_tcsncmp(wszState, "01004", 5))
+		{
+			fprintf(stderr, "[%5.5s] %s (%d)\n", wszState, wszMessage, iError);
+		}
+	}
 }

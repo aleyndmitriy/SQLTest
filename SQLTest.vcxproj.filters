@@ -237,6 +237,9 @@
     <ClCompile Include="FtaeServer.cpp">
       <Filter>Export\ExportInterface\DataSourceInterface\Server</Filter>
     </ClCompile>
+    <ClCompile Include="ConnectionAttributes.cpp">
+      <Filter>DataAccessLayer\Connection</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -452,9 +455,6 @@
     <ClInclude Include="HdaCommandParam.h">
       <Filter>Export\ExportInterface\DataSourceInterface\Server\ServersQuery</Filter>
     </ClInclude>
-    <ClInclude Include="HdaFunctionType.h">
-      <Filter>Export\ExportInterface\DataSourceInterface\Server\ServersQuery</Filter>
-    </ClInclude>
     <ClInclude Include="AlarmFilter.h">
       <Filter>Export\ExportInterface\DataSourceInterface\Server\ServersQuery</Filter>
     </ClInclude>
@@ -474,6 +474,12 @@
       <Filter>Export\ExportInterface\DataSourceInterface\Server</Filter>
     </ClInclude>
     <ClInclude Include="HdaFunctionParam.h">
+      <Filter>Export\ExportInterface\DataSourceInterface\Server\ServersQuery</Filter>
+    </ClInclude>
+    <ClInclude Include="HdaFunctionTypes.h">
+      <Filter>Export\ExportInterface\DataSourceInterface\Server\ServersQuery</Filter>
+    </ClInclude>
+    <ClInclude Include="HdaFunction.h">
       <Filter>Export\ExportInterface\DataSourceInterface\Server\ServersQuery</Filter>
     </ClInclude>
   </ItemGroup>

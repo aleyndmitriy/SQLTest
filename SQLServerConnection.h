@@ -20,15 +20,17 @@ namespace DrvFtaeAlarm {
 		SQLServerConnection& operator=(const SQLServerConnection& rhs) = default;
 		~SQLServerConnection() override;
 		void* GetInterface() override;
-		void ConnectToServerInstances(std::string driverName) override;
-		void ConnectToDatabaseInstances(std::string serverName, std::string login, std::string password) override;
+		bool ConnectToServerInstances(std::string driverName) override;
+		bool ConnectToDatabaseInstances(std::string serverName, std::string login, std::string password) override;
 		bool ConnectToDatabase(std::string databaseName) override;
 		std::vector<std::string> GetServerList() const override;
 		std::vector<std::string> GetDatabaseList() const override;
+		bool IsValidConnection() const override;
 	private:
 		SQLHDBC sqlDBC;
 		void freeConnection();
 		void allocateConnection();
+		void HandleDiagnosticRecord();
 		std::vector<std::string> serverList;
 		std::vector<std::string> databaseList;
 	};

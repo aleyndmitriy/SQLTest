@@ -2,9 +2,8 @@
 #include<vector>
 #include<string>
 #include"Record.h"
-#include "StatementCondition.h"
 #include"ConnectionAttributes.h"
-
+#include"Statement.h"
 namespace DrvFtaeAlarm {
 	class DatabaseEngine
 	{
@@ -14,15 +13,15 @@ namespace DrvFtaeAlarm {
 			System = 1,
 			Server = 2
 		};
-		virtual void OpenConnection() = 0;
-		virtual void OpenConnection(const ConnectionAttributes& attributes) = 0;
-		virtual void loadServerInstances(std::string driverName) = 0;
-		virtual void loadDatabaseInstances(std::string serverName, AuthenticationType type, std::string user, std::string password) = 0;
+		virtual bool OpenConnection() = 0;
+		virtual bool OpenConnection(const ConnectionAttributes& attributes) = 0;
+		virtual bool loadServerInstances(std::string driverName) = 0;
+		virtual bool loadDatabaseInstances(std::string serverName, AuthenticationType type, std::string user, std::string password) = 0;
 		virtual bool ChooseDatabase(std::string databaseName) = 0;
 		virtual void CloseConnection() = 0;
 		virtual std::vector<std::string> GetServersList() const = 0;
 		virtual std::vector<std::string> GetDatabasesList() const = 0;
-		virtual std::vector<Record> ExecuteStatement(const std::vector<StatementCondition>& conditions) = 0;
+		virtual std::vector<Record> ExecuteStatement(const std::string& query, const std::vector<std::string>& parameters) = 0;
 		virtual ~DatabaseEngine() {};
 	};
 }
