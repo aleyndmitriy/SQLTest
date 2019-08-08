@@ -2,7 +2,7 @@
 #include"OdsErr.h"
 #include"StatementCondition.h"
 #include"Property.h"
-BrowserEvent::BrowserEvent(const std::shared_ptr<DrvFtaeAlarm::ISettingsDataSource>& settingsDataSource, const std::shared_ptr<DrvFtaeAlarm::DatabaseEngine>& database):_settingsDataSource(settingsDataSource),_database(database),cfgString()
+BrowserEvent::BrowserEvent(const std::shared_ptr<DrvFtaeAlarm::ISettingsDataSource>& settingsDataSource, const std::shared_ptr<DrvFtaeAlarm::DatabaseInfoDAO>& databaseInfo):_settingsDataSource(settingsDataSource),_databaseInfo(databaseInfo),cfgString()
 {
 
 }
@@ -10,7 +10,7 @@ BrowserEvent::BrowserEvent(const std::shared_ptr<DrvFtaeAlarm::ISettingsDataSour
 BrowserEvent::~BrowserEvent()
 {
 	_settingsDataSource.reset();
-	_database.reset();
+	_databaseInfo.reset();
 	cfgString.clear();
 }
 

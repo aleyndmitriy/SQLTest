@@ -13,7 +13,7 @@ namespace DrvFtaeAlarm {
 		using const_reference = const value_type &;
 		using size_type = size_t;
 		using difference_type = ptrdiff_t;
-		SQLTable(std::string tableName);
+		SQLTable(const std::string& tableName);
 		SQLTable(const SQLTable& src) = default;
 		SQLTable(SQLTable&& src) noexcept = default;
 		SQLTable& operator=(const SQLTable& src) = default;

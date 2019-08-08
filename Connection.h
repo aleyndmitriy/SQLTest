@@ -5,6 +5,15 @@
 #include<vector>
 #include<string>
 namespace DrvFtaeAlarm {
+
+	enum class ConnectionStatus
+	{
+		NoConnect = 0,
+		ConnectToDriver = 1,
+		ConnectToServer = 2,
+		ConnectToDatabase = 3
+	};
+
 	class Connection : public IExtensible {
 	public:
 		Connection() = delete;
@@ -25,6 +34,7 @@ namespace DrvFtaeAlarm {
 		virtual std::vector<std::string> GetServerList() const = 0;
 		virtual std::vector<std::string> GetDatabaseList() const = 0;
 		virtual bool IsValidConnection() const = 0;
+		virtual ConnectionStatus GetConnectionStatus() const = 0;
 	protected:
 		std::shared_ptr<IEnvironment> ptrEnvironment;
 		ConnectionAttributes connectionAttributes;

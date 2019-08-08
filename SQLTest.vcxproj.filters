@@ -82,9 +82,6 @@
     <Filter Include="Assemblies">
       <UniqueIdentifier>{f41999e1-dc5f-46d2-82d9-7970a35c34b2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="DataAccessLayer\Record">
-      <UniqueIdentifier>{40b9aefd-9d21-454b-929c-6a1c30c00e23}</UniqueIdentifier>
-    </Filter>
     <Filter Include="DataAccessLayer\Statement">
       <UniqueIdentifier>{4f4004fd-7230-4ec4-8a36-73787310a231}</UniqueIdentifier>
     </Filter>
@@ -135,6 +132,12 @@
     </Filter>
     <Filter Include="Export\ExportInterface\DataSourceInterface\Server\ServersQuery">
       <UniqueIdentifier>{c5ebfe74-4bc7-408d-ba90-0e6674b8a15e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DataAccessLayer\DataBaseInfoDAO">
+      <UniqueIdentifier>{0a5a1221-a8cd-4633-b778-698e8295fa7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DataAccessLayer\Databases\Record">
+      <UniqueIdentifier>{40b9aefd-9d21-454b-929c-6a1c30c00e23}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -190,7 +193,7 @@
       <Filter>Assemblies</Filter>
     </ClCompile>
     <ClCompile Include="Record.cpp">
-      <Filter>DataAccessLayer\Record</Filter>
+      <Filter>DataAccessLayer\Databases\Record</Filter>
     </ClCompile>
     <ClCompile Include="Statement.cpp">
       <Filter>DataAccessLayer\Statement</Filter>
@@ -239,6 +242,12 @@
     </ClCompile>
     <ClCompile Include="ConnectionAttributes.cpp">
       <Filter>DataAccessLayer\Connection</Filter>
+    </ClCompile>
+    <ClCompile Include="SQLServerDatabaseInfoDAO.cpp">
+      <Filter>DataAccessLayer\DataBaseInfoDAO</Filter>
+    </ClCompile>
+    <ClCompile Include="DatabaseInfoDAO.cpp">
+      <Filter>DataAccessLayer\DataBaseInfoDAO</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -333,7 +342,7 @@
       <Filter>Assemblies</Filter>
     </ClInclude>
     <ClInclude Include="Record.h">
-      <Filter>DataAccessLayer\Record</Filter>
+      <Filter>DataAccessLayer\Databases\Record</Filter>
     </ClInclude>
     <ClInclude Include="Statement.h">
       <Filter>DataAccessLayer\Statement</Filter>
@@ -481,6 +490,12 @@
     </ClInclude>
     <ClInclude Include="HdaFunction.h">
       <Filter>Export\ExportInterface\DataSourceInterface\Server\ServersQuery</Filter>
+    </ClInclude>
+    <ClInclude Include="SQLServerDatabaseInfoDAO.h">
+      <Filter>DataAccessLayer\DataBaseInfoDAO</Filter>
+    </ClInclude>
+    <ClInclude Include="DatabaseInfoDAO.h">
+      <Filter>DataAccessLayer\DataBaseInfoDAO</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

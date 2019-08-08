@@ -1,6 +1,6 @@
 #include"SQLTable.h"
 
-DrvFtaeAlarm::SQLTable::SQLTable(std::string tableName) :_tableName(tableName), columns(std::map<std::string, std::string>{})
+DrvFtaeAlarm::SQLTable::SQLTable(const std::string& tableName) :_tableName(tableName), columns(std::map<std::string, std::string>{})
 {
 
 }

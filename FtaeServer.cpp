@@ -6,7 +6,7 @@
 #include"HdaCommandParam.h"
 
 
-FtaeServer::FtaeServer(const std::shared_ptr<DrvFtaeAlarm::ISettingsDataSource>& settingsDataSource, const std::shared_ptr<DrvFtaeAlarm::DatabaseEngine>& database):_settingsDataSource(settingsDataSource), _database(database), cfgString()
+FtaeServer::FtaeServer(const std::shared_ptr<DrvFtaeAlarm::ISettingsDataSource>& settingsDataSource, const std::shared_ptr<DrvFtaeAlarm::DatabaseInfoDAO>& databaseInfo):_settingsDataSource(settingsDataSource), _databaseInfo(databaseInfo), cfgString()
 {
 
 }
@@ -14,7 +14,7 @@ FtaeServer::FtaeServer(const std::shared_ptr<DrvFtaeAlarm::ISettingsDataSource>&
 FtaeServer::~FtaeServer()
 {
 	_settingsDataSource.reset();
-	_database.reset();
+	_databaseInfo.reset();
 	cfgString.clear();
 }
 
@@ -123,6 +123,6 @@ bool FtaeServer::OpenConnection()
 	}
 	DrvFtaeAlarm::ConnectionAttributes attributes;
 	_settingsDataSource->Load(attributes);
-	bool isOpen = _database->OpenConnection(attributes);
+	bool isOpen = true;
 	return isOpen;
 }

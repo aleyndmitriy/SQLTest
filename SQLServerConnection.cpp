@@ -182,6 +182,26 @@ bool DrvFtaeAlarm::SQLServerConnection::IsValidConnection() const
 	return (sqlDBC != SQL_NULL_HDBC);
 }
 
+DrvFtaeAlarm::ConnectionStatus DrvFtaeAlarm::SQLServerConnection::GetConnectionStatus() const
+{
+	if (!IsValidConnection()) {
+		return ConnectionStatus::NoConnect;
+	}
+
+	if (!connectionAttributes.databaseName.empty()) {
+		return ConnectionStatus::ConnectToDatabase;
+	}
+	else if (!connectionAttributes.serverName.empty()) {
+		return ConnectionStatus::ConnectToServer;
+	}
+	else if (!connectionAttributes.driver.empty()) {
+		return ConnectionStatus::ConnectToDriver;
+	}
+	else {
+		return ConnectionStatus::NoConnect;
+	}
+}
+
 void DrvFtaeAlarm::SQLServerConnection::HandleDiagnosticRecord()
 {
 	SQLSMALLINT iRec = 0;

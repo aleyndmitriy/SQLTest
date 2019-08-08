@@ -5,6 +5,7 @@ bool DrvFtaeAlarm::SQLServerDatabaseEngine::OpenConnection()
 	if (!environment) {
 		environment = std::make_shared<SQLServerEnvironment>();
 	}
+
 	connection = std::make_shared<SQLServerConnection>(environment);
 	bool isOpen = connection->IsValidConnection();
 	return isOpen;
@@ -15,6 +16,7 @@ bool DrvFtaeAlarm::SQLServerDatabaseEngine::OpenConnection(const ConnectionAttri
 	if (!environment) {
 		environment = std::make_shared<SQLServerEnvironment>();
 	}
+	
 	connection = std::make_shared<SQLServerConnection>(environment,attributes);
 	if (connection->IsValidConnection() == false) {
 		return false;
@@ -23,12 +25,64 @@ bool DrvFtaeAlarm::SQLServerDatabaseEngine::OpenConnection(const ConnectionAttri
 	if (attr != attributes) {
 		return false;
 	}
-	if (attr.databaseName.empty() == false) {
-		std::pair<std::map<std::string, SQLDatabase>::const_iterator, bool> res =
-			databases.insert(std::make_pair<std::string, SQLDatabase>(std::string(attr.databaseName), SQLDatabase(attr.databaseName)));
-		return (res.second || res.first != databases.cend());
-	}
 	return true;
+}
+
+bool DrvFtaeAlarm::SQLServerDatabaseEngine::OpenConnectionIfNeeded(const ConnectionAttributes& attributes)
+{
+	bool isValid = false;
+	if (connection) {
+		ConnectionAttributes attr = connection->GetConnectionAttributes();
+		ConnectionStatus status = connection->GetConnectionStatus();
+		switch (status)
+		{
+		case ConnectionStatus::ConnectToDatabase:
+			if (attributes == attr) {
+				return true;
+			}
+			else {
+				CloseConnection();
+				return OpenConnection(attributes);
+			}
+			break;
+		case ConnectionStatus::ConnectToServer:
+			if (attributes.serverName == attr.serverName) {
+				if (!attributes.databaseName.empty()) {
+					return ChooseDatabase(attributes.databaseName);
+				}
+				return true;
+			}
+			else {
+				CloseConnection();
+				return OpenConnection(attributes);
+			}
+			break;
+		case ConnectionStatus::ConnectToDriver:
+			if (attributes.driver == attr.driver) {
+				if (!attributes.serverName.empty()) {
+					isValid = loadDatabaseInstances(attributes.serverName, DatabaseEngine::AuthenticationType::Server, attributes.loginName, attributes.password);
+					if (isValid) {
+						return ChooseDatabase(attributes.databaseName);
+					}
+					else {
+						return false;
+					}
+				}
+			}
+			else {
+				CloseConnection();
+				return OpenConnection(attributes);
+			}
+		default:
+			CloseConnection();
+			return OpenConnection(attributes);
+			break;
+		}
+	}
+	else {
+		CloseConnection();
+		return OpenConnection(attributes);
+	}
 }
 
 bool DrvFtaeAlarm::SQLServerDatabaseEngine::loadServerInstances(std::string driverName)
@@ -46,17 +100,34 @@ bool DrvFtaeAlarm::SQLServerDatabaseEngine::loadDatabaseInstances(std::string se
 bool DrvFtaeAlarm::SQLServerDatabaseEngine::ChooseDatabase(std::string databaseName)
 {
 	if (connection->ConnectToDatabase(databaseName)) {
-		std::pair<std::map<std::string, SQLDatabase>::const_iterator,bool> res = 
-			databases.insert(std::make_pair<std::string, SQLDatabase>(std::string(databaseName), SQLDatabase(databaseName)));
-		return (res.second || res.first != databases.cend());
+		return true;
 	}
 	return false;
 }
 
 void DrvFtaeAlarm::SQLServerDatabaseEngine::CloseConnection()
 {
-	databases.clear();
 	connection.reset();
+}
+
+bool DrvFtaeAlarm::SQLServerDatabaseEngine::IsValidConnection() const
+{
+	if (connection) {
+		return connection->IsValidConnection();
+	}
+	else {
+		return false;
+	}
+}
+
+DrvFtaeAlarm::ConnectionAttributes DrvFtaeAlarm::SQLServerDatabaseEngine::GetConnectionAttributes() const
+{
+	if (connection) {
+		return connection->GetConnectionAttributes();
+	}
+	else {
+		return ConnectionAttributes();
+	}
 }
 
 DrvFtaeAlarm::SQLServerDatabaseEngine::~SQLServerDatabaseEngine()
@@ -76,8 +147,8 @@ std::vector<std::string> DrvFtaeAlarm::SQLServerDatabaseEngine::GetDatabasesList
 
 std::vector<DrvFtaeAlarm::Record> DrvFtaeAlarm::SQLServerDatabaseEngine::ExecuteStatement(const std::string& query, const std::vector<std::string>& parameters)
 {
-	
-	
-	return std::vector<DrvFtaeAlarm::Record>{};
+	std::unique_ptr<SQLServerStatement> stm = std::make_unique<SQLServerStatement>(connection, query, parameters);
+	std::vector<DrvFtaeAlarm::Record> vec = stm->Execute();
+	return vec;
 }
 

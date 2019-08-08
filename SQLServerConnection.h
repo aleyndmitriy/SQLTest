@@ -6,9 +6,17 @@
 #include"SQLServerEnvironment.h"
 #include"ConnectionAttributes.h"
 #include<vector>
+
 namespace DrvFtaeAlarm {
+	class SQLServerDatabaseEngine;
+	class SQLServerStatement;
+
 	class SQLServerConnection final : public Connection {
 	public:
+		friend class SQLServerDatabaseEngine;
+		friend class SQLServerStatement;
+		friend class std::_Ref_count_obj<SQLServerConnection>;
+	private:
 		SQLServerConnection() = delete;
 		SQLServerConnection(SQLServerConnection&& rsc) = delete;
 		SQLServerConnection& operator=(SQLServerConnection&& rhs) = delete;
@@ -26,7 +34,8 @@ namespace DrvFtaeAlarm {
 		std::vector<std::string> GetServerList() const override;
 		std::vector<std::string> GetDatabaseList() const override;
 		bool IsValidConnection() const override;
-	private:
+		ConnectionStatus GetConnectionStatus() const override;
+
 		SQLHDBC sqlDBC;
 		void freeConnection();
 		void allocateConnection();

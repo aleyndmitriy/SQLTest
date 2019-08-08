@@ -116,7 +116,7 @@ std::vector<DrvFtaeAlarm::Record> DrvFtaeAlarm::SQLServerStatement::Execute()
 
 	for (SQLSMALLINT colIndex = 0; colIndex < shNumberOfColumns; colIndex++) {
 		res = SQLDescribeCol(sqlStmt, colIndex + 1, colname, STR_LENGTH, &colnamelen, &coltype, collen + colIndex, &scale, NULL);
-		colname[colnamelen] = L'\0';
+		colname[colnamelen] = '\0';
 		res = SQLColAttributes(sqlStmt, colIndex + 1, SQL_DESC_DISPLAY_SIZE, NULL, 0, NULL, &displaysize);
 		//size_t len = wcslen(colname) + 1;
 		std::string wideStr = std::string((TCHAR*)colname);

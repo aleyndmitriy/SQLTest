@@ -15,7 +15,7 @@ namespace DrvFtaeAlarm {
 		SQLDatabase(std::string databaseName);
 		SQLDatabase(const SQLDatabase& database) = default;
 		SQLDatabase& operator=(const SQLDatabase& database) = default;
-		SQLDatabase(SQLDatabase&& database) = default;
+		SQLDatabase(SQLDatabase&& database) noexcept = default;
 		SQLDatabase& operator=(SQLDatabase&& database) = default;
 		~SQLDatabase();
 		std::string GetDatabaseName() const;

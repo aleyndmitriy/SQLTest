@@ -9,7 +9,7 @@ class FtaeSource final : public ODS::ISourceFtaeEvent
 {
 public:
 	FtaeSource() = delete;
-	FtaeSource(const std::shared_ptr<DrvFtaeAlarm::ISettingsDataSource>& settingsDataSource, const std::shared_ptr<DrvFtaeAlarm::DatabaseEngine>& database);
+	FtaeSource(const std::shared_ptr<DrvFtaeAlarm::ISettingsDataSource>& settingsDataSource, const std::shared_ptr<DrvFtaeAlarm::DatabaseInfoDAO>& databaseInfo);
 	FtaeSource(const FtaeSource& src) = delete;
 	FtaeSource& operator=(const FtaeSource& src) = delete;
 	FtaeSource(FtaeSource&& rhs) = delete;
@@ -25,7 +25,7 @@ public:
 	ODS::IBrowserEvent* GetBrowser() override;
 private:
 	std::shared_ptr<DrvFtaeAlarm::ISettingsDataSource> _settingsDataSource;
-	std::shared_ptr<DrvFtaeAlarm::DatabaseEngine> _database;
+	std::shared_ptr<DrvFtaeAlarm::DatabaseInfoDAO> _databaseInfo;
 	UISettingsConfigurator configurator;
 	BrowserEvent browser;
 	FtaeServer server;

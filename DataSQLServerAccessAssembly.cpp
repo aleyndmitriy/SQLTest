@@ -12,7 +12,9 @@ std::shared_ptr<DrvFtaeAlarm::ISettingsDataSource> DrvFtaeAlarm::DataSQLServerAc
 }
 
 
-DrvFtaeAlarm::DataSQLServerAccessAssembly::DataSQLServerAccessAssembly() :DataAccessAssembly(), databaseEngine(std::make_shared<DrvFtaeAlarm::SQLServerDatabaseEngine>()),settingsDataSource(std::make_shared<DrvFtaeAlarm::XMLSettingsDataSource>())
+DrvFtaeAlarm::DataSQLServerAccessAssembly::DataSQLServerAccessAssembly(): DataAccessAssembly(), 
+databaseEngine(std::make_shared<DrvFtaeAlarm::SQLServerDatabaseEngine>()),settingsDataSource(std::make_shared<DrvFtaeAlarm::XMLSettingsDataSource>()),
+databaseInfoDAO(std::make_shared<SQLServerDatabaseInfoDAO>(databaseEngine))
 {
 
 }
@@ -27,4 +29,9 @@ DrvFtaeAlarm::DataSQLServerAccessAssembly& DrvFtaeAlarm::DataSQLServerAccessAsse
 {
 	static DataSQLServerAccessAssembly shared;
 	return shared;
+}
+
+std::shared_ptr<DrvFtaeAlarm::DatabaseInfoDAO> DrvFtaeAlarm::DataSQLServerAccessAssembly::GetDatabaseInfoSQLServerDao() const
+{
+	return databaseInfoDAO;
 }

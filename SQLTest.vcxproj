@@ -134,6 +134,7 @@
     <ClCompile Include="BrowserEvent.cpp" />
     <ClCompile Include="Connection.cpp" />
     <ClCompile Include="ConnectionAttributes.cpp" />
+    <ClCompile Include="DatabaseInfoDAO.cpp" />
     <ClCompile Include="DataSQLServerAccessAssembly.cpp" />
     <ClCompile Include="Export.cpp" />
     <ClCompile Include="FiltersInitializer.cpp" />
@@ -155,6 +156,7 @@
     <ClCompile Include="SQLDatabase.cpp" />
     <ClCompile Include="SQLServerConnection.cpp" />
     <ClCompile Include="SQLServerDatabaseEngine.cpp" />
+    <ClCompile Include="SQLServerDatabaseInfoDAO.cpp" />
     <ClCompile Include="SQLServerEnvironment.cpp" />
     <ClCompile Include="SQLServerStatement.cpp" />
     <ClCompile Include="SQLServerType.cpp" />
@@ -191,6 +193,7 @@
     <ClInclude Include="HdaFunctionResult.h" />
     <ClInclude Include="HdaFunctionTypes.h" />
     <ClInclude Include="IBrowserEvent.h" />
+    <ClInclude Include="DatabaseInfoDAO.h" />
     <ClInclude Include="IDataSource.h" />
     <ClInclude Include="IDsBrowser.h" />
     <ClInclude Include="IDsConfigurator.h" />
@@ -232,6 +235,7 @@
     <ClInclude Include="SQLDatabase.h" />
     <ClInclude Include="SQLServerConnection.h" />
     <ClInclude Include="SQLServerDatabaseEngine.h" />
+    <ClInclude Include="SQLServerDatabaseInfoDAO.h" />
     <ClInclude Include="SQLServerEnvironment.h" />
     <ClInclude Include="SQLServerStatement.h" />
     <ClInclude Include="SQLServerType.h" />
