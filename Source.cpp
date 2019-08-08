@@ -31,7 +31,7 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance,
 		attr.password = std::string("admin");
 		attr.databaseName = std::string("FTAE");
 		std::shared_ptr<DrvFtaeAlarm::DatabaseInfoDAO> info = DrvFtaeAlarm::DataSQLServerAccessAssembly::instance().GetDatabaseInfoSQLServerDao();
-		std::unique_ptr<DrvFtaeAlarm::SQLTable> table = info->GetTableInfo(attr, std::string(), std::string("ConditionEvent"));
+		std::unique_ptr<DrvFtaeAlarm::SQLDatabase> table = info->GetDatabaseInfo(attr, attr.databaseName);
 		return 0;
 	}
 }

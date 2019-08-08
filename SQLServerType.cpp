@@ -79,74 +79,64 @@ DrvFtaeAlarm::SQLServerType DrvFtaeAlarm::SQLServerTypesFromString(const std::st
 	}
 }
 
-std::pair<SQLSMALLINT, SQLSMALLINT>  DrvFtaeAlarm::GetSQLServerTypeIdentifier(SQLServerType type)
+SQLSMALLINT  DrvFtaeAlarm::GetSQLServerTypeIdentifier(SQLServerType type)
 {
 	switch (type)
 	{
 	case SQLServerType::UNIQUEIDENTIFIER:
-		return std::make_pair<SQLSMALLINT, SQLSMALLINT>(SQL_C_GUID, SQL_GUID);
+		return SQL_GUID;
 		break;
 	case SQLServerType::NVARCHAR:
 	case SQLServerType::VARCHAR:
-		return std::make_pair<SQLSMALLINT, SQLSMALLINT>(SQL_C_CHAR, SQL_VARCHAR);
-		break;
 	case SQLServerType::NTEXT:
 	case SQLServerType::TEXT:
-		return std::make_pair<SQLSMALLINT, SQLSMALLINT>(SQL_C_CHAR, SQL_LONGVARCHAR);
-		break;
 	case SQLServerType::NCHAR:
 	case SQLServerType::CHAR:
-		return std::make_pair<SQLSMALLINT, SQLSMALLINT>(SQL_C_CHAR, SQL_CHAR);
+	case SQLServerType::XML:
+	case SQLServerType::NUMERIC:
+		return SQL_CHAR;
 		break;
 	case SQLServerType::DATE:
-		return std::make_pair<SQLSMALLINT, SQLSMALLINT>(SQL_C_TYPE_DATE, SQL_TYPE_DATE);
+		return SQL_TYPE_DATE;
 		break;
 	case SQLServerType::TIME:
-		return std::make_pair<SQLSMALLINT, SQLSMALLINT>(SQL_C_TYPE_TIME, SQL_TYPE_TIME);
+		return SQL_TYPE_TIME;
 		break;
 	case SQLServerType::DATETIME:
 	case SQLServerType::DATETIME2:
 	case SQLServerType::SMALLDATETIME:
-		return std::make_pair<SQLSMALLINT, SQLSMALLINT>(SQL_C_TYPE_TIMESTAMP, SQL_TYPE_TIMESTAMP);
+		return SQL_TYPE_TIMESTAMP;
 		break;
 	case SQLServerType::DATETIMEOFFSET:
-		return std::make_pair<SQLSMALLINT, SQLSMALLINT>(SQL_C_INTERVAL_SECOND, SQL_INTERVAL_SECOND);
+		return SQL_INTERVAL_SECOND;
 		break;
 	case SQLServerType::BINARY:
-		return std::make_pair<SQLSMALLINT, SQLSMALLINT>(SQL_C_BINARY, SQL_BINARY);
-		break;
 	case SQLServerType::VARBINARY:
-		return std::make_pair<SQLSMALLINT, SQLSMALLINT>(SQL_C_BINARY, SQL_VARBINARY);
-		break;
-	case SQLServerType::NUMERIC:
-		return std::make_pair<SQLSMALLINT, SQLSMALLINT>(SQL_C_CHAR, SQL_NUMERIC);
+		return SQL_BINARY;
 		break;
 	case SQLServerType::INT:
-		return std::make_pair<SQLSMALLINT, SQLSMALLINT>(SQL_C_SLONG, SQL_INTEGER);
+		return SQL_C_SLONG;
 		break;
 	case SQLServerType::SMALLINT:
-		return std::make_pair<SQLSMALLINT, SQLSMALLINT>(SQL_C_SSHORT, SQL_SMALLINT);
+		return SQL_C_SSHORT;
 		break;
 	case SQLServerType::TINYINT:
-		return std::make_pair<SQLSMALLINT, SQLSMALLINT>(SQL_C_STINYINT, SQL_TINYINT);
+		return SQL_C_STINYINT;
 		break;
 	case SQLServerType::BIGINT:
-		return std::make_pair<SQLSMALLINT, SQLSMALLINT>(SQL_C_SBIGINT, SQL_BIGINT);
+		return SQL_C_SBIGINT;
 		break;
 	case SQLServerType::BIT:
-		return std::make_pair<SQLSMALLINT, SQLSMALLINT>(SQL_C_BIT, SQL_BIT);
+		return SQL_BIT;
 		break;
 	case SQLServerType::REAL:
-		return std::make_pair<SQLSMALLINT, SQLSMALLINT>(SQL_C_FLOAT, SQL_REAL);
+		return SQL_REAL;
 		break;
 	case SQLServerType::FLOAT:
-		return std::make_pair<SQLSMALLINT, SQLSMALLINT>(SQL_C_DOUBLE, SQL_FLOAT);
-		break;
-	case SQLServerType::XML:
-		return std::make_pair<SQLSMALLINT, SQLSMALLINT>(SQL_C_CHAR, SQL_LONGVARCHAR);
+		return SQL_FLOAT;
 		break;
 	default:
-		return std::make_pair<SQLSMALLINT, SQLSMALLINT>(SQL_C_DEFAULT, SQL_DEFAULT);
+		return SQL_DEFAULT;
 			break;
 	}
 }

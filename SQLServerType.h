@@ -35,5 +35,5 @@ namespace DrvFtaeAlarm {
 	};
 
 	SQLServerType SQLServerTypesFromString(const std::string& type);
-	std::pair<SQLSMALLINT, SQLSMALLINT> GetSQLServerTypeIdentifier(SQLServerType type);
+	SQLSMALLINT GetSQLServerTypeIdentifier(SQLServerType type);
 }

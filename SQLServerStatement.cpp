@@ -2,6 +2,7 @@
 #include"Utils.h"
 #include"Constants.h"
 #include<tchar.h>
+#include"SQLServerType.h"
 
 DrvFtaeAlarm::SQLServerStatement::SQLServerStatement(const std::shared_ptr<SQLServerConnection>& connection, const std::string& query, const std::vector<std::string>& parameters) : Statement(connection, query, parameters), sqlStmt(SQL_NULL_HSTMT)
 {
@@ -131,28 +132,39 @@ std::vector<DrvFtaeAlarm::Record> DrvFtaeAlarm::SQLServerStatement::Execute()
 		freeStatement();
 		return recordSet;
 	}
-
-	SQLSMALLINT     coltype = 0;
-	SQLSMALLINT     colnamelen = 0;
-	SQLULEN     collen[MAX_COLUMNS];
-	SQLCHAR         colname[STR_LENGTH];
-	SQLLEN      displaysize = 0;
-	SQLSMALLINT     scale = 0;
 	std::unique_ptr<DataBinding[]> bindingArray(new DataBinding[shNumberOfColumns]);
-
 	for (SQLSMALLINT colIndex = 0; colIndex < shNumberOfColumns; colIndex++) {
+		SQLSMALLINT     coltype = 0;
+		SQLSMALLINT     colnamelen = 0;
+		SQLULEN     collen[MAX_COLUMNS];
+		SQLCHAR         colname[STR_LENGTH];
+		SQLLEN      displaysize = 0;
+		SQLSMALLINT     scale = 0;
 		res = SQLDescribeCol(sqlStmt, colIndex + 1, colname, STR_LENGTH, &colnamelen, &coltype, collen + colIndex, &scale, NULL);
-		HandleDiagnosticRecord();
+		if (!SQL_SUCCEEDED(res)) {
+			HandleDiagnosticRecord();
+			freeStatement();
+			return recordSet;
+		}
+		if (coltype > SQL_GUID && coltype < SQL_BIT) {
+			coltype = SQL_CHAR;
+		}
 		colname[colnamelen] = '\0';
-		res = SQLColAttributes(sqlStmt, colIndex + 1, SQL_DESC_DISPLAY_SIZE, NULL, 0, NULL, &displaysize);
-		//size_t len = wcslen(colname) + 1;
+		res = SQLColAttribute(sqlStmt, colIndex + 1, SQL_DESC_DISPLAY_SIZE, NULL, 0, NULL, &displaysize);
+		if (!SQL_SUCCEEDED(res)) {
+			HandleDiagnosticRecord();
+			freeStatement();
+			return recordSet;
+		}
+		SQLLEN len = SQL_GUID;
 		std::string wideStr = std::string((TCHAR*)colname);
 		bindingArray[colIndex].colName = wideStr;
 		bindingArray[colIndex].dataType = coltype;
-		bindingArray[colIndex].iBufferLength = max(displaysize, colnamelen);
+		bindingArray[colIndex].iBufferLength = max(displaysize, *(collen + colIndex));
 		bindingArray[colIndex].ptrDataValue = std::unique_ptr<char[]>(new char[bindingArray[colIndex].iBufferLength]);
-		res = SQLBindCol(sqlStmt, colIndex + 1, SQL_CHAR, bindingArray[colIndex].ptrDataValue.get(), bindingArray[colIndex].iBufferLength, &(bindingArray[colIndex].iStrLenOrIndex));
+		res = SQLBindCol(sqlStmt, colIndex + 1, coltype, bindingArray[colIndex].ptrDataValue.get(), bindingArray[colIndex].iBufferLength, &(bindingArray[colIndex].iStrLenOrIndex));
 		if (!SQL_SUCCEEDED(res)) {
+			HandleDiagnosticRecord();
 			freeStatement();
 			return recordSet;
 		}
