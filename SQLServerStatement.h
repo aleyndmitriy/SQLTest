@@ -32,5 +32,6 @@ namespace DrvFtaeAlarm {
 		SQLHSTMT    sqlStmt;
 		void freeStatement();
 		void allocateStatement();
+		void HandleDiagnosticRecord();
 	};
 }

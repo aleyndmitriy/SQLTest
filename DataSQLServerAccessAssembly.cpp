@@ -16,11 +16,12 @@ DrvFtaeAlarm::DataSQLServerAccessAssembly::DataSQLServerAccessAssembly(): DataAc
 databaseEngine(std::make_shared<DrvFtaeAlarm::SQLServerDatabaseEngine>()),settingsDataSource(std::make_shared<DrvFtaeAlarm::XMLSettingsDataSource>()),
 databaseInfoDAO(std::make_shared<SQLServerDatabaseInfoDAO>(databaseEngine))
 {
-
+	//databaseInfoDAO = std::make_shared<SQLServerDatabaseInfoDAO>(databaseEngine);
 }
 
 DrvFtaeAlarm::DataSQLServerAccessAssembly::~DataSQLServerAccessAssembly()
 {
+	databaseInfoDAO.reset();
 	databaseEngine.reset();
 	settingsDataSource.reset();
 }

@@ -16,7 +16,7 @@ namespace DrvFtaeAlarm {
 		~DatabaseInfoDAO();
 		virtual std::unique_ptr<SQLDatabase> GetDatabaseInfo(const ConnectionAttributes& attributes, std::string databaseName) = 0;
 		virtual std::unique_ptr<SQLTable> GetTableInfo(const ConnectionAttributes& attributes, std::string databaseName, std::string tableName) = 0;
-	private:
+	protected:
 		std::shared_ptr<DatabaseEngine> _databaseEngine;
 	};
 

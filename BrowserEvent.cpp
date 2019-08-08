@@ -2,6 +2,7 @@
 #include"OdsErr.h"
 #include"StatementCondition.h"
 #include"Property.h"
+
 BrowserEvent::BrowserEvent(const std::shared_ptr<DrvFtaeAlarm::ISettingsDataSource>& settingsDataSource, const std::shared_ptr<DrvFtaeAlarm::DatabaseInfoDAO>& databaseInfo):_settingsDataSource(settingsDataSource),_databaseInfo(databaseInfo),cfgString()
 {
 
@@ -75,6 +76,26 @@ int BrowserEvent::GetFilterList(TCHAR*** ppszFilterList, ULONG* pulCount)
 
 int BrowserEvent::GetAlarmPropertyInfoList(ODS::PropertyInfo** ppPropertyInfoList, ULONG* pulCount)
 {
+	if (!cfgString.empty())
+	{
+		size_t len = cfgString.size();
+		if (_settingsDataSource) {
+			_settingsDataSource->LoadSettingsString(cfgString.c_str(), len);
+		}
+		else {
+			return ODS::ERR::OK;
+		}
+	}
+	else {
+		return ODS::ERR::OK;
+	}
+	DrvFtaeAlarm::ConnectionAttributes attributes;
+	if (_settingsDataSource) {
+		_settingsDataSource->Load(attributes);
+	}
+
+	std::unique_ptr<DrvFtaeAlarm::SQLTable> table = _databaseInfo->GetTableInfo(attributes, std::string(), std::string("ConditionEvent"));
+
 	std::map< std::string, DrvFtaeAlarm::PropertyType> properties;
 	std::pair<std::string, DrvFtaeAlarm::PropertyType> pair1 = std::make_pair<std::string, DrvFtaeAlarm::PropertyType>(std::string("columnName1"), DrvFtaeAlarm::PropertyType::PROPTYPE_TEXT);
 	properties.insert(pair1);

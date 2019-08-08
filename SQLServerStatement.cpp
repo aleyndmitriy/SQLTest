@@ -1,6 +1,7 @@
 #include"SQLServerStatement.h"
 #include"Utils.h"
 #include"Constants.h"
+#include<tchar.h>
 
 DrvFtaeAlarm::SQLServerStatement::SQLServerStatement(const std::shared_ptr<SQLServerConnection>& connection, const std::string& query, const std::vector<std::string>& parameters) : Statement(connection, query, parameters), sqlStmt(SQL_NULL_HSTMT)
 {
@@ -76,11 +77,28 @@ void DrvFtaeAlarm::SQLServerStatement::freeStatement() {
 	}
 }
 
+void DrvFtaeAlarm::SQLServerStatement::HandleDiagnosticRecord()
+{
+	SQLSMALLINT iRec = 0;
+	SQLINTEGER  iError;
+	TCHAR       wszMessage[SQL_MAX_MESSAGE_LENGTH];
+	TCHAR       wszState[SQL_SQLSTATE_SIZE + 1];
+	while (SQLGetDiagRec(SQL_HANDLE_STMT, sqlStmt, ++iRec, reinterpret_cast<SQLCHAR*>(wszState), &iError, reinterpret_cast<SQLCHAR*>(wszMessage),
+		(SQLSMALLINT)(sizeof(wszMessage) / sizeof(TCHAR)), (SQLSMALLINT*)NULL) == SQL_SUCCESS)
+	{
+		if (_tcsncmp(wszState, "01004", 5))
+		{
+			fprintf(stderr, "[%5.5s] %s (%d)\n", wszState, wszMessage, iError);
+		}
+	}
+}
+
 void DrvFtaeAlarm::SQLServerStatement::allocateStatement()
 {
 	SQLSMALLINT res = SQLAllocHandle(SQL_HANDLE_STMT, ptrConnection->GetInterface(), &sqlStmt);
 	if (res == SQL_ERROR)
 	{
+		HandleDiagnosticRecord();
 		freeStatement();
 		return;
 	}
@@ -91,6 +109,7 @@ void DrvFtaeAlarm::SQLServerStatement::allocateStatement()
 
 	res = SQLPrepare(sqlStmt, (SQLCHAR*)(strQuery.c_str()), SQL_NTS);
 	if (!SQL_SUCCEEDED(res)) {
+		HandleDiagnosticRecord();
 		freeStatement();
 		return;
 	}
@@ -99,9 +118,16 @@ void DrvFtaeAlarm::SQLServerStatement::allocateStatement()
 std::vector<DrvFtaeAlarm::Record> DrvFtaeAlarm::SQLServerStatement::Execute()
 {
 	std::vector<DrvFtaeAlarm::Record> recordSet = std::vector<DrvFtaeAlarm::Record>();
-	SQLSMALLINT shNumberOfColumns = 0;
-	SQLSMALLINT res = SQLNumResultCols(sqlStmt, &shNumberOfColumns);
+	SQLSMALLINT res = SQLExecute(sqlStmt);
 	if (!SQL_SUCCEEDED(res)) {
+		HandleDiagnosticRecord();
+		freeStatement();
+		return recordSet;
+	}
+	SQLSMALLINT shNumberOfColumns = 0;
+	res = SQLNumResultCols(sqlStmt, &shNumberOfColumns);
+	if (!SQL_SUCCEEDED(res)) {
+		HandleDiagnosticRecord();
 		freeStatement();
 		return recordSet;
 	}
@@ -116,6 +142,7 @@ std::vector<DrvFtaeAlarm::Record> DrvFtaeAlarm::SQLServerStatement::Execute()
 
 	for (SQLSMALLINT colIndex = 0; colIndex < shNumberOfColumns; colIndex++) {
 		res = SQLDescribeCol(sqlStmt, colIndex + 1, colname, STR_LENGTH, &colnamelen, &coltype, collen + colIndex, &scale, NULL);
+		HandleDiagnosticRecord();
 		colname[colnamelen] = '\0';
 		res = SQLColAttributes(sqlStmt, colIndex + 1, SQL_DESC_DISPLAY_SIZE, NULL, 0, NULL, &displaysize);
 		//size_t len = wcslen(colname) + 1;
@@ -130,11 +157,7 @@ std::vector<DrvFtaeAlarm::Record> DrvFtaeAlarm::SQLServerStatement::Execute()
 			return recordSet;
 		}
 	}
-	res = SQLExecute(sqlStmt);
-	if (!SQL_SUCCEEDED(res)) {
-		freeStatement();
-		return recordSet;
-	}
+	
 	while ((res = SQLFetch(sqlStmt)) == SQL_SUCCESS)
 	{
 		Record record;
