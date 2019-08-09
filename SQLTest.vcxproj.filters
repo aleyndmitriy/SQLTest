@@ -497,6 +497,9 @@
     <ClInclude Include="DatabaseInfoDAO.h">
       <Filter>DataAccessLayer\DataBaseInfoDAO</Filter>
     </ClInclude>
+    <ClInclude Include="TimeUtils.h">
+      <Filter>Export\Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SQLTest.rc">

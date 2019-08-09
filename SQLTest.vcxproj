@@ -242,6 +242,7 @@
     <ClInclude Include="SQLTable.h" />
     <ClInclude Include="Statement.h" />
     <ClInclude Include="StatementCondition.h" />
+    <ClInclude Include="TimeUtils.h" />
     <ClInclude Include="TimeValue.h" />
     <ClInclude Include="Tvr.h" />
     <ClInclude Include="UIDialogViewController.h" />

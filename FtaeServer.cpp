@@ -1,6 +1,6 @@
 #include"FtaeServer.h"
 #include"OdsErr.h"
-#include"Property.h"
+#include "Alarm.h"
 #include"AlarmFilter.h"
 #include "AlarmPropertyId.h"
 #include "HdaFunctionTypes.h"
@@ -267,6 +267,34 @@ int FtaeServer::GetFuncParameterList(ODS::HdaFunction* pFunc, std::string& szSqc
 	return iRes;
 }
 
+int FtaeServer::BuildFuncResult(ODS::HdaFunctionResult* pFuncResult, const std::vector<DrvFtaeAlarm::Record>& rRecordList)
+{
+	if (rRecordList.empty()) {
+		return ODS::ERR::DB_NO_DATA;
+	}
+	int iAddRecCount = 0;
+	ODS::Alarm* pAlarmList = new ODS::Alarm[rRecordList.size()];
+	if (!pAlarmList) {
+		return ODS::ERR::MEMORY_ALLOCATION_ERR;
+	}
+	ODS::HdaFunctionResultAlarmList* pFR = (ODS::HdaFunctionResultAlarmList*)pFuncResult;
+	for (std::vector<DrvFtaeAlarm::Record>::const_iterator recordsIterator = rRecordList.cbegin(); recordsIterator != rRecordList.cend(); ++recordsIterator) {
+		size_t nAlarmPropCount = recordsIterator->GetColumnNumber();
+		std::vector<ODS::Property> listProp;
+		unsigned int index = 0;
+		for (DrvFtaeAlarm::Record::const_iterator columnIter = recordsIterator->cbegin(); columnIter != recordsIterator->cend(); ++columnIter) {
+			ODS::Property prop;
+			SetODSProperty(prop, PROP_START_ID + index,columnIter->first.c_str(),columnIter->second.second,columnIter->second.first);
+			++index;
+		}
+	}
+
+	pFR->SetAlarmList(pAlarmList, iAddRecCount);
+
+	// clear memory
+	delete[] pAlarmList;
+	return ODS::ERR::OK;
+}
 
 std::map<std::string, DrvFtaeAlarm::PropertyType> FtaeServer::LoadAttributes()
 {
@@ -336,3 +364,9 @@ USHORT VariantToUSHORT(VARIANT* pvValue)
 
 	}
 }
+
+void SetODSProperty(ODS::Property& prop, ULONG ulId, const TCHAR* szName, const std::string& szValue, short type)
+{
+
+}
+

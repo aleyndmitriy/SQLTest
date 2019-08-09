@@ -27,6 +27,10 @@ typename DrvFtaeAlarm::Record::const_iterator DrvFtaeAlarm::Record::findColumnVa
 	return recordData.find(key);
 }
 
+size_t DrvFtaeAlarm::Record::GetColumnNumber() const
+{
+	return recordData.size();
+}
 
 DrvFtaeAlarm::Record::~Record()
 {

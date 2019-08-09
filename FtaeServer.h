@@ -5,6 +5,7 @@
 #include"DatabaseInfoDAO.h"
 #include "HdaFunction.h"
 #include "HdaFunctionResult.h"
+#include "Property.h"
 
 class FtaeServer final : public ODS::IServerFtae {
 public:
@@ -28,7 +29,9 @@ private:
 	int GetCmdParameterList(ODS::HdaCommand* pCommand, SYSTEMTIME& rStartTime, SYSTEMTIME& rEndTime);
 	int GetFuncParameterList(ODS::HdaFunction* pFunc, std::string& szSqc, std::vector<DrvFtaeAlarm::PRIORITY_FILTER>& filterList,
 		std::vector<std::string>& staticFilterList);
+	int BuildFuncResult(ODS::HdaFunctionResult* pFuncResult, const std::vector<DrvFtaeAlarm::Record>& rRecordList);
 	std::map<std::string, DrvFtaeAlarm::PropertyType> LoadAttributes();
 };
 
 USHORT VariantToUSHORT(VARIANT* pvValue);
+void SetODSProperty(ODS::Property& prop, ULONG ulId, const TCHAR* szName, const std::string& szValue, short type);

@@ -17,6 +17,7 @@ namespace DrvFtaeAlarm {
 		const_iterator cbegin() const;
 		const_iterator cend() const;
 		const_iterator findColumnValue(const std::string& key) const;
+		size_t GetColumnNumber() const;
 		~Record();
 		friend bool operator==(const Record& lhs, const Record& rhs);
 		friend bool operator!=(const Record& lhs, const Record& rhs);
@@ -24,7 +25,7 @@ namespace DrvFtaeAlarm {
 		friend bool operator<=(const Record& lhs, const Record& rhs);
 		friend bool operator>(const Record& lhs, const Record& rhs);
 		friend bool operator>=(const Record& lhs, const Record& rhs);
-	private:
+	protected:
 		std::map<std::string, FieldData> recordData;
 	};
 
