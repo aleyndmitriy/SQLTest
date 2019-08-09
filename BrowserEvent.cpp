@@ -2,6 +2,8 @@
 #include"OdsErr.h"
 #include"StatementCondition.h"
 #include"Property.h"
+#include "SQLServerType.h"
+#include"Constants.h"
 
 BrowserEvent::BrowserEvent(const std::shared_ptr<DrvFtaeAlarm::ISettingsDataSource>& settingsDataSource, const std::shared_ptr<DrvFtaeAlarm::DatabaseInfoDAO>& databaseInfo):_settingsDataSource(settingsDataSource),_databaseInfo(databaseInfo),cfgString()
 {
@@ -96,44 +98,39 @@ int BrowserEvent::GetAlarmPropertyInfoList(ODS::PropertyInfo** ppPropertyInfoLis
 
 	std::unique_ptr<DrvFtaeAlarm::SQLTable> table = _databaseInfo->GetTableInfo(attributes, std::string(), std::string("ConditionEvent"));
 
-	std::map< std::string, DrvFtaeAlarm::PropertyType> properties;
-	std::pair<std::string, DrvFtaeAlarm::PropertyType> pair1 = std::make_pair<std::string, DrvFtaeAlarm::PropertyType>(std::string("columnName1"), DrvFtaeAlarm::PropertyType::PROPTYPE_TEXT);
-	properties.insert(pair1);
-	std::pair<std::string, DrvFtaeAlarm::PropertyType> pair2 = std::make_pair<std::string, DrvFtaeAlarm::PropertyType>(std::string("columnName2"), DrvFtaeAlarm::PropertyType::PROPTYPE_NUMERIC);
-	properties.insert(pair2);
-	std::pair<std::string, DrvFtaeAlarm::PropertyType> pair3 = std::make_pair<std::string, DrvFtaeAlarm::PropertyType>(std::string("columnName3"), DrvFtaeAlarm::PropertyType::PROPTYPE_BOOLEAN);
-	properties.insert(pair3);
-	std::pair<std::string, DrvFtaeAlarm::PropertyType> pair4 = std::make_pair<std::string, DrvFtaeAlarm::PropertyType>(std::string("columnName4"), DrvFtaeAlarm::PropertyType::PROPTYPE_DATE);
-	properties.insert(pair4);
-	std::pair<std::string, DrvFtaeAlarm::PropertyType> pair5 = std::make_pair<std::string, DrvFtaeAlarm::PropertyType>(std::string("columnName4"), DrvFtaeAlarm::PropertyType::PROPTYPE_TEXT);
-	properties.insert(pair5);
+	std::map<std::string, DrvFtaeAlarm::PropertyType> properties;
+	for (DrvFtaeAlarm::SQLTable::const_iterator itr = table->cbegin(); itr != table->cend(); ++itr) {
+		std::pair<std::string, DrvFtaeAlarm::PropertyType> pair = std::make_pair<std::string, DrvFtaeAlarm::PropertyType>(std::string(itr->first), DrvFtaeAlarm::PropertyTypeFromString(itr->second));
+		properties.insert(pair);
+	}
+	
 	*ppPropertyInfoList = new ODS::PropertyInfo[properties.size()];
 	if (*ppPropertyInfoList)
 	{
 		ULONG i = 0;
 		for (std::map< std::string, DrvFtaeAlarm::PropertyType>::const_iterator itr = properties.cbegin(); itr != properties.cend(); ++itr) {
-			(*ppPropertyInfoList)->SetId(i);
-			(*ppPropertyInfoList)->SetName(itr->first.c_str());
+			(*ppPropertyInfoList + i)->SetId(PROP_START_ID + i);
+			(*ppPropertyInfoList + i)->SetName(itr->first.c_str());
 			switch (itr->second)
 			{
 			case DrvFtaeAlarm::PropertyType::PROPTYPE_NUMERIC:
-				(*ppPropertyInfoList)->SetValueType(ODS::Property::PROP_VALUE_TYPE_VAR, VT_R8);
+				(*ppPropertyInfoList + i)->SetValueType(ODS::Property::PROP_VALUE_TYPE_VAR, VT_R8);
 				break;
 			case DrvFtaeAlarm::PropertyType::PROPTYPE_TEXT:
-				(*ppPropertyInfoList)->SetValueType(ODS::Property::PROP_VALUE_TYPE_STR, VT_BSTR);
+				(*ppPropertyInfoList + i)->SetValueType(ODS::Property::PROP_VALUE_TYPE_STR, VT_BSTR);
 				break;
 			case DrvFtaeAlarm::PropertyType::PROPTYPE_BOOLEAN:
-				(*ppPropertyInfoList)->SetValueType(ODS::Property::PROP_VALUE_TYPE_VAR, VT_BOOL);
+				(*ppPropertyInfoList + i)->SetValueType(ODS::Property::PROP_VALUE_TYPE_VAR, VT_BOOL);
 				break;
 			case DrvFtaeAlarm::PropertyType::PROPTYPE_DATE:
-				(*ppPropertyInfoList)->SetValueType(ODS::Property::PROP_VALUE_TYPE_VAR, VT_DATE);
+				(*ppPropertyInfoList + i)->SetValueType(ODS::Property::PROP_VALUE_TYPE_VAR, VT_DATE);
 				break;
 			default:
-				(*ppPropertyInfoList)->SetValueType(ODS::Property::PROP_VALUE_TYPE_STR, VT_BSTR);
+				(*ppPropertyInfoList + i)->SetValueType(ODS::Property::PROP_VALUE_TYPE_STR, VT_BSTR);
 				break;
 			}
+			++i;
 		}
-		++i;
 	}
 	*pulCount = properties.size();
 	return  ODS::ERR::OK;

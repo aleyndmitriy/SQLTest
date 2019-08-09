@@ -3,6 +3,18 @@
 
 namespace DrvFtaeAlarm {
 
+	struct PRIORITY_FILTER   // this structure for example purpose
+	{
+		unsigned short	m_PriorityFrom;
+		unsigned short	m_PriorityTo;
+
+		PRIORITY_FILTER()
+		{
+			m_PriorityFrom = 0;
+			m_PriorityTo = 0;
+		}
+	};
+	
 	enum class PropertyType : int
 	{
 		PROPTYPE_NONE = -1,

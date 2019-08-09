@@ -156,7 +156,6 @@ std::vector<DrvFtaeAlarm::Record> DrvFtaeAlarm::SQLServerStatement::Execute()
 			freeStatement();
 			return recordSet;
 		}
-		SQLLEN len = SQL_GUID;
 		std::string wideStr = std::string((TCHAR*)colname);
 		bindingArray[colIndex].colName = wideStr;
 		bindingArray[colIndex].dataType = coltype;

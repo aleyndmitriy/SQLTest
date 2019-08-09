@@ -115,16 +115,16 @@ SQLSMALLINT  DrvFtaeAlarm::GetSQLServerTypeIdentifier(SQLServerType type)
 		return SQL_BINARY;
 		break;
 	case SQLServerType::INT:
-		return SQL_C_SLONG;
+		return SQL_INTEGER;
 		break;
 	case SQLServerType::SMALLINT:
-		return SQL_C_SSHORT;
+		return SQL_SMALLINT;
 		break;
 	case SQLServerType::TINYINT:
-		return SQL_C_STINYINT;
+		return SQL_TINYINT;
 		break;
 	case SQLServerType::BIGINT:
-		return SQL_C_SBIGINT;
+		return SQL_BIGINT;
 		break;
 	case SQLServerType::BIT:
 		return SQL_BIT;
@@ -138,5 +138,38 @@ SQLSMALLINT  DrvFtaeAlarm::GetSQLServerTypeIdentifier(SQLServerType type)
 	default:
 		return SQL_DEFAULT;
 			break;
+	}
+}
+
+DrvFtaeAlarm::PropertyType DrvFtaeAlarm::PropertyTypeFromString(const std::string& type)
+{
+	SQLSMALLINT identifier = GetSQLServerTypeIdentifier(SQLServerTypesFromString(type));
+	switch (identifier)
+	{
+	case SQL_GUID:
+	case SQL_CHAR:
+	case SQL_BINARY:
+		return PropertyType::PROPTYPE_TEXT;
+		break;
+	case SQL_TYPE_DATE:
+	case SQL_TYPE_TIME:
+	case SQL_TYPE_TIMESTAMP:
+		return PropertyType::PROPTYPE_DATE;
+		break;
+	case SQL_INTEGER:
+	case SQL_SMALLINT:
+	case SQL_TINYINT:
+	case SQL_BIGINT:
+	case SQL_REAL:
+	case SQL_FLOAT:
+	case SQL_INTERVAL_SECOND:
+		return PropertyType::PROPTYPE_NUMERIC;
+		break;
+	case SQL_BIT:
+		return PropertyType::PROPTYPE_BOOLEAN;
+		break;
+	default:
+		return PropertyType::PROPTYPE_NONE;
+		break;
 	}
 }

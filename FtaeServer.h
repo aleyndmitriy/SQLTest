@@ -26,5 +26,9 @@ private:
 	std::shared_ptr<DrvFtaeAlarm::DatabaseInfoDAO> _databaseInfo;
 	std::string cfgString;
 	int GetCmdParameterList(ODS::HdaCommand* pCommand, SYSTEMTIME& rStartTime, SYSTEMTIME& rEndTime);
-	bool OpenConnection();
+	int GetFuncParameterList(ODS::HdaFunction* pFunc, std::string& szSqc, std::vector<DrvFtaeAlarm::PRIORITY_FILTER>& filterList,
+		std::vector<std::string>& staticFilterList);
+	std::map<std::string, DrvFtaeAlarm::PropertyType> LoadAttributes();
 };
+
+USHORT VariantToUSHORT(VARIANT* pvValue);

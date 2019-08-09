@@ -3,6 +3,8 @@
 #include<utility>
 #include<Windows.h>
 #include<sqlext.h>
+#include"StatementCondition.h"
+
 namespace DrvFtaeAlarm {
 
 	enum class SQLServerType
@@ -35,5 +37,6 @@ namespace DrvFtaeAlarm {
 	};
 
 	SQLServerType SQLServerTypesFromString(const std::string& type);
+	PropertyType PropertyTypeFromString(const std::string& type);
 	SQLSMALLINT GetSQLServerTypeIdentifier(SQLServerType type);
 }
