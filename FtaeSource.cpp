@@ -2,16 +2,13 @@
 #include"OdsErr.h"
 
 
-FtaeSource::FtaeSource(const std::shared_ptr<DrvFtaeAlarm::ISettingsDataSource>& settingsDataSource, const std::shared_ptr<DrvFtaeAlarm::DatabaseInfoDAO>& databaseInfo):
-	_settingsDataSource(settingsDataSource), _databaseInfo(databaseInfo),configurator(settingsDataSource), browser(settingsDataSource,databaseInfo),server(settingsDataSource,databaseInfo), m_pRegInfo(nullptr), m_pHost(nullptr)
+FtaeSource::FtaeSource(const std::shared_ptr<DrvFtaeAlarm::ISettingsDataSource>& settingsDataSource, const std::shared_ptr<DrvFtaeAlarm::DatabaseInfoDAO>& databaseInfo, const std::shared_ptr<DrvFtaeAlarm::ConditionRecordsDAO>& conditionRecords): configurator(settingsDataSource), browser(settingsDataSource,databaseInfo),server(settingsDataSource,databaseInfo, conditionRecords), m_pRegInfo(nullptr), m_pHost(nullptr)
 {
 
 }
 
 FtaeSource::~FtaeSource()
 {
-	_settingsDataSource.reset();
-	_databaseInfo.reset();
 	m_pRegInfo = nullptr;
 	m_pHost = nullptr;
 }

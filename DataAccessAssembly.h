@@ -3,6 +3,7 @@
 #include"DatabaseEngine.h"
 #include"ISettingsDataSource.h"
 #include "DatabaseInfoDAO.h"
+#include "ConditionRecordsDAO.h"
 
 namespace DrvFtaeAlarm {
 
@@ -11,6 +12,7 @@ namespace DrvFtaeAlarm {
 		virtual std::shared_ptr<DatabaseEngine> GetDataBaseEngine() const = 0;
 		virtual std::shared_ptr<ISettingsDataSource> GetSettingDataSource() const = 0;
 		virtual std::shared_ptr<DatabaseInfoDAO> GetDatabaseInfoSQLServerDao() const = 0;
+		virtual std::shared_ptr<ConditionRecordsDAO> GetConditionRecordSQLServerDao() const = 0;
 		DataAccessAssembly(const DataAccessAssembly& src) = delete;
 		DataAccessAssembly& operator=(const DataAccessAssembly& src) = delete;
 		DataAccessAssembly(DataAccessAssembly&& rhs) = delete;

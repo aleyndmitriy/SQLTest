@@ -9,8 +9,9 @@
 #include"HdaCommandParam.h"
 #include "SQLServerType.h"
 #include"Constants.h"
+#include"StatementCondition.h"
 
-FtaeServer::FtaeServer(const std::shared_ptr<DrvFtaeAlarm::ISettingsDataSource>& settingsDataSource, const std::shared_ptr<DrvFtaeAlarm::DatabaseInfoDAO>& databaseInfo):_settingsDataSource(settingsDataSource), _databaseInfo(databaseInfo), cfgString()
+FtaeServer::FtaeServer(const std::shared_ptr<DrvFtaeAlarm::ISettingsDataSource>& settingsDataSource, const std::shared_ptr<DrvFtaeAlarm::DatabaseInfoDAO>& databaseInfo, const std::shared_ptr<DrvFtaeAlarm::ConditionRecordsDAO>& recordsInfo):_settingsDataSource(settingsDataSource), _databaseInfo(databaseInfo), _recordsInfo(recordsInfo), cfgString()
 {
 
 }
@@ -67,10 +68,6 @@ int FtaeServer::Execute(ODS::HdaCommand* pCommand, ODS::HdaCommandResult** ppRes
 	{
 		ODS::HdaCommandResult* pResult = new ODS::HdaCommandResult;
 		if (pResult) {
-			std::map<std::string, DrvFtaeAlarm::PropertyType> properties = LoadAttributes();
-			if (properties.empty()) {
-				return ODS::ERR::DB_NO_DATA;
-			}
 			for (int ind = 0; ind < nCount; ind++) {
 				ODS::HdaFunctionResult* pFuncResult = NULL;
 				int nFnType = pList[ind]->GetType();
@@ -78,9 +75,19 @@ int FtaeServer::Execute(ODS::HdaCommand* pCommand, ODS::HdaCommandResult** ppRes
 					std::string sqc;
 					std::vector<DrvFtaeAlarm::PRIORITY_FILTER> filterList;
 					std::vector<std::string> staticFilterList;
-					pFuncResult = new ODS::HdaFunctionResultAlarmList;
 					if (ODS::ERR::OK == GetFuncParameterList(pList[ind], sqc, filterList, staticFilterList)) {
-
+						std::vector<DrvFtaeAlarm::Record> records = LoadEvents(staticFilterList);
+						if (!records.empty()) {
+							pFuncResult = new ODS::HdaFunctionResultAlarmList;
+							if (pFuncResult) {
+								iRes = BuildFuncResult(pFuncResult, records);
+							}
+							else {
+								iRes = ODS::ERR::MEMORY_ALLOCATION_ERR;
+								break;
+							}
+						}
+						
 					}
 				}
 				else {
@@ -107,6 +114,7 @@ int FtaeServer::Execute(ODS::HdaCommand* pCommand, ODS::HdaCommandResult** ppRes
 
 int FtaeServer::DestroyResult(ODS::HdaCommandResult* pResult)
 {
+	delete pResult;
 	return 0;
 }
 
@@ -286,6 +294,20 @@ int FtaeServer::BuildFuncResult(ODS::HdaFunctionResult* pFuncResult, const std::
 			ODS::Property prop;
 			SetODSProperty(prop, PROP_START_ID + index,columnIter->first.c_str(),columnIter->second.second,columnIter->second.first);
 			++index;
+			listProp.push_back(prop);
+		}
+		size_t count = listProp.size();
+		ODS::Property* pPropList = new ODS::Property[count];
+		if (pPropList)
+		{
+			for (size_t idx = 0; idx < count; idx++)
+				pPropList[idx] = listProp[idx];
+
+			pAlarmList[iAddRecCount].SetPropertyList(pPropList, count);
+
+			iAddRecCount++;
+
+			delete[] pPropList;
 		}
 	}
 
@@ -296,23 +318,29 @@ int FtaeServer::BuildFuncResult(ODS::HdaFunctionResult* pFuncResult, const std::
 	return ODS::ERR::OK;
 }
 
-std::map<std::string, DrvFtaeAlarm::PropertyType> FtaeServer::LoadAttributes()
+std::vector<DrvFtaeAlarm::Record> FtaeServer::LoadEvents(std::vector<std::string> filters)
 {
-	std::map<std::string, DrvFtaeAlarm::PropertyType> properties;
+	std::vector<DrvFtaeAlarm::Record> records;
 	if (!_settingsDataSource) {
-		return properties;
+		return records;
 	}
 	DrvFtaeAlarm::ConnectionAttributes attributes;
 	if (!_settingsDataSource->Load(attributes)) {
-		return properties;
+		return records;
+	}
+	std::map<std::pair<std::string, bool>, std::vector<DrvFtaeAlarm::StatementCondition> > loadedFilters;
+	if (!_settingsDataSource->Load(loadedFilters)) {
+		return records;
+	}
+	std::vector<DrvFtaeAlarm::StatementCondition> conditions;
+
+	for (std::vector<std::string>::const_iterator itr = filters.cbegin(); itr != filters.cend(); ++itr) {
+		
 	}
 	std::unique_ptr<DrvFtaeAlarm::SQLTable> table = _databaseInfo->GetTableInfo(attributes, std::string(), std::string("ConditionEvent"));
-
-	for (DrvFtaeAlarm::SQLTable::const_iterator itr = table->cbegin(); itr != table->cend(); ++itr) {
-		std::pair<std::string, DrvFtaeAlarm::PropertyType> pair = std::make_pair<std::string, DrvFtaeAlarm::PropertyType>(std::string(itr->first), DrvFtaeAlarm::PropertyTypeFromString(itr->second));
-		properties.insert(pair);
-	}
-	return properties;
+	records = _recordsInfo->GetRecords(*table, attributes, conditions);
+	
+	return records;
 }
 
 USHORT VariantToUSHORT(VARIANT* pvValue)
@@ -367,6 +395,76 @@ USHORT VariantToUSHORT(VARIANT* pvValue)
 
 void SetODSProperty(ODS::Property& prop, ULONG ulId, const TCHAR* szName, const std::string& szValue, short type)
 {
-
+	VARIANT vValue;
+	prop.SetFlag(ODS::Property::PROP_FLAG_ACCESS_READ_ONLY, true);
+	prop.SetId(ulId);
+	prop.SetName(szName);
+	switch (type)
+	{
+	case SQL_CHAR:
+	case SQL_GUID:
+	case SQL_BINARY:
+		prop.SetStrValue(szValue.c_str());
+		break;
+	case SQL_FLOAT:
+		::VariantInit(&vValue);
+		vValue.vt = VT_R8;
+		vValue.dblVal = std::stod(szValue);
+		prop.SetVarValue(&vValue);
+		::VariantClear(&vValue);
+		break;
+	case SQL_REAL:
+		::VariantInit(&vValue);
+		vValue.vt = VT_R8;
+		vValue.fltVal = std::stof(szValue);
+		prop.SetVarValue(&vValue);
+		::VariantClear(&vValue);
+		break;
+	case SQL_BIT:
+		::VariantInit(&vValue);
+		vValue.vt = VT_BOOL;
+		vValue.bVal = std::stoi(szValue);
+		prop.SetVarValue(&vValue);
+		::VariantClear(&vValue);
+		break;
+	case SQL_INTEGER:
+		::VariantInit(&vValue);
+		vValue.vt = VT_INT;
+		vValue.intVal = std::stoi(szValue);
+		prop.SetVarValue(&vValue);
+		::VariantClear(&vValue);
+		break;
+	case SQL_SMALLINT:
+	case SQL_TINYINT:
+		::VariantInit(&vValue);
+		vValue.vt = VT_INT;
+		vValue.iVal = std::stoi(szValue);
+		prop.SetVarValue(&vValue);
+		::VariantClear(&vValue);
+		break;
+	case SQL_BIGINT:
+		::VariantInit(&vValue);
+		vValue.vt = VT_INT;
+		vValue.llVal = std::stoll(szValue);
+		prop.SetVarValue(&vValue);
+		::VariantClear(&vValue);
+		break;
+	case SQL_INTERVAL_SECOND:
+		::VariantInit(&vValue);
+		vValue.vt = VT_UI8;
+		vValue.ullVal = std::stoull(szValue);
+		prop.SetVarValue(&vValue);
+		::VariantClear(&vValue);
+		break;
+	case SQL_TYPE_TIMESTAMP:
+		::VariantInit(&vValue);
+		vValue.vt = VT_UI8;
+		vValue.ullVal = std::stoull(szValue);
+		prop.SetVarValue(&vValue);
+		::VariantClear(&vValue);
+		break;
+	default:
+		break;
+	}
 }
 

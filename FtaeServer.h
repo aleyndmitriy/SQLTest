@@ -3,6 +3,7 @@
 #include "ISettingsDataSource.h"
 #include<memory>
 #include"DatabaseInfoDAO.h"
+#include"ConditionRecordsDAO.h"
 #include "HdaFunction.h"
 #include "HdaFunctionResult.h"
 #include "Property.h"
@@ -10,7 +11,7 @@
 class FtaeServer final : public ODS::IServerFtae {
 public:
 	FtaeServer() = delete;
-	FtaeServer(const std::shared_ptr<DrvFtaeAlarm::ISettingsDataSource>& settingsDataSource, const std::shared_ptr<DrvFtaeAlarm::DatabaseInfoDAO>& databaseInfo);
+	FtaeServer(const std::shared_ptr<DrvFtaeAlarm::ISettingsDataSource>& settingsDataSource, const std::shared_ptr<DrvFtaeAlarm::DatabaseInfoDAO>& databaseInfo, const std::shared_ptr<DrvFtaeAlarm::ConditionRecordsDAO>& recordsInfo);
 	FtaeServer(const FtaeServer& src) = delete;
 	FtaeServer(FtaeServer&& src) = delete;
 	FtaeServer& operator=(const FtaeServer& rhs) = delete;
@@ -25,12 +26,13 @@ public:
 private:
 	std::shared_ptr<DrvFtaeAlarm::ISettingsDataSource> _settingsDataSource;
 	std::shared_ptr<DrvFtaeAlarm::DatabaseInfoDAO> _databaseInfo;
+	const std::shared_ptr<DrvFtaeAlarm::ConditionRecordsDAO> _recordsInfo;
 	std::string cfgString;
 	int GetCmdParameterList(ODS::HdaCommand* pCommand, SYSTEMTIME& rStartTime, SYSTEMTIME& rEndTime);
 	int GetFuncParameterList(ODS::HdaFunction* pFunc, std::string& szSqc, std::vector<DrvFtaeAlarm::PRIORITY_FILTER>& filterList,
 		std::vector<std::string>& staticFilterList);
 	int BuildFuncResult(ODS::HdaFunctionResult* pFuncResult, const std::vector<DrvFtaeAlarm::Record>& rRecordList);
-	std::map<std::string, DrvFtaeAlarm::PropertyType> LoadAttributes();
+	std::vector<DrvFtaeAlarm::Record> LoadEvents(std::vector<std::string> filters);
 };
 
 USHORT VariantToUSHORT(VARIANT* pvValue);
