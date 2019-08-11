@@ -104,6 +104,8 @@ void DrvFtaeAlarm::LoginViewController::ShowView()
 }
 
 void DrvFtaeAlarm::LoginViewController::HideView() {
+
+	presenter->SaveSettings();
 	ShowWindow(window, SW_HIDE);
 }
 

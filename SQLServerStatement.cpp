@@ -149,6 +149,12 @@ std::vector<DrvFtaeAlarm::Record> DrvFtaeAlarm::SQLServerStatement::Execute()
 		if (coltype > SQL_GUID && coltype < SQL_BIT) {
 			coltype = SQL_CHAR;
 		}
+		if (coltype == SQL_FLOAT) {
+			coltype = SQL_C_FLOAT;
+		}
+		if (coltype == SQL_BIGINT) {
+			coltype = SQL_C_UBIGINT;
+		}
 		colname[colnamelen] = '\0';
 		res = SQLColAttribute(sqlStmt, colIndex + 1, SQL_DESC_DISPLAY_SIZE, NULL, 0, NULL, &displaysize);
 		if (!SQL_SUCCEEDED(res)) {
@@ -161,6 +167,7 @@ std::vector<DrvFtaeAlarm::Record> DrvFtaeAlarm::SQLServerStatement::Execute()
 		bindingArray[colIndex].dataType = coltype;
 		bindingArray[colIndex].iBufferLength = max(displaysize, *(collen + colIndex));
 		bindingArray[colIndex].ptrDataValue = std::unique_ptr<char[]>(new char[bindingArray[colIndex].iBufferLength]);
+		bindingArray[colIndex].ptrDataValue[bindingArray[colIndex].iBufferLength - 1] = '\0';
 		res = SQLBindCol(sqlStmt, colIndex + 1, coltype, bindingArray[colIndex].ptrDataValue.get(), bindingArray[colIndex].iBufferLength, &(bindingArray[colIndex].iStrLenOrIndex));
 		if (!SQL_SUCCEEDED(res)) {
 			HandleDiagnosticRecord();
@@ -174,12 +181,87 @@ std::vector<DrvFtaeAlarm::Record> DrvFtaeAlarm::SQLServerStatement::Execute()
 		Record record;
 		for (SQLSMALLINT colIndex = 0; colIndex < shNumberOfColumns; colIndex++) {
 			std::string dataString;
-			if (bindingArray[colIndex].iStrLenOrIndex != SQL_NO_DATA) {
-				dataString = std::string(bindingArray[colIndex].ptrDataValue.get());
+			if (bindingArray[colIndex].iStrLenOrIndex != SQL_NO_DATA && bindingArray[colIndex].iStrLenOrIndex != SQL_NULL_DATA) {
+				dataString = DataToString(bindingArray[colIndex].ptrDataValue.get(), bindingArray[colIndex].dataType);
 			}
 			record.insert(bindingArray[colIndex].colName, bindingArray[colIndex].dataType, dataString);
 		}
 		recordSet.push_back(record);
 	}
 	return recordSet;
+}
+
+std::string DrvFtaeAlarm::SQLServerStatement::DataToString(char* data, SQLSMALLINT type) {
+
+	std::string str;
+	int* ptrInt = nullptr;
+	int iData = 0;
+	unsigned char* ptrCh = nullptr;
+	unsigned char ch;
+	long long* ptrLong = nullptr;
+	long long lData = 0;
+	SQLGUID* guid = nullptr;
+	WCHAR strGuide[MAX_UUID_LENGTH];
+	TIMESTAMP_STRUCT* ptrTime = nullptr;
+	TIME_STRUCT* ptrHour = nullptr;
+	DATE_STRUCT* ptrDay = nullptr;
+	int res = 0;
+	switch (type)
+	{
+	case SQL_C_LONG:
+	case SQL_C_SHORT:
+	case SQL_C_TINYINT:
+		ptrInt = reinterpret_cast<int*>(data);
+		iData = *ptrInt;
+		return std::to_string(iData);
+		break;
+	case SQL_C_BIT:
+		ptrCh = reinterpret_cast<unsigned char*>(data);
+		ch = *ptrCh;
+		if (ch > 0) {
+			return std::to_string((int)1);
+		}
+		else {
+			return std::to_string((int)0);
+		}
+		break;
+	case SQL_C_UBIGINT:
+	case SQL_C_INTERVAL_SECOND:
+		ptrLong = reinterpret_cast<long long*>(data);
+		lData = *ptrLong;
+		return std::to_string(lData);
+		break;
+	case SQL_C_CHAR:
+	case SQL_C_BINARY:
+		return std::string(data);
+		break;
+	case SQL_C_GUID:
+		guid = reinterpret_cast<SQLGUID*>(data);
+		strGuide[MAX_UUID_LENGTH - 1] = L'\0';
+		res = StringFromGUID2(*guid, strGuide, MAX_UUID_LENGTH);
+		return std::string(Wstr2Str(std::wstring(strGuide)));
+		break;
+	case SQL_C_TYPE_TIMESTAMP:
+		ptrTime = reinterpret_cast<TIMESTAMP_STRUCT*>(data);
+		str = std::to_string(ptrTime->year) + std::string("-") + std::to_string(ptrTime->month) + std::string("-") +
+			std::to_string(ptrTime->day) + std::string(" ") + std::to_string(ptrTime->hour) + std::string(":") + std::to_string(ptrTime->minute) +
+			std::string(":") + std::to_string(ptrTime->second) + std::string(".") + std::to_string(ptrTime->fraction);
+		return str;
+		break;
+	case SQL_C_TYPE_TIME:
+		ptrHour = reinterpret_cast<TIME_STRUCT*>(data);
+		str =  std::to_string(ptrHour->hour) + std::string(":") + std::to_string(ptrHour->minute) +
+			std::string(":") + std::to_string(ptrHour->second);
+		return str;
+		break;
+	case SQL_C_TYPE_DATE:
+		ptrDay = reinterpret_cast<DATE_STRUCT*>(data);
+		str = std::to_string(ptrDay->year) + std::string("-") + std::to_string(ptrDay->month) + std::string("-") +
+			std::to_string(ptrDay->day);
+		return str;
+		break;
+	default:
+		return str;
+		break;
+	}
 }

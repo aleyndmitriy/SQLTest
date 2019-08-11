@@ -20,8 +20,11 @@ void DrvFtaeAlarm::LoginPresenter::SetViewInput(std::shared_ptr<ILoginViewInput>
 void DrvFtaeAlarm::LoginPresenter::viewIsReady()
 {
 	_database->OpenConnection();
-	_database->loadServerInstances("SQL Server Native Client 11.0");
 	_settingsDataSource->Load(attributes);
+	if (attributes.driver.empty()) {
+		attributes.driver = std::string("SQL Server Native Client 11.0");
+	}
+	_database->loadServerInstances(attributes.driver);
 	std::shared_ptr< ILoginViewInput> ptrView = view.lock();
 	if (ptrView) {
 		ptrView->LoadConnectionSettings(attributes);
@@ -118,5 +121,7 @@ void  DrvFtaeAlarm::LoginPresenter::SetConnection()
 
 void DrvFtaeAlarm::LoginPresenter::SaveSettings()
 {
-	_settingsDataSource->Save(attributes);
+	if (!attributes.driver.empty() && !attributes.serverName.empty() && !attributes.loginName.empty() && !attributes.password.empty() && !attributes.databaseName.empty()) {
+		_settingsDataSource->Save(attributes);
+	}
 }

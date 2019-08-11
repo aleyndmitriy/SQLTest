@@ -33,5 +33,6 @@ namespace DrvFtaeAlarm {
 		void freeStatement();
 		void allocateStatement();
 		void HandleDiagnosticRecord();
+		std::string DataToString(char* data, SQLSMALLINT type);
 	};
 }

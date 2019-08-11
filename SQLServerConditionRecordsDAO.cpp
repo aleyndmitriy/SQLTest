@@ -17,6 +17,22 @@ std::vector<DrvFtaeAlarm::Record> DrvFtaeAlarm::SQLServerConditionRecordsDAO::Ge
 		return records;
 	}
 	std::string querry = ConvertStatementsConditionToSQL(table,conditions);
+	HANDLE hFile = CreateFile("SQLQuerry.sql", GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (hFile == INVALID_HANDLE_VALUE)
+	{
+		return records;
+	}
+	BOOL isWrite = FALSE;
+	DWORD posPointer = 0;
+	size_t sz;
+	isWrite = WriteFile(hFile, querry.c_str(), querry.size() + 1, &posPointer, NULL);
+	if (posPointer != querry.size() + 1) {
+		CloseHandle(hFile);
+		hFile = INVALID_HANDLE_VALUE;
+		return records;
+	}
+	CloseHandle(hFile);
+	hFile = INVALID_HANDLE_VALUE;
 	std::vector<std::string> params = { };
 	records = _databaseEngine->ExecuteStatement(querry, params);
 	return records;
@@ -26,11 +42,13 @@ std::string DrvFtaeAlarm::SQLServerConditionRecordsDAO::ConvertStatementsConditi
 {
 	std::string sql = std::string("SELECT ");
 	for (SQLTable::const_iterator itr = table.cbegin(); itr != table.cend(); ++itr) {
-		sql += std::string(" ") + table.GetFullName() + std::string(".") + itr->first;
+		sql += std::string(" ") + table.GetFullName() + std::string(".") + itr->first + std::string(", ");
 	}
+	sql.erase(sql.size() - 2, 2);
 	sql += std::string(" FROM ") + table.GetFullName() + std::string(" WHERE ");
 	std::vector<StatementCondition>::const_iterator itr = conditions.cbegin();
 	sql += ConvertStatementConditionToSQL(table, *itr);
+	++itr;
 	while(itr != conditions.cend()) {
 		switch (itr->GetCombineOperation()) {
 		case CombineOperation::COMBINEOP_AND:
@@ -66,34 +84,34 @@ std::string DrvFtaeAlarm::SQLServerConditionRecordsDAO::ConvertStatementConditio
 	}
 	switch (condition.GetConditionType()) {
 	case ConditionType::CONDTYPE_EQUAL:
-		sql += std::string("=") + val1;
+		sql += std::string(" = ") + val1;
 		break;
 	case ConditionType::CONDTYPE_LESS:
-		sql += std::string("<") + val1;
+		sql += std::string(" < ") + val1;
 		break;
 	case ConditionType::CONDTYPE_GREATER:
-		sql += std::string(">") + val1;
+		sql += std::string(" > ") + val1;
 		break;
 	case ConditionType::CONDTYPE_LESSEQUAL:
-		sql += std::string("<=") + val1;
+		sql += std::string(" <= ") + val1;
 		break;
 	case ConditionType::CONDTYPE_GREATEREQUAL:
-		sql += std::string(">=") + val1;
+		sql += std::string(" >= ") + val1;
 		break;
 	case ConditionType::CONDTYPE_NOTEQUAL:
-		sql += std::string("!=") + val1;
+		sql += std::string(" != ") + val1;
 		break;
 	case ConditionType::CONDTYPE_BETWEEN:
-		sql += std::string("BETWEEN") + val1 + std::string("AND") + val2;
+		sql += std::string(" BETWEEN ") + val1 + std::string(" AND ") + val2;
 		break;
 	case ConditionType::CONDTYPE_ISNULL:
-		sql += std::string("IS NULL");
+		sql += std::string(" IS NULL ");
 		break;
 	case ConditionType::CONDTYPE_ISNOTNULL:
-		sql += std::string("IS NOT NULL");
+		sql += std::string(" IS NOT NULL ");
 		break;
 	case ConditionType::CONDTYPE_LIKE:
-		sql += std::string("'") + condition.GetValue1() + std::string("%'");
+		sql += std::string(" LIKE ") + std::string(" '") + condition.GetValue1() + std::string("%' ");
 		break;
 	default:
 		break;

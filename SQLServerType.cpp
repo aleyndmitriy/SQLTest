@@ -84,7 +84,7 @@ SQLSMALLINT  DrvFtaeAlarm::GetSQLServerTypeIdentifier(SQLServerType type)
 	switch (type)
 	{
 	case SQLServerType::UNIQUEIDENTIFIER:
-		return SQL_GUID;
+		return SQL_C_GUID;
 		break;
 	case SQLServerType::NVARCHAR:
 	case SQLServerType::VARCHAR:
@@ -94,43 +94,43 @@ SQLSMALLINT  DrvFtaeAlarm::GetSQLServerTypeIdentifier(SQLServerType type)
 	case SQLServerType::CHAR:
 	case SQLServerType::XML:
 	case SQLServerType::NUMERIC:
-		return SQL_CHAR;
+		return SQL_C_CHAR;
 		break;
 	case SQLServerType::DATE:
-		return SQL_TYPE_DATE;
+		return SQL_C_TYPE_DATE;
 		break;
 	case SQLServerType::TIME:
-		return SQL_TYPE_TIME;
+		return SQL_C_TYPE_TIME;
 		break;
 	case SQLServerType::DATETIME:
 	case SQLServerType::DATETIME2:
 	case SQLServerType::SMALLDATETIME:
-		return SQL_TYPE_TIMESTAMP;
+		return SQL_C_TYPE_TIMESTAMP;
 		break;
 	case SQLServerType::DATETIMEOFFSET:
-		return SQL_INTERVAL_SECOND;
+		return SQL_C_INTERVAL_SECOND;
 		break;
 	case SQLServerType::BINARY:
 	case SQLServerType::VARBINARY:
-		return SQL_BINARY;
+		return SQL_C_BINARY;
 		break;
 	case SQLServerType::INT:
-		return SQL_INTEGER;
+		return SQL_C_LONG;
 		break;
 	case SQLServerType::SMALLINT:
-		return SQL_SMALLINT;
+		return SQL_C_SHORT;
 		break;
 	case SQLServerType::TINYINT:
-		return SQL_TINYINT;
+		return SQL_C_TINYINT;
 		break;
 	case SQLServerType::BIGINT:
-		return SQL_BIGINT;
+		return SQL_C_UBIGINT;
 		break;
 	case SQLServerType::BIT:
-		return SQL_BIT;
+		return SQL_C_BIT;
 		break;
 	case SQLServerType::REAL:
-		return SQL_REAL;
+		return SQL_C_FLOAT;
 		break;
 	case SQLServerType::FLOAT:
 		return SQL_FLOAT;
@@ -146,26 +146,26 @@ DrvFtaeAlarm::PropertyType DrvFtaeAlarm::PropertyTypeFromString(const std::strin
 	SQLSMALLINT identifier = GetSQLServerTypeIdentifier(SQLServerTypesFromString(type));
 	switch (identifier)
 	{
-	case SQL_GUID:
-	case SQL_CHAR:
-	case SQL_BINARY:
+	case SQL_C_GUID:
+	case SQL_C_CHAR:
+	case SQL_C_BINARY:
 		return PropertyType::PROPTYPE_TEXT;
 		break;
-	case SQL_TYPE_DATE:
-	case SQL_TYPE_TIME:
-	case SQL_TYPE_TIMESTAMP:
+	case SQL_C_TYPE_DATE:
+	case SQL_C_TYPE_TIME:
+	case SQL_C_TYPE_TIMESTAMP:
 		return PropertyType::PROPTYPE_DATE;
 		break;
-	case SQL_INTEGER:
-	case SQL_SMALLINT:
-	case SQL_TINYINT:
-	case SQL_BIGINT:
-	case SQL_REAL:
+	case SQL_C_LONG:
+	case SQL_C_SHORT:
+	case SQL_C_TINYINT:
+	case SQL_C_UBIGINT:
+	case SQL_C_FLOAT:
 	case SQL_FLOAT:
-	case SQL_INTERVAL_SECOND:
+	case SQL_C_INTERVAL_SECOND:
 		return PropertyType::PROPTYPE_NUMERIC;
 		break;
-	case SQL_BIT:
+	case SQL_C_BIT:
 		return PropertyType::PROPTYPE_BOOLEAN;
 		break;
 	default:

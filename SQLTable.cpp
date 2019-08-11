@@ -38,6 +38,11 @@ std::string DrvFtaeAlarm::SQLTable::GetFullName() const
 	}
 }
 
+void DrvFtaeAlarm::SQLTable::SetSchemaName(std::string schemaName)
+{
+	_schemaName = schemaName;
+}
+
 bool DrvFtaeAlarm::SQLTable::InsertColumn(const std::string& columnName, const std::string& columnType)
 {
 	std::pair<std::string, std::string> val = std::make_pair<std::string, std::string>(std::string(columnName), std::string(columnType));

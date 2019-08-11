@@ -39,7 +39,7 @@ std::unique_ptr<DrvFtaeAlarm::SQLTable> DrvFtaeAlarm::SQLServerDatabaseInfoDAO::
 	if (!_databaseEngine->OpenConnectionIfNeeded(attributes)) {
 		return nullptr;
 	}
-	std::string querry = std::string("SELECT COLUMN_NAME, DATA_TYPE FROM Information_schema.Columns WHERE TABLE_NAME = '") + tableName + std::string("';");
+	std::string querry = std::string("SELECT COLUMN_NAME, DATA_TYPE, TABLE_SCHEMA FROM Information_schema.Columns WHERE TABLE_NAME = '") + tableName + std::string("';");
 	std::vector<std::string> vec = { };
 	std::vector<Record> records = _databaseEngine->ExecuteStatement(querry, vec);
 	if (records.empty()) {
@@ -49,8 +49,10 @@ std::unique_ptr<DrvFtaeAlarm::SQLTable> DrvFtaeAlarm::SQLServerDatabaseInfoDAO::
 	for (std::vector<Record>::const_iterator itr = records.cbegin(); itr != records.cend(); ++itr) {
 		Record::const_iterator recordItrColName = itr->findColumnValue("COLUMN_NAME");
 		Record::const_iterator recordItrColType = itr->findColumnValue("DATA_TYPE");
-		if (recordItrColName != itr->cend() && recordItrColType != itr->cend()) {
+		Record::const_iterator recordItrColSchema = itr->findColumnValue("TABLE_SCHEMA");
+		if (recordItrColName != itr->cend() && recordItrColType != itr->cend() && recordItrColSchema != itr->cend()) {
 			ptrData->InsertColumn(recordItrColName->second.second, recordItrColType->second.second);
+			ptrData->SetSchemaName(recordItrColSchema->second.second);
 		}
 	}
 	return ptrData;

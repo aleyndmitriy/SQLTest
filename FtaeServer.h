@@ -23,6 +23,7 @@ public:
 	int IsHdaFunctionSupported(int nFuncType) override;
 	int Execute(ODS::HdaCommand* pCommand, ODS::HdaCommandResult** ppResult) override;
 	int DestroyResult(ODS::HdaCommandResult* pResult) override;
+	std::vector<DrvFtaeAlarm::Record> LoadEvents(std::vector<std::string> filters);
 private:
 	std::shared_ptr<DrvFtaeAlarm::ISettingsDataSource> _settingsDataSource;
 	std::shared_ptr<DrvFtaeAlarm::DatabaseInfoDAO> _databaseInfo;
@@ -32,7 +33,6 @@ private:
 	int GetFuncParameterList(ODS::HdaFunction* pFunc, std::string& szSqc, std::vector<DrvFtaeAlarm::PRIORITY_FILTER>& filterList,
 		std::vector<std::string>& staticFilterList);
 	int BuildFuncResult(ODS::HdaFunctionResult* pFuncResult, const std::vector<DrvFtaeAlarm::Record>& rRecordList);
-	std::vector<DrvFtaeAlarm::Record> LoadEvents(std::vector<std::string> filters);
 };
 
 USHORT VariantToUSHORT(VARIANT* pvValue);

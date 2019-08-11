@@ -1,6 +1,7 @@
 #include"FiltersPresenter.h"
+#include "SQLServerType.h"
 
-DrvFtaeAlarm::FiltersPresenter::FiltersPresenter(const std::shared_ptr<DatabaseEngine>& database, const std::shared_ptr<ISettingsDataSource>& settingsDataSource) :view(), _database(database), _settingsDataSource(settingsDataSource)
+DrvFtaeAlarm::FiltersPresenter::FiltersPresenter(const std::shared_ptr<DatabaseEngine>& database, const std::shared_ptr<DatabaseInfoDAO>& databaseInfoDAO, const std::shared_ptr<ISettingsDataSource>& settingsDataSource) :view(), _database(database),_databaseInfoDAO(databaseInfoDAO), _settingsDataSource(settingsDataSource)
 {
 	
 }
@@ -9,6 +10,7 @@ DrvFtaeAlarm::FiltersPresenter::~FiltersPresenter()
 {
 	view.reset();
 	_database.reset();
+	_databaseInfoDAO.reset();
 	_settingsDataSource.reset();
 }
 
@@ -20,16 +22,16 @@ void DrvFtaeAlarm::FiltersPresenter::SetViewInput(std::shared_ptr<IFiltersViewIn
 void DrvFtaeAlarm::FiltersPresenter::viewIsReady()
 {
 	std::map< std::string, PropertyType> properties;
-	std::pair<std::string, PropertyType> pair1 = std::make_pair<std::string, PropertyType>(std::string("columnName1"),PropertyType::PROPTYPE_TEXT);
-	properties.insert(pair1);
-	std::pair<std::string, PropertyType> pair2 = std::make_pair<std::string, PropertyType>(std::string("columnName2"), PropertyType::PROPTYPE_NUMERIC);
-	properties.insert(pair2);
-	std::pair<std::string, PropertyType> pair3 = std::make_pair<std::string, PropertyType>(std::string("columnName3"), PropertyType::PROPTYPE_BOOLEAN);
-	properties.insert(pair3);
-	std::pair<std::string, PropertyType> pair4 = std::make_pair<std::string, PropertyType>(std::string("columnName4"), PropertyType::PROPTYPE_DATE);
-	properties.insert(pair4);
-	std::pair<std::string, PropertyType> pair5 = std::make_pair<std::string, PropertyType>(std::string("columnName4"), PropertyType::PROPTYPE_TEXT);
-	properties.insert(pair5);
+	ConnectionAttributes attributes;
+	if (!attributes.serverName.empty() && !attributes.loginName.empty() && !attributes.password.empty()) {
+		_settingsDataSource->Load(attributes);
+		std::unique_ptr<SQLTable> table = _databaseInfoDAO->GetTableInfo(attributes, attributes.databaseName, std::string("ConditionEvent"));
+		for (SQLTable::const_iterator itr = table->cbegin(); itr != table->cend(); ++itr) {
+			std::pair<std::string, PropertyType> pair = std::make_pair<std::string, PropertyType>(std::string(itr->first), PropertyTypeFromString(itr->second));
+			properties.insert(pair);
+		}
+	}
+	
 	std::map<std::pair<std::string, bool>, std::vector<StatementCondition> > loadFilters;
 	_settingsDataSource->Load(loadFilters);
 	for (std::map<std::pair<std::string, bool>, std::vector<StatementCondition> >::const_iterator itr = loadFilters.cbegin(); itr != loadFilters.cend(); ++itr) {
@@ -37,7 +39,9 @@ void DrvFtaeAlarm::FiltersPresenter::viewIsReady()
 	}
 	std::shared_ptr<IFiltersViewInput> ptrView = view.lock();
 	if (ptrView) {
-		ptrView->LoadPropertiesList(properties);
+		if (!properties.empty()) {
+			ptrView->LoadPropertiesList(properties);
+		}
 		for (FiltersIterator itr = filters.begin(); itr != filters.end(); ++itr)
 		{
 			ptrView->AddFilter(itr->first);
@@ -152,4 +156,22 @@ void DrvFtaeAlarm::FiltersPresenter::SaveFilters()
 		savingFilters.insert(val);
 	}
 	bSaved = _settingsDataSource->Save(savingFilters);
+}
+
+void DrvFtaeAlarm::FiltersPresenter::LoadProperties() {
+	
+	ConnectionAttributes attributes;
+	_settingsDataSource->Load(attributes);
+	if (!attributes.serverName.empty() && !attributes.loginName.empty() && !attributes.password.empty()) {
+		std::map< std::string, PropertyType> properties;
+		std::unique_ptr<SQLTable> table = _databaseInfoDAO->GetTableInfo(attributes, attributes.databaseName, std::string("ConditionEvent"));
+		for (SQLTable::const_iterator itr = table->cbegin(); itr != table->cend(); ++itr) {
+			std::pair<std::string, PropertyType> pair = std::make_pair<std::string, PropertyType>(std::string(itr->first), PropertyTypeFromString(itr->second));
+			properties.insert(pair);
+		}
+		std::shared_ptr<IFiltersViewInput> ptrView = view.lock();
+		if (ptrView) {
+			ptrView->LoadPropertiesList(properties);
+		}
+	}
 }

@@ -599,6 +599,13 @@ void DrvFtaeAlarm::FiltersViewController::CreateConditionComboBoolean()
 	SendMessage(hComboControl, CB_SETITEMDATA, pos, (LPARAM)ConditionType::CONDTYPE_ISNOTNULL);
 }
 
+void DrvFtaeAlarm::FiltersViewController::LoadColumnsName()
+{
+	if (_properties.empty()) {
+		presenter->LoadProperties();
+	}
+}
+
 INT_PTR WINAPI FiltersDlg_Proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	LPNMLISTVIEW itemView;
@@ -627,6 +634,9 @@ INT_PTR WINAPI FiltersDlg_Proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 		case IDC_COMBO_PROPERTY:
 			switch (HIWORD(wParam))
 			{
+			case CBN_DROPDOWN:
+				controller->LoadColumnsName();
+				break;
 			case CBN_SELCHANGE:
 				controller->ChooseConditionProperty();
 				break;

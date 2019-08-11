@@ -22,6 +22,7 @@ namespace DrvFtaeAlarm {
 		~SQLTable();
 		std::string GetTableName() const;
 		std::string GetSchemaName() const;
+		void SetSchemaName(std::string schemaName);
 		std::string GetFullName() const;
 		bool InsertColumn(const std::string& columnName, const std::string& columnType);
 		std::string& at(std::string columnName);

@@ -335,9 +335,14 @@ std::vector<DrvFtaeAlarm::Record> FtaeServer::LoadEvents(std::vector<std::string
 	std::vector<DrvFtaeAlarm::StatementCondition> conditions;
 
 	for (std::vector<std::string>::const_iterator itr = filters.cbegin(); itr != filters.cend(); ++itr) {
-		
+		for (std::map<std::pair<std::string, bool>, std::vector<DrvFtaeAlarm::StatementCondition> >::const_iterator mapItr = loadedFilters.cbegin();
+			mapItr != loadedFilters.cend(); ++mapItr) {
+			if (mapItr->first.first == *itr) {
+				conditions.insert(conditions.cend(), mapItr->second.cbegin(), mapItr->second.cend());
+			}
+		}
 	}
-	std::unique_ptr<DrvFtaeAlarm::SQLTable> table = _databaseInfo->GetTableInfo(attributes, std::string(), std::string("ConditionEvent"));
+	std::unique_ptr<DrvFtaeAlarm::SQLTable> table = _databaseInfo->GetTableInfo(attributes, std::string("FTAE"), std::string("ConditionEvent"));
 	records = _recordsInfo->GetRecords(*table, attributes, conditions);
 	
 	return records;
