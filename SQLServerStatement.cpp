@@ -200,6 +200,8 @@ std::string DrvFtaeAlarm::SQLServerStatement::DataToString(char* data, SQLSMALLI
 	unsigned char ch;
 	long long* ptrLong = nullptr;
 	long long lData = 0;
+	float* ptrFloat = nullptr;
+	float fData = 0.0;
 	SQLGUID* guid = nullptr;
 	WCHAR strGuide[MAX_UUID_LENGTH];
 	TIMESTAMP_STRUCT* ptrTime = nullptr;
@@ -259,6 +261,12 @@ std::string DrvFtaeAlarm::SQLServerStatement::DataToString(char* data, SQLSMALLI
 		str = std::to_string(ptrDay->year) + std::string("-") + std::to_string(ptrDay->month) + std::string("-") +
 			std::to_string(ptrDay->day);
 		return str;
+		break;
+	case SQL_C_FLOAT:
+	case SQL_FLOAT:
+		ptrFloat = reinterpret_cast<float*>(data);
+		fData = *ptrFloat;
+		return std::to_string(fData);
 		break;
 	default:
 		return str;

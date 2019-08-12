@@ -44,6 +44,9 @@ void* FtaeServer::GetInterface()
 
 int FtaeServer::IsHdaFunctionSupported(int nFuncType)
 {
+	if (nFuncType == ODS::HdaFunctionType::ALARM_LIST)
+		return 1;
+
 	return 0;
 }
 
@@ -401,14 +404,15 @@ USHORT VariantToUSHORT(VARIANT* pvValue)
 void SetODSProperty(ODS::Property& prop, ULONG ulId, const TCHAR* szName, const std::string& szValue, short type)
 {
 	VARIANT vValue;
+	float val = 0.0;
 	prop.SetFlag(ODS::Property::PROP_FLAG_ACCESS_READ_ONLY, true);
 	prop.SetId(ulId);
 	prop.SetName(szName);
 	switch (type)
 	{
-	case SQL_CHAR:
-	case SQL_GUID:
-	case SQL_BINARY:
+	case SQL_C_CHAR:
+	case SQL_C_GUID:
+	case SQL_C_BINARY:
 		prop.SetStrValue(szValue.c_str());
 		break;
 	case SQL_FLOAT:
@@ -418,50 +422,53 @@ void SetODSProperty(ODS::Property& prop, ULONG ulId, const TCHAR* szName, const 
 		prop.SetVarValue(&vValue);
 		::VariantClear(&vValue);
 		break;
-	case SQL_REAL:
+	case SQL_C_FLOAT:
 		::VariantInit(&vValue);
 		vValue.vt = VT_R8;
-		vValue.fltVal = std::stof(szValue);
+		val = std::stof(szValue);
+		vValue.fltVal = val;
 		prop.SetVarValue(&vValue);
 		::VariantClear(&vValue);
 		break;
-	case SQL_BIT:
+	case SQL_C_BIT:
 		::VariantInit(&vValue);
 		vValue.vt = VT_BOOL;
 		vValue.bVal = std::stoi(szValue);
 		prop.SetVarValue(&vValue);
 		::VariantClear(&vValue);
 		break;
-	case SQL_INTEGER:
+	case SQL_C_LONG:
 		::VariantInit(&vValue);
 		vValue.vt = VT_INT;
 		vValue.intVal = std::stoi(szValue);
 		prop.SetVarValue(&vValue);
 		::VariantClear(&vValue);
 		break;
-	case SQL_SMALLINT:
-	case SQL_TINYINT:
+	case SQL_C_SHORT:
+	case SQL_C_TINYINT:
 		::VariantInit(&vValue);
 		vValue.vt = VT_INT;
 		vValue.iVal = std::stoi(szValue);
 		prop.SetVarValue(&vValue);
 		::VariantClear(&vValue);
 		break;
-	case SQL_BIGINT:
+	case SQL_C_UBIGINT:
 		::VariantInit(&vValue);
 		vValue.vt = VT_INT;
 		vValue.llVal = std::stoll(szValue);
 		prop.SetVarValue(&vValue);
 		::VariantClear(&vValue);
 		break;
-	case SQL_INTERVAL_SECOND:
+	case SQL_C_INTERVAL_SECOND:
 		::VariantInit(&vValue);
 		vValue.vt = VT_UI8;
 		vValue.ullVal = std::stoull(szValue);
 		prop.SetVarValue(&vValue);
 		::VariantClear(&vValue);
 		break;
-	case SQL_TYPE_TIMESTAMP:
+	case SQL_C_TYPE_TIMESTAMP:
+	case SQL_C_TYPE_TIME:
+	case SQL_C_TYPE_DATE:
 		::VariantInit(&vValue);
 		vValue.vt = VT_UI8;
 		vValue.ullVal = std::stoull(szValue);
