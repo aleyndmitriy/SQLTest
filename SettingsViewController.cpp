@@ -18,13 +18,13 @@ void DrvFtaeAlarm::SettingsViewController::setupInitialState()
 	iccex.dwICC = ICC_TAB_CLASSES;
 	InitCommonControlsEx(&iccex);
 	HWND hTabControl = GetDlgItem(window, IDC_TAB);
-	LoginInitializer::CreateModule(GetModuleHandle(NULL), shared_from_this());
+	LoginInitializer::CreateModule(GetModuleHandle("Drv_Ftae_HdaAlarm.dll"), shared_from_this());
 	TCITEM tia;
 	tia.mask = TCIF_TEXT;
 	TCHAR header1[] = "Configuration";
 	tia.pszText = header1;
 	TabCtrl_InsertItem(hTabControl, 0, &tia);
-	FiltersInitializer::CreateModule(GetModuleHandle(NULL), shared_from_this());
+	FiltersInitializer::CreateModule(GetModuleHandle("Drv_Ftae_HdaAlarm.dll"), shared_from_this());
 	TCHAR header2[] = "Filters";
 	tia.pszText = header2;
 	TabCtrl_InsertItem(hTabControl, 1, &tia);

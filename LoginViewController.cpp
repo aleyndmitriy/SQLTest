@@ -11,6 +11,12 @@ void DrvFtaeAlarm::LoginViewController::setupInitialState()
 {
 	presenter->SetViewInput(shared_from_this());
 	presenter->viewIsReady();
+	HWND hComboControl = GetDlgItem(window, IDC_COMBO_AUTH_TYPE);
+	SendMessage(hComboControl, CB_RESETCONTENT, 0, 0);
+	int pos = SendMessage(hComboControl, CB_ADDSTRING, 0, (LPARAM)TEXT("Windows Authentication"));
+	SendMessage(hComboControl, CB_SETITEMDATA, pos, (LPARAM)0);
+	pos = SendMessage(hComboControl, CB_ADDSTRING, 0, (LPARAM)TEXT("SQL Server Authentication"));
+	SendMessage(hComboControl, CB_SETITEMDATA, pos, (LPARAM)1);
 }
 
 DrvFtaeAlarm::LoginViewController::~LoginViewController()
@@ -34,7 +40,7 @@ void DrvFtaeAlarm::LoginViewController::AddToParentView()
 
 void DrvFtaeAlarm::LoginViewController::LoadSeverInstances()
 {
-	presenter->FindServerList();
+	presenter->ConnectToDriver();
 }
 void DrvFtaeAlarm::LoginViewController::VerifyLogin()
 {
@@ -75,7 +81,25 @@ void DrvFtaeAlarm::LoginViewController::ConnectToServer()
 
 void DrvFtaeAlarm::LoginViewController::ChooseAuthentication()
 {
-
+	HWND hComboControl = GetDlgItem(window, IDC_COMBO_AUTH_TYPE);
+	int index = (int)SendMessage(hComboControl, CB_GETCURSEL, 0, 0);
+	int res = SendMessage(hComboControl, CB_GETITEMDATA, index, 0);
+	HWND hloginControl = GetDlgItem(window, IDC_EDIT_USERNAME);
+	HWND hpassControl = GetDlgItem(window, IDC_EDIT_PASSWORD);
+	if (!res) {
+		SendMessage(hloginControl, EM_SETSEL, 0, -1);
+		SendMessage(hloginControl, WM_CLEAR, 0, 0);
+		SendMessage(hpassControl, EM_SETSEL, 0, -1);
+		SendMessage(hpassControl, WM_CLEAR, 0, 0);
+		EnableWindow(hloginControl, FALSE);
+		EnableWindow(hpassControl, FALSE);
+	}
+	else {
+		EnableWindow(hloginControl, TRUE);
+		EnableWindow(hpassControl, TRUE);
+	}
+	
+	presenter->GetAuthType(res);
 }
 
 void DrvFtaeAlarm::LoginViewController::ChooseDatabase()
@@ -86,9 +110,9 @@ void DrvFtaeAlarm::LoginViewController::ChooseDatabase()
 	presenter->GetDatabaseIndex(res);
 }
 
-void DrvFtaeAlarm::LoginViewController::ConnectToDatabase()
+void DrvFtaeAlarm::LoginViewController::CheckConnectionToDatabase()
 {
-	presenter->ConnectToDatabase();
+	presenter->CheckConnectToDatabase();
 }
 
 void DrvFtaeAlarm::LoginViewController::CloseView()
@@ -135,16 +159,7 @@ void DrvFtaeAlarm::LoginViewController::LoadDatabasesList(const std::vector<std:
 
 void DrvFtaeAlarm::LoginViewController::LoadConnectionSettings(const ConnectionAttributes& attributes)
 {
-	if (!attributes.loginName.empty()) {
-		SendDlgItemMessage(window, IDC_EDIT_USERNAME, EM_SETSEL, 0, -1);
-		SendDlgItemMessage(window, IDC_EDIT_USERNAME, WM_CLEAR, 0, 0);
-		SendDlgItemMessage(window, IDC_EDIT_USERNAME, WM_SETTEXT, 0, (LPARAM)(attributes.loginName.c_str()));
-	}
-	if (!attributes.password.empty()) {
-		SendDlgItemMessage(window, IDC_EDIT_PASSWORD, EM_SETSEL, 0, -1);
-		SendDlgItemMessage(window, IDC_EDIT_PASSWORD, WM_CLEAR, 0, 0);
-		SendDlgItemMessage(window, IDC_EDIT_PASSWORD, WM_SETTEXT, 0, (LPARAM)(attributes.password.c_str()));
-	}
+	
 	if (!attributes.serverName.empty()) {
 		LRESULT index = SendDlgItemMessage(window, IDC_COMBO_SERVER_NAME, CB_ADDSTRING, 0, (LPARAM)(attributes.serverName.c_str()));
 		SendDlgItemMessage(window, IDC_COMBO_SERVER_NAME, CB_SETCURSEL, (WPARAM)index, 0);
@@ -153,7 +168,27 @@ void DrvFtaeAlarm::LoginViewController::LoadConnectionSettings(const ConnectionA
 		LRESULT index = SendDlgItemMessage(window, IDC_COMBO_CONFIG_DATABASE_NAME, CB_ADDSTRING, 0, (LPARAM)(attributes.databaseName.c_str()));
 		SendDlgItemMessage(window, IDC_COMBO_CONFIG_DATABASE_NAME, CB_SETCURSEL, (WPARAM)index, 0);
 	}
-	presenter->SetConnection();
+	
+	HWND hloginControl = GetDlgItem(window, IDC_EDIT_USERNAME);
+	SendMessage(hloginControl, EM_SETSEL, 0, -1);
+	SendMessage(hloginControl, WM_CLEAR, 0, 0);
+	HWND hpassControl = GetDlgItem(window, IDC_EDIT_PASSWORD);
+	SendMessage(hpassControl, EM_SETSEL, 0, -1);
+	SendMessage(hpassControl, WM_CLEAR, 0, 0);
+	if (attributes.isSystemAuthentication) {
+		EnableWindow(hloginControl, FALSE);
+		EnableWindow(hpassControl, FALSE);
+	}
+	else {
+		EnableWindow(hloginControl,TRUE);
+		EnableWindow(hpassControl, TRUE);
+		if (!attributes.loginName.empty()) {
+			SendMessage(hloginControl, WM_SETTEXT, 0, (LPARAM)(attributes.loginName.c_str()));
+		}
+		if (!attributes.password.empty()) {
+			SendMessage(hpassControl, WM_SETTEXT, 0, (LPARAM)(attributes.password.c_str()));
+		}
+	}
 }
 
 void DrvFtaeAlarm::LoginViewController::SaveServerName()
@@ -170,9 +205,20 @@ void DrvFtaeAlarm::LoginViewController::SaveDatabaseName()
 	presenter->GetDatabaseName(std::string(base));
 }
 
+void DrvFtaeAlarm::LoginViewController::StartLoading()
+{
+	HCURSOR hCurs = LoadCursor(NULL, IDC_WAIT);
+	SetCursor(hCurs);
+}
+void DrvFtaeAlarm::LoginViewController::StopLoading()
+{
+	HCURSOR hCurs = LoadCursor(NULL, IDC_ARROW);
+	SetCursor(hCurs);
+}
+
 void DrvFtaeAlarm::LoginViewController::WarningMessage(std::string message)
 {
-
+	MessageBox(window,TEXT(message.c_str()),"Warning", MB_ICONWARNING);
 }
 
 INT_PTR WINAPI LoginDlg_Proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -238,11 +284,8 @@ INT_PTR WINAPI LoginDlg_Proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		case IDC_COMBO_AUTH_TYPE:
 			switch (HIWORD(wParam))
 			{
-			case CBN_EDITUPDATE:
-				controller->ChooseAuthentication();
-				break;
 			case CBN_SELCHANGE:
-				//controller->ConnectToServer();
+				controller->ChooseAuthentication();
 				break;
 			}
 			break;
@@ -270,7 +313,7 @@ INT_PTR WINAPI LoginDlg_Proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			switch (HIWORD(wParam))
 			{
 			case BN_CLICKED:
-				controller->ConnectToDatabase();
+				controller->CheckConnectionToDatabase();
 				break;
 			}
 			break;

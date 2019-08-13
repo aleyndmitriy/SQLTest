@@ -3,11 +3,11 @@
 bool DrvFtaeAlarm::operator==(const ConnectionAttributes& lhs, const ConnectionAttributes& rhs)
 {
 	return (lhs.driver == rhs.driver && lhs.serverName == rhs.serverName && lhs.loginName == rhs.loginName &&
-		lhs.password == rhs.password && lhs.databaseName == rhs.databaseName);
+		lhs.password == rhs.password && lhs.databaseName == rhs.databaseName && lhs.isSystemAuthentication == rhs.isSystemAuthentication);
 }
 
 bool DrvFtaeAlarm::operator!=(const ConnectionAttributes& lhs, const ConnectionAttributes& rhs)
 {
 	return (lhs.driver != rhs.driver || lhs.serverName != rhs.serverName || lhs.loginName != rhs.loginName ||
-		lhs.password != rhs.password || lhs.databaseName != rhs.databaseName);
+		lhs.password != rhs.password || lhs.databaseName != rhs.databaseName || lhs.isSystemAuthentication != rhs.isSystemAuthentication);
 }

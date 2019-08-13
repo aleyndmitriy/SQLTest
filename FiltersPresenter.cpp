@@ -160,18 +160,21 @@ void DrvFtaeAlarm::FiltersPresenter::SaveFilters()
 
 void DrvFtaeAlarm::FiltersPresenter::LoadProperties() {
 	
-	ConnectionAttributes attributes;
-	_settingsDataSource->Load(attributes);
-	if (!attributes.serverName.empty() && !attributes.loginName.empty() && !attributes.password.empty()) {
-		std::map< std::string, PropertyType> properties;
-		std::unique_ptr<SQLTable> table = _databaseInfoDAO->GetTableInfo(attributes, attributes.databaseName, std::string("ConditionEvent"));
-		for (SQLTable::const_iterator itr = table->cbegin(); itr != table->cend(); ++itr) {
-			std::pair<std::string, PropertyType> pair = std::make_pair<std::string, PropertyType>(std::string(itr->first), PropertyTypeFromString(itr->second));
-			properties.insert(pair);
-		}
-		std::shared_ptr<IFiltersViewInput> ptrView = view.lock();
-		if (ptrView) {
+	std::shared_ptr<IFiltersViewInput> ptrView = view.lock();
+	if (ptrView) {
+		ptrView->StartLoading();
+		ConnectionAttributes attributes;
+		_settingsDataSource->Load(attributes);
+		if (!attributes.serverName.empty() && !attributes.loginName.empty() && !attributes.password.empty()) {
+			std::map< std::string, PropertyType> properties;
+			std::unique_ptr<SQLTable> table = _databaseInfoDAO->GetTableInfo(attributes, attributes.databaseName, std::string("ConditionEvent"));
+			for (SQLTable::const_iterator itr = table->cbegin(); itr != table->cend(); ++itr) {
+				std::pair<std::string, PropertyType> pair = std::make_pair<std::string, PropertyType>(std::string(itr->first), PropertyTypeFromString(itr->second));
+				properties.insert(pair);
+			}
 			ptrView->LoadPropertiesList(properties);
 		}
+		ptrView->StopLoading();
 	}
+	
 }

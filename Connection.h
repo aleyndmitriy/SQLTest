@@ -13,6 +13,11 @@ namespace DrvFtaeAlarm {
 		ConnectToServer = 2,
 		ConnectToDatabase = 3
 	};
+	enum class AuthenticationType
+	{
+		System = 1,
+		Server = 2
+	};
 
 	class Connection : public IExtensible {
 	public:
@@ -29,7 +34,7 @@ namespace DrvFtaeAlarm {
 		virtual ~Connection() override;
 		ConnectionAttributes GetConnectionAttributes() const;
 		virtual bool ConnectToServerInstances(std::string driverName) = 0 ;
-		virtual bool ConnectToDatabaseInstances(std::string serverName, std::string login, std::string password) = 0;
+		virtual bool ConnectToDatabaseInstances(std::string serverName, std::string login, std::string password, AuthenticationType authType) = 0;
 		virtual bool ConnectToDatabase(std::string databaseName) = 0;
 		virtual std::vector<std::string> GetServerList() const = 0;
 		virtual std::vector<std::string> GetDatabaseList() const = 0;

@@ -11,6 +11,8 @@ namespace DrvFtaeAlarm {
 		virtual void AddCondition(const StatementCondition& condition, int index) = 0;
 		virtual void SelectedCondition(const StatementCondition& condition) = 0;
 		virtual void LoadPropertiesList(const std::map<std::string, PropertyType>& properties) = 0;
+		virtual void StartLoading() = 0;
+		virtual void StopLoading() = 0;
 		virtual ~IFiltersViewInput() {};
 	};
 }

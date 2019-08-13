@@ -29,7 +29,7 @@ namespace DrvFtaeAlarm {
 		~SQLServerConnection() override;
 		void* GetInterface() override;
 		bool ConnectToServerInstances(std::string driverName) override;
-		bool ConnectToDatabaseInstances(std::string serverName, std::string login, std::string password) override;
+		bool ConnectToDatabaseInstances(std::string serverName, std::string login, std::string password, AuthenticationType authType) override;
 		bool ConnectToDatabase(std::string databaseName) override;
 		std::vector<std::string> GetServerList() const override;
 		std::vector<std::string> GetDatabaseList() const override;

@@ -60,9 +60,18 @@ bool DrvFtaeAlarm::SQLServerDatabaseEngine::OpenConnectionIfNeeded(const Connect
 		case ConnectionStatus::ConnectToDriver:
 			if (attributes.driver == attr.driver) {
 				if (!attributes.serverName.empty()) {
-					isValid = loadDatabaseInstances(attributes.serverName, DatabaseEngine::AuthenticationType::Server, attributes.loginName, attributes.password);
+					AuthenticationType authtype = AuthenticationType::Server;
+					if (attributes.isSystemAuthentication) {
+						authtype = AuthenticationType::System;
+					}
+					isValid = loadDatabaseInstances(attributes.serverName, authtype, attributes.loginName, attributes.password);
 					if (isValid) {
-						return ChooseDatabase(attributes.databaseName);
+						if (attributes.databaseName.empty()) {
+							return isValid;
+						}
+						else {
+							return ChooseDatabase(attributes.databaseName);
+						}
 					}
 					else {
 						return false;
@@ -93,7 +102,7 @@ bool DrvFtaeAlarm::SQLServerDatabaseEngine::loadServerInstances(std::string driv
 
 bool DrvFtaeAlarm::SQLServerDatabaseEngine::loadDatabaseInstances(std::string serverName, AuthenticationType type, std::string user, std::string password)
 {
-	bool isConnect = connection->ConnectToDatabaseInstances(serverName, user, password);
+	bool isConnect = connection->ConnectToDatabaseInstances(serverName, user, password, type);
 	return isConnect;
 }
 
@@ -127,6 +136,15 @@ DrvFtaeAlarm::ConnectionAttributes DrvFtaeAlarm::SQLServerDatabaseEngine::GetCon
 	}
 	else {
 		return ConnectionAttributes();
+	}
+}
+
+DrvFtaeAlarm::ConnectionStatus DrvFtaeAlarm::SQLServerDatabaseEngine::GetConnectionStatus() const {
+	if (connection) {
+		return connection->GetConnectionStatus();
+	}
+	else {
+		return ConnectionStatus::NoConnect;
 	}
 }
 

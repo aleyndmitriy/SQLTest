@@ -9,11 +9,6 @@ namespace DrvFtaeAlarm {
 	class DatabaseEngine
 	{
 	public:
-		enum class AuthenticationType
-		{
-			System = 1,
-			Server = 2
-		};
 		virtual bool OpenConnection() = 0;
 		virtual bool OpenConnection(const ConnectionAttributes& attributes) = 0;
 		virtual bool OpenConnectionIfNeeded(const ConnectionAttributes& attributes) = 0;
@@ -23,6 +18,7 @@ namespace DrvFtaeAlarm {
 		virtual void CloseConnection() = 0;
 		virtual bool IsValidConnection() const = 0;
 		virtual ConnectionAttributes GetConnectionAttributes() const = 0;
+		virtual ConnectionStatus GetConnectionStatus() const = 0;
 		virtual std::vector<std::string> GetServersList() const = 0;
 		virtual std::vector<std::string> GetDatabasesList() const = 0;
 		virtual std::vector<Record> ExecuteStatement(const std::string& query, const std::vector<std::string>& parameters) = 0;

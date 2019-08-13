@@ -21,6 +21,8 @@ namespace DrvFtaeAlarm {
 		void LoadDatabasesList(const std::vector<std::string>& databases) override;
 		void LoadConnectionSettings(const ConnectionAttributes& attributes) override;
 		void WarningMessage(std::string message) override;
+		void StartLoading() override;
+		void StopLoading() override;
 		void AddToParentView() override;
 		void CloseView() override;
 		void ShowView() override;
@@ -37,7 +39,7 @@ namespace DrvFtaeAlarm {
 		void ConnectToServer();
 		void ChooseAuthentication();
 		void ChooseDatabase();
-		void ConnectToDatabase();
+		void CheckConnectionToDatabase();
 	private:
 		std::shared_ptr<ILoginViewOutput> presenter;
 	};

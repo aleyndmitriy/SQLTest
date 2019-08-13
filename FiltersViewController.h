@@ -43,6 +43,8 @@ namespace DrvFtaeAlarm {
 		void ChooseConditionPropertyType();
 		void ChooseCondition();
 		void LoadColumnsName();
+		void StartLoading() override;
+		void StopLoading() override;
 		~FiltersViewController();
 	private:
 		std::shared_ptr<IFiltersViewOutput> presenter;

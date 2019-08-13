@@ -45,6 +45,7 @@ void DrvFtaeAlarm::SQLServerConnection::freeConnection() {
 	connectionAttributes.loginName.clear();
 	connectionAttributes.password.clear();
 	connectionAttributes.databaseName.clear();
+	connectionAttributes.isSystemAuthentication = false;
 }
 
 void DrvFtaeAlarm::SQLServerConnection::allocateConnection() {
@@ -66,7 +67,11 @@ void DrvFtaeAlarm::SQLServerConnection::allocateConnection() {
 	if (connectionAttributes.serverName.empty() || connectionAttributes.loginName.empty() || connectionAttributes.password.empty()) {
 		return;
 	}
-	isConnect = ConnectToDatabaseInstances(connectionAttributes.serverName, connectionAttributes.loginName, connectionAttributes.password);
+	AuthenticationType authtype = AuthenticationType::Server;
+	if (connectionAttributes.isSystemAuthentication) {
+		authtype = AuthenticationType::System;
+	}
+	isConnect = ConnectToDatabaseInstances(connectionAttributes.serverName, connectionAttributes.loginName, connectionAttributes.password, authtype);
 	if (databaseList.empty() || !isConnect) {
 		return;
 	}
@@ -113,12 +118,18 @@ bool DrvFtaeAlarm::SQLServerConnection::ConnectToServerInstances(std::string dri
 	}
 }
 
-bool DrvFtaeAlarm::SQLServerConnection::ConnectToDatabaseInstances(std::string serverName, std::string login, std::string password)
+bool DrvFtaeAlarm::SQLServerConnection::ConnectToDatabaseInstances(std::string serverName, std::string login, std::string password, AuthenticationType authType)
 {
 	TCHAR whUserInfo[SQL_MAX_MESSAGE_LENGTH];
 	TCHAR wStrOut[STR_LENGTH];
 	SQLSMALLINT shBrowseResultLen = 0;
-	std::string strServerData = std::string("SERVER=") + serverName + std::string(";UID=") + login + std::string(";PWD=") + password;
+	std::string strServerData = std::string("SERVER=") + serverName;
+	if (authType == AuthenticationType::Server) {
+		strServerData = strServerData + std::string(";UID=") + login + std::string(";PWD=") + password;
+	}
+	else {
+		strServerData = strServerData + std::string(";Trusted_Connection=yes");
+	}
 	StringCchCopy(whUserInfo, strServerData.length() + 1, strServerData.c_str());
 	SQLSMALLINT res = SQLBrowseConnect(sqlDBC, reinterpret_cast<SQLCHAR*>(whUserInfo), SQL_NTS,
 		reinterpret_cast<SQLCHAR*>(wStrOut), STR_LENGTH, &shBrowseResultLen);
@@ -135,6 +146,13 @@ bool DrvFtaeAlarm::SQLServerConnection::ConnectToDatabaseInstances(std::string s
 			}
 			else {
 				databaseList.assign(databases.begin(), databases.end());
+				connectionAttributes.serverName = serverName;
+				if (authType == AuthenticationType::System) {
+					connectionAttributes.isSystemAuthentication = true;
+				}
+				else {
+					connectionAttributes.isSystemAuthentication = false;
+				}
 				return true;
 			}
 		}
@@ -164,6 +182,7 @@ bool DrvFtaeAlarm::SQLServerConnection::ConnectToDatabase(std::string databaseNa
 		freeConnection();
 		return false;
 	}
+	connectionAttributes.databaseName = databaseName;
 	return true;
 }
 

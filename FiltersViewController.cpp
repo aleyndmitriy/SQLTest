@@ -606,6 +606,19 @@ void DrvFtaeAlarm::FiltersViewController::LoadColumnsName()
 	}
 }
 
+void DrvFtaeAlarm::FiltersViewController::StartLoading()
+{
+	HCURSOR hCurs = LoadCursor(NULL, IDC_WAIT);
+	SetCursor(hCurs);
+}
+
+void DrvFtaeAlarm::FiltersViewController::StopLoading()
+{
+	HCURSOR hCurs = LoadCursor(NULL, IDC_ARROW);
+	SetCursor(hCurs);
+}
+
+
 INT_PTR WINAPI FiltersDlg_Proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	LPNMLISTVIEW itemView;

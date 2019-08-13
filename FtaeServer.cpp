@@ -327,6 +327,10 @@ std::vector<DrvFtaeAlarm::Record> FtaeServer::LoadEvents(std::vector<std::string
 	if (!_settingsDataSource) {
 		return records;
 	}
+	size_t len = cfgString.size();
+	if (_settingsDataSource) {
+		_settingsDataSource->LoadSettingsString(cfgString.c_str(), len + 1);
+	}
 	DrvFtaeAlarm::ConnectionAttributes attributes;
 	if (!_settingsDataSource->Load(attributes)) {
 		return records;

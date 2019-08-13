@@ -22,6 +22,7 @@ namespace DrvFtaeAlarm {
 		void CloseConnection() override;
 		bool IsValidConnection() const override;
 		ConnectionAttributes GetConnectionAttributes() const override;
+		ConnectionStatus GetConnectionStatus() const override;
 		std::vector<std::string> GetServersList() const override;
 		std::vector<std::string> GetDatabasesList() const override;
 		std::vector<Record> ExecuteStatement(const std::string& query, const std::vector<std::string>& parameters) override;

@@ -24,7 +24,7 @@ int UISettingsConfigurator::Configure(const TCHAR* szCfgInString, TCHAR** pszCfg
 		}
 	}
 
-	DrvFtaeAlarm::SettingsInitializer::CreateModule(GetModuleHandle(NULL), std::shared_ptr<DrvFtaeAlarm::UIDialogViewController>());
+	DrvFtaeAlarm::SettingsInitializer::CreateModule(GetModuleHandle("Drv_Ftae_HdaAlarm.dll"), std::shared_ptr<DrvFtaeAlarm::UIDialogViewController>());
 	if (_settingsDataSource) {
 		_settingsDataSource->SaveSettingsString("OutputXML.xml");
 	}
@@ -52,7 +52,11 @@ int UISettingsConfigurator::Configure(const TCHAR* szCfgInString, TCHAR** pszCfg
 		}
 		*pszCfgOutString = outStr;
 		CloseHandle(hFile);
+		DeleteFile("OutputXML.xml");
+		DeleteFile("Filters.xml");
+		DeleteFile("Settings.xml");
 		hFile = INVALID_HANDLE_VALUE;
+		iRes = ODS::ERR::OK;
 	}
 	return iRes;
 }

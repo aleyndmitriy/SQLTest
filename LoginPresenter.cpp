@@ -21,23 +21,9 @@ void DrvFtaeAlarm::LoginPresenter::viewIsReady()
 {
 	_database->OpenConnection();
 	_settingsDataSource->Load(attributes);
-	if (attributes.driver.empty()) {
-		attributes.driver = std::string("SQL Server Native Client 11.0");
-	}
-	_database->loadServerInstances(attributes.driver);
 	std::shared_ptr< ILoginViewInput> ptrView = view.lock();
 	if (ptrView) {
 		ptrView->LoadConnectionSettings(attributes);
-	}
-}
-
-void DrvFtaeAlarm::LoginPresenter::FindServerList()
-{
-	std::shared_ptr< ILoginViewInput> ptrView = view.lock();
-	serverNames.clear();
-	if (ptrView) {
-		serverNames = _database->GetServersList();
-		ptrView->LoadServerList(serverNames);
 	}
 }
 
@@ -62,6 +48,10 @@ void DrvFtaeAlarm::LoginPresenter::GetDatabaseName(std::string&& databaseName)
 	attributes.databaseName = std::move(databaseName);
 }
 
+void DrvFtaeAlarm::LoginPresenter::GetAuthType(int isSystem) {
+	attributes.isSystemAuthentication = (isSystem == 0);
+}
+
 void DrvFtaeAlarm::LoginPresenter::GetServerIndex(int index)
 {
 	if (!serverNames.empty() && index < serverNames.size()) {
@@ -76,47 +66,75 @@ void DrvFtaeAlarm::LoginPresenter::GetDatabaseIndex(int index)
 	}
 }
 
+void DrvFtaeAlarm::LoginPresenter::ConnectToDriver() {
+	std::shared_ptr< ILoginViewInput> ptrView = view.lock();
+	if (ptrView) {
+		ptrView->StartLoading();
+		CloseExistentConnection();
+		ptrView->LoadServerList(serverNames);
+		attributes.driver = std::string("SQL Server Native Client 11.0");
+		ptrView->LoadConnectionSettings(attributes);
+		if (_database->OpenConnectionIfNeeded(attributes)) {
+			serverNames = _database->GetServersList();
+			ptrView->LoadServerList(serverNames);
+			ptrView->StopLoading();
+		}
+		else {
+			attributes.driver.clear();
+			_database->CloseConnection();
+			ptrView->StopLoading();
+			ptrView->WarningMessage(std::string("Can't open connection"));
+		}
+	}
+	
+}
+
 void DrvFtaeAlarm::LoginPresenter::ConnectToServer()
 {
-	if (!attributes.serverName.empty() && !attributes.loginName.empty() && !attributes.password.empty()) {
-		_database->loadDatabaseInstances(attributes.serverName, DrvFtaeAlarm::DatabaseEngine::AuthenticationType::Server, attributes.loginName, attributes.password);
-		std::shared_ptr<ILoginViewInput> ptrView = view.lock();
-		if (ptrView) {
+	std::shared_ptr< ILoginViewInput> ptrView = view.lock();
+	if (ptrView) {
+		ptrView->StartLoading();
+		attributes.databaseName.clear();
+		if (_database->OpenConnectionIfNeeded(attributes)) {
 			databaseNames = _database->GetDatabasesList();
 			ptrView->LoadDatabasesList(databaseNames);
 		}
+		ptrView->StopLoading();
 	}
+	
 }
 
-void DrvFtaeAlarm::LoginPresenter::ConnectToDatabase()
+void DrvFtaeAlarm::LoginPresenter::CheckConnectToDatabase()
 {
-	if (!attributes.databaseName.empty()) {
-		bool isOpened = _database->ChooseDatabase(attributes.databaseName);
-		
-	}
-}
-
-void  DrvFtaeAlarm::LoginPresenter::SetConnection()
-{
-	if (!attributes.serverName.empty() && !attributes.loginName.empty() && !attributes.password.empty()) {
-		_database->loadDatabaseInstances(attributes.serverName, DrvFtaeAlarm::DatabaseEngine::AuthenticationType::Server, attributes.loginName, attributes.password);
-		std::shared_ptr<ILoginViewInput> ptrView = view.lock();
-		if (ptrView) {
-			databaseNames = _database->GetDatabasesList();
-			if (attributes.databaseName.empty()) {
-				ptrView->LoadDatabasesList(databaseNames);
-			}
-			else {
-				std::vector<std::string>::const_iterator itr = std::find(databaseNames.cbegin(), databaseNames.cend(), attributes.databaseName);
-				if (itr != databaseNames.cend()) {
-					bool isOpened = _database->ChooseDatabase(attributes.databaseName);
-				}
-				else {
-					ptrView->LoadDatabasesList(databaseNames);
-				}
+	std::shared_ptr< ILoginViewInput> ptrView = view.lock();
+	if (ptrView) {
+		ptrView->StartLoading();
+		ConnectionAttributes attr;
+		if (!attributes.driver.empty() && !attributes.serverName.empty() && !attributes.databaseName.empty()) {
+			if (!_database->OpenConnectionIfNeeded(attributes)) {
+				ptrView->StopLoading();
+				ptrView->WarningMessage(std::string("Can't open connection"));
 			}
 		}
+		else {
+			ptrView->StopLoading();
+			ptrView->WarningMessage(std::string("Empty fields!"));
+		}
+		ptrView->StopLoading();
 	}
+}
+
+void DrvFtaeAlarm::LoginPresenter::CloseExistentConnection()
+{
+	_database->CloseConnection();
+	attributes.serverName.clear();
+	attributes.databaseName.clear();
+	attributes.loginName.clear();
+	attributes.password.clear();
+	attributes.driver.clear();
+	attributes.isSystemAuthentication = false;
+	serverNames.clear();
+	databaseNames.clear();
 }
 
 void DrvFtaeAlarm::LoginPresenter::SaveSettings()
