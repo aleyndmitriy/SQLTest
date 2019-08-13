@@ -52,6 +52,7 @@ void DrvFtaeAlarm::FiltersViewController::LoadPropertiesList(const std::map<std:
 void DrvFtaeAlarm::FiltersViewController::CreatePropertiesCombo()
 {
 	HWND hComboControl = GetDlgItem(window, IDC_COMBO_PROPERTY);
+	SendMessage(hComboControl, CB_RESETCONTENT, 0, 0);
 	for(std::map<std::string, PropertyType>::const_iterator itr = _properties.cbegin(); itr != _properties.cend(); ++itr)
 	{
 		std::string wProperty = itr->first;
@@ -497,6 +498,7 @@ void DrvFtaeAlarm::FiltersViewController::ShowEditValuesControls()
 {
 	HWND hEditControl1 = GetDlgItem(window, IDC_EDIT_VALUE1);
 	HWND hEditControl2 = GetDlgItem(window, IDC_EDIT_VALUE2);
+	HWND hStaticEnd = GetDlgItem(window, IDC_STATIC_AND);
 	ConditionType type = GetSelectedConditionType();
 	switch (type)
 	{
@@ -509,15 +511,18 @@ void DrvFtaeAlarm::FiltersViewController::ShowEditValuesControls()
 	case ConditionType::CONDTYPE_LIKE:
 		ShowWindow(hEditControl1, TRUE);
 		ShowWindow(hEditControl2, FALSE);
+		ShowWindow(hStaticEnd, FALSE);
 		break;
 	case ConditionType::CONDTYPE_BETWEEN:
 		ShowWindow(hEditControl1, TRUE);
 		ShowWindow(hEditControl2, TRUE);
+		ShowWindow(hStaticEnd, TRUE);
 		break;
 	case ConditionType::CONDTYPE_ISNULL:
 	case ConditionType::CONDTYPE_ISNOTNULL:
 		ShowWindow(hEditControl1, FALSE);
 		ShowWindow(hEditControl2, FALSE);
+		ShowWindow(hStaticEnd, FALSE);
 		break;
 	default:
 		break;
@@ -601,9 +606,7 @@ void DrvFtaeAlarm::FiltersViewController::CreateConditionComboBoolean()
 
 void DrvFtaeAlarm::FiltersViewController::LoadColumnsName()
 {
-	if (_properties.empty()) {
-		presenter->LoadProperties();
-	}
+	presenter->LoadProperties();
 }
 
 void DrvFtaeAlarm::FiltersViewController::StartLoading()

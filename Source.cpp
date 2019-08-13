@@ -35,8 +35,6 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance,
 			DrvFtaeAlarm::DataSQLServerAccessAssembly::instance().GetConditionRecordSQLServerDao());
 		std::vector<std::string> vec = {std::string("asdf")};
 		server.LoadEvents(vec);
-		//std::shared_ptr<DrvFtaeAlarm::DatabaseInfoDAO> info = DrvFtaeAlarm::DataSQLServerAccessAssembly::instance().GetDatabaseInfoSQLServerDao();
-		//std::unique_ptr<DrvFtaeAlarm::SQLTable> table = info->GetTableInfo(attr, attr.databaseName, std::string("ConditionEvent"));
 		return 0;
 	}
 }

@@ -7,7 +7,9 @@ namespace DrvFtaeAlarm {
 		std::string databaseName;
 		std::string loginName;
 		std::string password;
-		bool isSystemAuthentication;
+		bool isServerAuthentication;
+		ConnectionAttributes();
+		~ConnectionAttributes();
 	};
 
 	bool operator==(const ConnectionAttributes& lhs, const ConnectionAttributes& rhs);

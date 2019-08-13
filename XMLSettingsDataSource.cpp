@@ -35,6 +35,7 @@ bool DrvFtaeAlarm::XMLSettingsDataSource::Save(const ConnectionAttributes& attri
 	pugi::xml_node connectionNode = rootNode.append_child("Connection");
 	connectionNode.append_attribute("Version").set_value(attributes.driver.c_str());
 	connectionNode.append_attribute("Server").set_value(attributes.serverName.c_str());
+	connectionNode.append_attribute("AuthenticationType").set_value(attributes.isServerAuthentication);
 	connectionNode.append_attribute("ConfigDataBase").set_value(attributes.databaseName.c_str());
 	connectionNode.append_attribute("User").set_value(attributes.loginName.c_str());
 	connectionNode.append_attribute("Password").set_value(attributes.password.c_str());
@@ -79,6 +80,7 @@ bool DrvFtaeAlarm::XMLSettingsDataSource::Load(ConnectionAttributes& attributes)
 	pugi::xml_node connectionNode = rootNode.child("Connection");
 	attributes.driver = std::string(connectionNode.attribute("Version").as_string());
 	attributes.serverName = std::string(connectionNode.attribute("Server").as_string());
+	attributes.isServerAuthentication = connectionNode.attribute("AuthenticationType").as_bool();
 	attributes.databaseName = std::string(connectionNode.attribute("ConfigDataBase").as_string());
 	attributes.loginName = std::string(connectionNode.attribute("User").as_string());
 	attributes.password = std::string(connectionNode.attribute("Password").as_string());
@@ -97,6 +99,7 @@ bool DrvFtaeAlarm::XMLSettingsDataSource::LoadSettingsString(const char* source,
 	pugi::xml_node connectionNode = rootNode.child("Connection");
 	attributes.driver = std::string(connectionNode.attribute("Version").as_string());
 	attributes.serverName = std::string(connectionNode.attribute("Server").as_string());
+	attributes.isServerAuthentication = connectionNode.attribute("AuthenticationType").as_bool();
 	attributes.databaseName = std::string(connectionNode.attribute("ConfigDataBase").as_string());
 	attributes.loginName = std::string(connectionNode.attribute("User").as_string());
 	attributes.password = std::string(connectionNode.attribute("Password").as_string());
@@ -137,6 +140,7 @@ bool DrvFtaeAlarm::XMLSettingsDataSource::SaveSettingsString(const char* fileNam
 	pugi::xml_node connectionNode = rootNode.append_child("Connection");
 	connectionNode.append_attribute("Version").set_value(attributes.driver.c_str());
 	connectionNode.append_attribute("Server").set_value(attributes.serverName.c_str());
+	connectionNode.append_attribute("AuthenticationType").set_value(attributes.isServerAuthentication);
 	connectionNode.append_attribute("ConfigDataBase").set_value(attributes.databaseName.c_str());
 	connectionNode.append_attribute("User").set_value(attributes.loginName.c_str());
 	connectionNode.append_attribute("Password").set_value(attributes.password.c_str());

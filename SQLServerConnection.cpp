@@ -45,7 +45,7 @@ void DrvFtaeAlarm::SQLServerConnection::freeConnection() {
 	connectionAttributes.loginName.clear();
 	connectionAttributes.password.clear();
 	connectionAttributes.databaseName.clear();
-	connectionAttributes.isSystemAuthentication = false;
+	connectionAttributes.isServerAuthentication = false;
 }
 
 void DrvFtaeAlarm::SQLServerConnection::allocateConnection() {
@@ -64,11 +64,14 @@ void DrvFtaeAlarm::SQLServerConnection::allocateConnection() {
 	if (serverList.empty() || !isConnect) {
 		return;
 	}
-	if (connectionAttributes.serverName.empty() || connectionAttributes.loginName.empty() || connectionAttributes.password.empty()) {
+	if (connectionAttributes.serverName.empty()) {
 		return;
 	}
 	AuthenticationType authtype = AuthenticationType::Server;
-	if (connectionAttributes.isSystemAuthentication) {
+	if (connectionAttributes.isServerAuthentication) {
+		authtype = AuthenticationType::Server;
+	}
+	else {
 		authtype = AuthenticationType::System;
 	}
 	isConnect = ConnectToDatabaseInstances(connectionAttributes.serverName, connectionAttributes.loginName, connectionAttributes.password, authtype);
@@ -147,11 +150,11 @@ bool DrvFtaeAlarm::SQLServerConnection::ConnectToDatabaseInstances(std::string s
 			else {
 				databaseList.assign(databases.begin(), databases.end());
 				connectionAttributes.serverName = serverName;
-				if (authType == AuthenticationType::System) {
-					connectionAttributes.isSystemAuthentication = true;
+				if (authType == AuthenticationType::Server) {
+					connectionAttributes.isServerAuthentication = true;
 				}
 				else {
-					connectionAttributes.isSystemAuthentication = false;
+					connectionAttributes.isServerAuthentication = false;
 				}
 				return true;
 			}

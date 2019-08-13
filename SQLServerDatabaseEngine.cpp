@@ -50,6 +50,9 @@ bool DrvFtaeAlarm::SQLServerDatabaseEngine::OpenConnectionIfNeeded(const Connect
 				if (!attributes.databaseName.empty()) {
 					return ChooseDatabase(attributes.databaseName);
 				}
+				else {
+					return OpenConnection(attributes);
+				}
 				return true;
 			}
 			else {
@@ -60,9 +63,9 @@ bool DrvFtaeAlarm::SQLServerDatabaseEngine::OpenConnectionIfNeeded(const Connect
 		case ConnectionStatus::ConnectToDriver:
 			if (attributes.driver == attr.driver) {
 				if (!attributes.serverName.empty()) {
-					AuthenticationType authtype = AuthenticationType::Server;
-					if (attributes.isSystemAuthentication) {
-						authtype = AuthenticationType::System;
+					AuthenticationType authtype = AuthenticationType::System;
+					if (attributes.isServerAuthentication) {
+						authtype = AuthenticationType::Server;
 					}
 					isValid = loadDatabaseInstances(attributes.serverName, authtype, attributes.loginName, attributes.password);
 					if (isValid) {

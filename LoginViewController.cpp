@@ -10,13 +10,18 @@ DrvFtaeAlarm::LoginViewController::LoginViewController(const std::shared_ptr<UID
 void DrvFtaeAlarm::LoginViewController::setupInitialState()
 {
 	presenter->SetViewInput(shared_from_this());
-	presenter->viewIsReady();
 	HWND hComboControl = GetDlgItem(window, IDC_COMBO_AUTH_TYPE);
 	SendMessage(hComboControl, CB_RESETCONTENT, 0, 0);
 	int pos = SendMessage(hComboControl, CB_ADDSTRING, 0, (LPARAM)TEXT("Windows Authentication"));
 	SendMessage(hComboControl, CB_SETITEMDATA, pos, (LPARAM)0);
 	pos = SendMessage(hComboControl, CB_ADDSTRING, 0, (LPARAM)TEXT("SQL Server Authentication"));
 	SendMessage(hComboControl, CB_SETITEMDATA, pos, (LPARAM)1);
+	SendMessage(hComboControl, CB_SETCURSEL, (WPARAM)0, 0);
+	HWND hloginControl = GetDlgItem(window, IDC_EDIT_USERNAME);
+	HWND hpassControl = GetDlgItem(window, IDC_EDIT_PASSWORD);
+	EnableWindow(hloginControl, FALSE);
+	EnableWindow(hpassControl, FALSE);
+	presenter->viewIsReady();
 }
 
 DrvFtaeAlarm::LoginViewController::~LoginViewController()
@@ -98,7 +103,6 @@ void DrvFtaeAlarm::LoginViewController::ChooseAuthentication()
 		EnableWindow(hloginControl, TRUE);
 		EnableWindow(hpassControl, TRUE);
 	}
-	
 	presenter->GetAuthType(res);
 }
 
@@ -175,12 +179,9 @@ void DrvFtaeAlarm::LoginViewController::LoadConnectionSettings(const ConnectionA
 	HWND hpassControl = GetDlgItem(window, IDC_EDIT_PASSWORD);
 	SendMessage(hpassControl, EM_SETSEL, 0, -1);
 	SendMessage(hpassControl, WM_CLEAR, 0, 0);
-	if (attributes.isSystemAuthentication) {
-		EnableWindow(hloginControl, FALSE);
-		EnableWindow(hpassControl, FALSE);
-	}
-	else {
-		EnableWindow(hloginControl,TRUE);
+	if (attributes.isServerAuthentication) {
+		SendDlgItemMessage(window, IDC_COMBO_AUTH_TYPE, CB_SETCURSEL, (WPARAM)1, 0);
+		EnableWindow(hloginControl, TRUE);
 		EnableWindow(hpassControl, TRUE);
 		if (!attributes.loginName.empty()) {
 			SendMessage(hloginControl, WM_SETTEXT, 0, (LPARAM)(attributes.loginName.c_str()));
@@ -188,6 +189,11 @@ void DrvFtaeAlarm::LoginViewController::LoadConnectionSettings(const ConnectionA
 		if (!attributes.password.empty()) {
 			SendMessage(hpassControl, WM_SETTEXT, 0, (LPARAM)(attributes.password.c_str()));
 		}
+	}
+	else {
+		SendDlgItemMessage(window, IDC_COMBO_AUTH_TYPE, CB_SETCURSEL, (WPARAM)0, 0);
+		EnableWindow(hloginControl,FALSE);
+		EnableWindow(hpassControl, FALSE);
 	}
 }
 

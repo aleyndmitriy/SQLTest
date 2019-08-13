@@ -349,7 +349,7 @@ std::vector<DrvFtaeAlarm::Record> FtaeServer::LoadEvents(std::vector<std::string
 			}
 		}
 	}
-	std::unique_ptr<DrvFtaeAlarm::SQLTable> table = _databaseInfo->GetTableInfo(attributes, std::string("FTAE"), std::string("ConditionEvent"));
+	std::unique_ptr<DrvFtaeAlarm::SQLTable> table = _databaseInfo->GetTableInfo(attributes, attributes.databaseName, std::string("ConditionEvent"));
 	records = _recordsInfo->GetRecords(*table, attributes, conditions);
 	
 	return records;

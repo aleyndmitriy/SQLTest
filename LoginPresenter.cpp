@@ -49,7 +49,7 @@ void DrvFtaeAlarm::LoginPresenter::GetDatabaseName(std::string&& databaseName)
 }
 
 void DrvFtaeAlarm::LoginPresenter::GetAuthType(int isSystem) {
-	attributes.isSystemAuthentication = (isSystem == 0);
+	attributes.isServerAuthentication = (isSystem > 0);
 }
 
 void DrvFtaeAlarm::LoginPresenter::GetServerIndex(int index)
@@ -71,7 +71,6 @@ void DrvFtaeAlarm::LoginPresenter::ConnectToDriver() {
 	if (ptrView) {
 		ptrView->StartLoading();
 		CloseExistentConnection();
-		ptrView->LoadServerList(serverNames);
 		attributes.driver = std::string("SQL Server Native Client 11.0");
 		ptrView->LoadConnectionSettings(attributes);
 		if (_database->OpenConnectionIfNeeded(attributes)) {
@@ -109,18 +108,20 @@ void DrvFtaeAlarm::LoginPresenter::CheckConnectToDatabase()
 	std::shared_ptr< ILoginViewInput> ptrView = view.lock();
 	if (ptrView) {
 		ptrView->StartLoading();
-		ConnectionAttributes attr;
 		if (!attributes.driver.empty() && !attributes.serverName.empty() && !attributes.databaseName.empty()) {
 			if (!_database->OpenConnectionIfNeeded(attributes)) {
 				ptrView->StopLoading();
 				ptrView->WarningMessage(std::string("Can't open connection"));
+			}
+			else {
+				ptrView->StopLoading();
+				ptrView->WarningMessage(std::string("Connection has been successfully established!"));
 			}
 		}
 		else {
 			ptrView->StopLoading();
 			ptrView->WarningMessage(std::string("Empty fields!"));
 		}
-		ptrView->StopLoading();
 	}
 }
 
@@ -132,14 +133,19 @@ void DrvFtaeAlarm::LoginPresenter::CloseExistentConnection()
 	attributes.loginName.clear();
 	attributes.password.clear();
 	attributes.driver.clear();
-	attributes.isSystemAuthentication = false;
+	attributes.isServerAuthentication = false;
 	serverNames.clear();
 	databaseNames.clear();
+	std::shared_ptr< ILoginViewInput> ptrView = view.lock();
+	if (ptrView) {
+		ptrView->LoadServerList(serverNames);
+		ptrView->LoadDatabasesList(databaseNames);
+	}
 }
 
 void DrvFtaeAlarm::LoginPresenter::SaveSettings()
 {
-	if (!attributes.driver.empty() && !attributes.serverName.empty() && !attributes.loginName.empty() && !attributes.password.empty() && !attributes.databaseName.empty()) {
+	if (!attributes.driver.empty() && !attributes.serverName.empty() && !attributes.databaseName.empty()) {
 		_settingsDataSource->Save(attributes);
 	}
 }
