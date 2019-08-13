@@ -9,16 +9,10 @@
 #define IDD_TABPAGE_CONNSETTINGS        106
 #define IDD_PROPPAGE_LARGE              107
 #define IDD_TABPAGE_FILTERS             107
-#define IDC_RADIO1                      1001
 #define IDC_RADIO_AND                   1001
-#define IDC_RADIO2                      1002
 #define IDC_RADIO_OR                    1002
-#define IDC_COMBO_REMOTE                1003
 #define IDC_COMBO_SERVER_NAME           1003
-#define IDC_EDIT1                       1004
 #define IDC_EDIT_FILTERNAME             1004
-#define IDC_BUTTON1                     1005
-#define IDC_BUTTON_BROSESERVERS         1005
 #define IDC_BUTTON_NEW_FILTER           1005
 #define IDC_EDIT2                       1006
 #define IDC_EDIT_VALUE1                 1006
