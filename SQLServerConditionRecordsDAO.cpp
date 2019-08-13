@@ -24,7 +24,6 @@ std::vector<DrvFtaeAlarm::Record> DrvFtaeAlarm::SQLServerConditionRecordsDAO::Ge
 	}
 	BOOL isWrite = FALSE;
 	DWORD posPointer = 0;
-	size_t sz;
 	isWrite = WriteFile(hFile, querry.c_str(), querry.size() + 1, &posPointer, NULL);
 	if (posPointer != querry.size() + 1) {
 		CloseHandle(hFile);
