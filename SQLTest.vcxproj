@@ -143,6 +143,7 @@
     <ClCompile Include="FiltersViewController.cpp" />
     <ClCompile Include="FtaeServer.cpp" />
     <ClCompile Include="FtaeSource.cpp" />
+    <ClCompile Include="Log.cpp" />
     <ClCompile Include="LoginInitializer.cpp" />
     <ClCompile Include="LoginPresenter.cpp" />
     <ClCompile Include="LoginViewController.cpp" />
@@ -206,6 +207,7 @@
     <ClInclude Include="IExtensible.h" />
     <ClInclude Include="IFiltersViewInput.h" />
     <ClInclude Include="IFiltersViewOutput.h" />
+    <ClInclude Include="ILog.h" />
     <ClInclude Include="ILoginViewInput.h" />
     <ClInclude Include="ILoginViewOutput.h" />
     <ClInclude Include="IPluginHost.h" />
@@ -217,6 +219,7 @@
     <ClInclude Include="ISettingsViewInput.h" />
     <ClInclude Include="ISettingsViewOutput.h" />
     <ClInclude Include="ISourceFtaeEvent.h" />
+    <ClInclude Include="Log.h" />
     <ClInclude Include="LoginInitializer.h" />
     <ClInclude Include="LoginPresenter.h" />
     <ClInclude Include="LoginViewController.h" />
@@ -224,6 +227,7 @@
     <ClInclude Include="OdsErr.h" />
     <ClInclude Include="OdsIID.h" />
     <ClInclude Include="OdsString.h" />
+    <ClInclude Include="OdsStringUtils.h" />
     <ClInclude Include="PluginObjectFactory.h" />
     <ClInclude Include="Property.h" />
     <ClInclude Include="PropertyInfo.h" />

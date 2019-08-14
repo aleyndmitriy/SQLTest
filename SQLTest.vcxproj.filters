@@ -142,6 +142,9 @@
     <Filter Include="DataAccessLayer\ConditionRecordsDAO">
       <UniqueIdentifier>{0133c448-d407-490f-9e31-366b993d28f4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Export\Log">
+      <UniqueIdentifier>{4a1f87aa-ffdf-4d65-963a-9119f2afb384}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -257,6 +260,9 @@
     </ClCompile>
     <ClCompile Include="SQLServerConditionRecordsDAO.cpp">
       <Filter>DataAccessLayer\ConditionRecordsDAO</Filter>
+    </ClCompile>
+    <ClCompile Include="Log.cpp">
+      <Filter>Export\Log</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -514,6 +520,15 @@
     </ClInclude>
     <ClInclude Include="SQLServerConditionRecordsDAO.h">
       <Filter>DataAccessLayer\ConditionRecordsDAO</Filter>
+    </ClInclude>
+    <ClInclude Include="ILog.h">
+      <Filter>Export\Log</Filter>
+    </ClInclude>
+    <ClInclude Include="Log.h">
+      <Filter>Export\Log</Filter>
+    </ClInclude>
+    <ClInclude Include="OdsStringUtils.h">
+      <Filter>Export\Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
