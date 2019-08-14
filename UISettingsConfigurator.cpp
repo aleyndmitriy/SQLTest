@@ -78,7 +78,7 @@ int UISettingsConfigurator::ConfigureFilters(TCHAR* szCfgInString, TCHAR** pszCf
 	return iRes;
 }
 
-void* UISettingsConfigurator::GetInterface()
+void* UISettingsConfigurator::GetInterface(int nIfcId)
 {
 	return NULL;
 }

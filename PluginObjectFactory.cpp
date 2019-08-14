@@ -50,7 +50,7 @@ int PluginObjectFactory::DestroyObject(ODS::IPluginObj* pPluginObj)
 	return iRes;
 }
 
-void* PluginObjectFactory::GetInterface()
+void* PluginObjectFactory::GetInterface(int nIfcId)
 {
 	return this;
 }

@@ -10,6 +10,7 @@
 #include "SQLServerType.h"
 #include"Constants.h"
 #include"StatementCondition.h"
+#include"Log.h"
 
 FtaeServer::FtaeServer(const std::shared_ptr<DrvFtaeAlarm::ISettingsDataSource>& settingsDataSource, const std::shared_ptr<DrvFtaeAlarm::DatabaseInfoDAO>& databaseInfo, const std::shared_ptr<DrvFtaeAlarm::ConditionRecordsDAO>& recordsInfo):_settingsDataSource(settingsDataSource), _databaseInfo(databaseInfo), _recordsInfo(recordsInfo), cfgString()
 {
@@ -28,16 +29,17 @@ int FtaeServer::Init(TCHAR* szCfgString)
 	int iRes = ODS::ERR::OK;
 
 	cfgString = szCfgString;
-
+	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("Server Init, %s"), (0 == szCfgString) ? _T("") : szCfgString);
 	return iRes;
 }
 
 int  FtaeServer::Shut()
 {
+	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("Server Shut"));
 	return ODS::ERR::OK;
 }
 
-void* FtaeServer::GetInterface()
+void* FtaeServer::GetInterface(int nIfcId)
 {
 	return NULL;
 }
@@ -45,6 +47,7 @@ void* FtaeServer::GetInterface()
 int FtaeServer::IsHdaFunctionSupported(int nFuncType)
 {
 	if (nFuncType == ODS::HdaFunctionType::ALARM_LIST)
+		DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("Server HDA functions supported"));
 		return 1;
 
 	return 0;
@@ -56,7 +59,7 @@ int FtaeServer::Execute(ODS::HdaCommand* pCommand, ODS::HdaCommandResult** ppRes
 
 	if (!pCommand || !ppResult)
 		return ODS::ERR::BAD_PARAM;
-
+	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("Server executing commands..."));
 	ODS::HdaFunction** pList = nullptr;
 	int nCount = 0;
 
@@ -80,6 +83,7 @@ int FtaeServer::Execute(ODS::HdaCommand* pCommand, ODS::HdaCommandResult** ppRes
 					std::vector<std::string> staticFilterList;
 					if (ODS::ERR::OK == GetFuncParameterList(pList[ind], sqc, filterList, staticFilterList)) {
 						std::vector<DrvFtaeAlarm::Record> records = LoadEvents(staticFilterList);
+						DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("Server has loaded events..."));
 						if (!records.empty()) {
 							pFuncResult = new ODS::HdaFunctionResultAlarmList;
 							if (pFuncResult) {
@@ -124,7 +128,7 @@ int FtaeServer::DestroyResult(ODS::HdaCommandResult* pResult)
 int FtaeServer::GetCmdParameterList(ODS::HdaCommand* pCommand, SYSTEMTIME& rStartTime, SYSTEMTIME& rEndTime)
 {
 	int iRes = ODS::ERR::OK;
-
+	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("GetCmdParameterList"));
 	ODS::HdaCommandParam** ppCmdParamList = NULL;
 	int nCount = 0;
 
@@ -132,6 +136,7 @@ int FtaeServer::GetCmdParameterList(ODS::HdaCommand* pCommand, SYSTEMTIME& rStar
 		return ODS::ERR::BAD_PARAM;
 
 	iRes = pCommand->GetParamList(&ppCmdParamList, &nCount);
+	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("GetCmdParameterList: Number of parameters: %d"), nCount);
 	if (iRes == ODS::ERR::OK)
 	{
 		for (int i = 0; i < nCount; i++)
@@ -164,8 +169,10 @@ int FtaeServer::GetFuncParameterList(ODS::HdaFunction* pFunc, std::string& szSqc
 
 	ODS::HdaFunctionParam** ppFPList = NULL;
 	int nCountParam = 0;
+	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("GetFuncParameterList"));
 
 	iRes = pFunc->GetParameterList(&ppFPList, &nCountParam);
+	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("GetFuncParameterList: Number of parameters: %d"), nCountParam);
 	if (ODS::ERR::OK == iRes)
 	{
 		PVOID handle = NULL;
@@ -280,9 +287,13 @@ int FtaeServer::GetFuncParameterList(ODS::HdaFunction* pFunc, std::string& szSqc
 
 int FtaeServer::BuildFuncResult(ODS::HdaFunctionResult* pFuncResult, const std::vector<DrvFtaeAlarm::Record>& rRecordList)
 {
+	
+	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("BuildFuncResult"));
+
 	if (rRecordList.empty()) {
 		return ODS::ERR::DB_NO_DATA;
 	}
+	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("BuildFuncResult: Number of parameters: %d"), rRecordList.size());
 	int iAddRecCount = 0;
 	ODS::Alarm* pAlarmList = new ODS::Alarm[rRecordList.size()];
 	if (!pAlarmList) {
@@ -323,6 +334,8 @@ int FtaeServer::BuildFuncResult(ODS::HdaFunctionResult* pFuncResult, const std::
 
 std::vector<DrvFtaeAlarm::Record> FtaeServer::LoadEvents(std::vector<std::string> filters)
 {
+	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("LoadEvents"));
+	
 	std::vector<DrvFtaeAlarm::Record> records;
 	if (!_settingsDataSource) {
 		return records;
@@ -351,7 +364,7 @@ std::vector<DrvFtaeAlarm::Record> FtaeServer::LoadEvents(std::vector<std::string
 	}
 	std::unique_ptr<DrvFtaeAlarm::SQLTable> table = _databaseInfo->GetTableInfo(attributes, attributes.databaseName, std::string("ConditionEvent"));
 	records = _recordsInfo->GetRecords(*table, attributes, conditions);
-	
+	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("LoadEvents: Number of records: %d"), records.size());
 	return records;
 }
 

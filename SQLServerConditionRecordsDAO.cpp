@@ -1,4 +1,5 @@
 #include"SQLServerConditionRecordsDAO.h"
+#include"Log.h"
 
 DrvFtaeAlarm::SQLServerConditionRecordsDAO::SQLServerConditionRecordsDAO(const std::shared_ptr<SQLServerDatabaseEngine>& databaseEngine): ConditionRecordsDAO(databaseEngine)
 {
@@ -17,6 +18,7 @@ std::vector<DrvFtaeAlarm::Record> DrvFtaeAlarm::SQLServerConditionRecordsDAO::Ge
 		return records;
 	}
 	std::string querry = ConvertStatementsConditionToSQL(table,conditions);
+	Log::GetInstance()->WriteInfoDebug(_T("SQL Query: %s ."), (LPCTSTR)querry.c_str());
 	HANDLE hFile = CreateFile("SQLQuerry.sql", GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (hFile == INVALID_HANDLE_VALUE)
 	{

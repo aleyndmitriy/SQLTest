@@ -12,7 +12,7 @@ namespace DrvFtaeAlarm {
 		UIDialogViewController(const UIDialogViewController& src) = delete;
 		UIDialogViewController& operator=(const UIDialogViewController& rhs) = delete;
 		virtual ~UIDialogViewController();
-		void* GetInterface() override;
+		void* GetInterface(int nIfcId) override;
 		virtual void AddToParentView() = 0;
 		virtual void AddChildViewController(const std::shared_ptr< UIDialogViewController>& child) = 0;
 		virtual void CloseView() = 0;

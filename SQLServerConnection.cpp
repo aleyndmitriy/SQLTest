@@ -29,7 +29,7 @@ DrvFtaeAlarm::SQLServerConnection::~SQLServerConnection() {
 	}
 }
 
-void* DrvFtaeAlarm::SQLServerConnection::GetInterface() {
+void* DrvFtaeAlarm::SQLServerConnection::GetInterface(int nIfcId) {
 	return sqlDBC;
 }
 
@@ -49,7 +49,7 @@ void DrvFtaeAlarm::SQLServerConnection::freeConnection() {
 }
 
 void DrvFtaeAlarm::SQLServerConnection::allocateConnection() {
-	SQLSMALLINT res = SQLAllocHandle(SQL_HANDLE_DBC, ptrEnvironment->GetInterface(), &sqlDBC);
+	SQLSMALLINT res = SQLAllocHandle(SQL_HANDLE_DBC, ptrEnvironment->GetInterface(0), &sqlDBC);
 	if (res == SQL_ERROR)
 	{
 		HandleDiagnosticRecord();

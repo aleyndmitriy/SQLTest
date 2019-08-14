@@ -27,7 +27,7 @@ namespace DrvFtaeAlarm {
 		SQLServerConnection(const SQLServerConnection& src) = default;
 		SQLServerConnection& operator=(const SQLServerConnection& rhs) = default;
 		~SQLServerConnection() override;
-		void* GetInterface() override;
+		void* GetInterface(int nIfcId) override;
 		bool ConnectToServerInstances(std::string driverName) override;
 		bool ConnectToDatabaseInstances(std::string serverName, std::string login, std::string password, AuthenticationType authType) override;
 		bool ConnectToDatabase(std::string databaseName) override;

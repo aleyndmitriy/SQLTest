@@ -235,7 +235,7 @@ INT_PTR WINAPI LoginDlg_Proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	switch (uMsg) {
 	case WM_INITDIALOG:
 		controller = std::shared_ptr<DrvFtaeAlarm::LoginViewController>(reinterpret_cast<DrvFtaeAlarm::LoginViewController*>(lParam));
-		ptrHandle = reinterpret_cast<HWND*>(controller->GetInterface());
+		ptrHandle = reinterpret_cast<HWND*>(controller->GetInterface(0));
 		*ptrHandle = hwnd;
 		controller->setupInitialState();
 		controller->AddToParentView();

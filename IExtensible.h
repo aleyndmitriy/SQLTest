@@ -2,5 +2,5 @@
 class IExtensible {
 public:
 	virtual ~IExtensible() {}
-	virtual void* GetInterface() = 0;
+	virtual void* GetInterface(int nIfcId) = 0;
 };

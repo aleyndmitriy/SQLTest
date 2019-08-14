@@ -15,7 +15,7 @@ public:
 	FtaeSource(FtaeSource&& rhs) = delete;
 	FtaeSource& operator=(FtaeSource&& src) = delete;
 	~FtaeSource();
-	void* GetInterface() override;
+	void* GetInterface(int nIfcId) override;
 	int Attach(const ODS::IPluginHost* pHost) override;
 	int Detach() override;
 	void SetRegInfo(LPVOID pRegInfo);

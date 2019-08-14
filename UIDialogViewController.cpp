@@ -11,7 +11,7 @@ DrvFtaeAlarm::UIDialogViewController::~UIDialogViewController()
 	parentController.reset();
 }
 
-void* DrvFtaeAlarm::UIDialogViewController::GetInterface()
+void* DrvFtaeAlarm::UIDialogViewController::GetInterface(int nIfcId)
 {
 	return &(this->window);
 }

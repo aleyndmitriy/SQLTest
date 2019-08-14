@@ -15,7 +15,7 @@ public:
 	int ConfigureFilters(TCHAR* szCfgInString, TCHAR** pszCfgOutString) override;
 	int Configure(const TCHAR* szCfgInString, TCHAR** pszCfgOutString) override;
 	int DestroyString(TCHAR* szCfgString) override;
-	void* GetInterface() override;
+	void* GetInterface(int nIfcId) override;
 private:
 	std::shared_ptr<DrvFtaeAlarm::ISettingsDataSource> _settingsDataSource;
 };

@@ -636,7 +636,7 @@ INT_PTR WINAPI FiltersDlg_Proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 	switch (uMsg) {
 	case WM_INITDIALOG:
 		controller = std::shared_ptr<DrvFtaeAlarm::FiltersViewController>(reinterpret_cast<DrvFtaeAlarm::FiltersViewController*>(lParam));
-		ptrHandle = reinterpret_cast<HWND*>(controller->GetInterface());
+		ptrHandle = reinterpret_cast<HWND*>(controller->GetInterface(0));
 		*ptrHandle = hwnd;
 		controller->setupInitialState();
 		controller->AddToParentView();

@@ -62,7 +62,7 @@ DrvFtaeAlarm::SQLServerStatement::~SQLServerStatement() {
 	freeStatement();
 }
 
-void* DrvFtaeAlarm::SQLServerStatement::GetInterface() {
+void* DrvFtaeAlarm::SQLServerStatement::GetInterface(int nIfcId) {
 	return sqlStmt;
 }
 
@@ -96,7 +96,7 @@ void DrvFtaeAlarm::SQLServerStatement::HandleDiagnosticRecord()
 
 void DrvFtaeAlarm::SQLServerStatement::allocateStatement()
 {
-	SQLSMALLINT res = SQLAllocHandle(SQL_HANDLE_STMT, ptrConnection->GetInterface(), &sqlStmt);
+	SQLSMALLINT res = SQLAllocHandle(SQL_HANDLE_STMT, ptrConnection->GetInterface(0), &sqlStmt);
 	if (res == SQL_ERROR)
 	{
 		HandleDiagnosticRecord();

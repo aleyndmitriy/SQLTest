@@ -19,7 +19,7 @@ namespace DrvFtaeAlarm {
 		explicit SQLServerStatement(const std::shared_ptr<SQLServerConnection>& connection, const std::string& query);
 		explicit SQLServerStatement(std::shared_ptr<SQLServerConnection>&& connection, std::string&& query);
 		~SQLServerStatement();
-		void* GetInterface() override;
+		void* GetInterface(int nIfcId) override;
 		std::vector<Record> Execute() override;
 	private:
 		struct DataBinding {

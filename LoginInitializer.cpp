@@ -7,7 +7,7 @@ void DrvFtaeAlarm::LoginInitializer::CreateModule(HINSTANCE hInstance, const std
 	LoginViewController* controller = new LoginViewController(parent, presenter);
 	HWND hParentHandle = NULL;
 	if (parent) {
-		HWND* ptrParentHandle = reinterpret_cast<HWND*>(parent->GetInterface());
+		HWND* ptrParentHandle = reinterpret_cast<HWND*>(parent->GetInterface(0));
 		hParentHandle = *ptrParentHandle;
 	}
 	HWND window = CreateDialogParam(hInstance, MAKEINTRESOURCE(IDD_TABPAGE_CONNSETTINGS), hParentHandle, LoginDlg_Proc, (LPARAM)controller);

@@ -16,7 +16,7 @@ public:
 	BrowserEvent& operator=(const BrowserEvent& rhs) = delete;
 	BrowserEvent& operator=(BrowserEvent&& rhs) = delete;
 	~BrowserEvent();
-	void* GetInterface() override;
+	void* GetInterface(int nIfcId) override;
 	int Init(TCHAR* szCfgString) override;
 	int Shut() override;
 	int GetExternalFilterList(TCHAR*** ppszFilterList, ULONG* pulCount) override;

@@ -7,7 +7,7 @@ void DrvFtaeAlarm::FiltersInitializer::CreateModule(HINSTANCE hInstance, const s
 	FiltersViewController* controller = new FiltersViewController(parent, presenter);
 	HWND hParentHandle = NULL;
 	if (parent) {
-		HWND* ptrParentHandle = reinterpret_cast<HWND*>(parent->GetInterface());
+		HWND* ptrParentHandle = reinterpret_cast<HWND*>(parent->GetInterface(0));
 		hParentHandle = *ptrParentHandle;
 	}
 	HWND window = CreateDialogParam(hInstance, MAKEINTRESOURCE(IDD_TABPAGE_FILTERS), hParentHandle, FiltersDlg_Proc, (LPARAM)controller);

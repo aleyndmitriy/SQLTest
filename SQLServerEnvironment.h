@@ -15,7 +15,7 @@ namespace DrvFtaeAlarm {
 		SQLServerEnvironment& operator=(SQLServerEnvironment&& rhs) = delete;
 		SQLServerEnvironment(const SQLServerEnvironment& src) = default;
 		SQLServerEnvironment& operator=(const SQLServerEnvironment& rhs) = default;
-		void* GetInterface() override;
+		void* GetInterface(int nIfcId) override;
 	private:
 		SQLHENV sqlEnvironment;
 	};

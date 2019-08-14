@@ -11,6 +11,6 @@ DrvFtaeAlarm::SQLServerEnvironment::~SQLServerEnvironment() {
 	SQLSMALLINT res = SQLFreeHandle(SQL_HANDLE_ENV, sqlEnvironment);
 }
 
-void* DrvFtaeAlarm::SQLServerEnvironment::GetInterface() {
+void* DrvFtaeAlarm::SQLServerEnvironment::GetInterface(int nIfcId) {
 	return sqlEnvironment;
 }

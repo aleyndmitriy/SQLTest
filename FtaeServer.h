@@ -19,7 +19,7 @@ public:
 	~FtaeServer();
 	int Init(TCHAR* szCfgString) override;
 	int Shut() override;
-	void* GetInterface() override;
+	void* GetInterface(int nIfcId) override;
 	int IsHdaFunctionSupported(int nFuncType) override;
 	int Execute(ODS::HdaCommand* pCommand, ODS::HdaCommandResult** ppResult) override;
 	int DestroyResult(ODS::HdaCommandResult* pResult) override;

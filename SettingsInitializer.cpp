@@ -6,7 +6,7 @@ int DrvFtaeAlarm::SettingsInitializer::CreateModule(HINSTANCE hInstance, const s
 	SettingsViewController* controller = new SettingsViewController(parent, presenter);
 	HWND hParenHandle = NULL;
 	if (parent) {
-		hParenHandle = (HWND)(parent->GetInterface());
+		hParenHandle = (HWND)(parent->GetInterface(0));
 	}
 	return DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_SETTINGS_DIALOG), hParenHandle, SettingDlg_Proc, (LPARAM)controller);
 }

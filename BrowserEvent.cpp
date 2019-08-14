@@ -4,6 +4,7 @@
 #include"Property.h"
 #include "SQLServerType.h"
 #include"Constants.h"
+#include"Log.h"
 
 BrowserEvent::BrowserEvent(const std::shared_ptr<DrvFtaeAlarm::ISettingsDataSource>& settingsDataSource, const std::shared_ptr<DrvFtaeAlarm::DatabaseInfoDAO>& databaseInfo):_settingsDataSource(settingsDataSource),_databaseInfo(databaseInfo),cfgString()
 {
@@ -22,17 +23,18 @@ int BrowserEvent::Init(TCHAR* szCfgString)
 	int iRes = ODS::ERR::OK;
 
 	cfgString = szCfgString;
-
+	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("Browse Init, %s"), (0 == szCfgString) ? _T("") : szCfgString);
 	return iRes;
 }
 
 int  BrowserEvent::Shut()
 {
+	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("Browse Shut"));
 	return ODS::ERR::OK;
 }
 
 
-void* BrowserEvent::GetInterface()
+void* BrowserEvent::GetInterface(int nIfcId)
 {
 	return NULL;
 }
@@ -46,6 +48,7 @@ int BrowserEvent::GetExternalFilterList(TCHAR*** ppszFilterList, ULONG* pulCount
 
 int BrowserEvent::GetFilterList(TCHAR*** ppszFilterList, ULONG* pulCount)
 {
+	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("GetFilterList"));
 	if (!cfgString.empty())
 	{
 		size_t len = cfgString.size();
@@ -78,6 +81,8 @@ int BrowserEvent::GetFilterList(TCHAR*** ppszFilterList, ULONG* pulCount)
 
 int BrowserEvent::GetAlarmPropertyInfoList(ODS::PropertyInfo** ppPropertyInfoList, ULONG* pulCount)
 {
+	
+	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("GetAlarmPropertyInfoList"));
 	if (!cfgString.empty())
 	{
 		size_t len = cfgString.size();
@@ -133,11 +138,13 @@ int BrowserEvent::GetAlarmPropertyInfoList(ODS::PropertyInfo** ppPropertyInfoLis
 		}
 	}
 	*pulCount = properties.size();
+	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("GetAlarmPropertyInfoList: property list size: %d"),properties.size());
 	return  ODS::ERR::OK;
 }
 
 int BrowserEvent::DestroyFilterList(TCHAR** ppFilterList, ULONG ulCount)
 {
+	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("GetAlarmPropertyInfoList"));
 	if (ppFilterList)
 	{
 		for (ULONG ind = 0; ind < ulCount; ind++)

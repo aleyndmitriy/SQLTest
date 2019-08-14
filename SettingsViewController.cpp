@@ -41,7 +41,7 @@ void DrvFtaeAlarm::SettingsViewController::ShiftChildDialog()
 	for (std::vector<std::weak_ptr<UIDialogViewController> >::iterator itr = childs.begin(); itr != childs.end(); itr++) {
 		std::shared_ptr<UIDialogViewController> ptr = itr->lock();
 		if (ptr) {
-			HWND* ptrHandle =  reinterpret_cast<HWND*>(ptr->GetInterface());
+			HWND* ptrHandle =  reinterpret_cast<HWND*>(ptr->GetInterface(0));
 			RECT childRect;
 			POINT point; 
 			GetWindowRect(*ptrHandle,&childRect);
@@ -162,7 +162,7 @@ INT_PTR WINAPI SettingDlg_Proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 	switch (uMsg) {
 	case WM_INITDIALOG:
 		controller = std::shared_ptr<DrvFtaeAlarm::SettingsViewController>(reinterpret_cast<DrvFtaeAlarm::SettingsViewController*>(lParam));
-		ptrHandle = reinterpret_cast<HWND*>(controller->GetInterface());
+		ptrHandle = reinterpret_cast<HWND*>(controller->GetInterface(0));
 		*ptrHandle = hwnd;
 		controller->setupInitialState();
 		break;

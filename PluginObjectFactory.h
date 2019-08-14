@@ -33,7 +33,7 @@ public:
 	~PluginObjectFactory();
 	int CreateObject(const TCHAR* szObjKey, void* pObjCreationParam, ODS::IPluginObj** ppPluginObj) override;
 	int DestroyObject(ODS::IPluginObj* pPluginObj) override;
-	void* GetInterface() override;
+	void* GetInterface(int nIfcId) override;
 	SDsRegInfo& at(std::string name);
 	bool InsertRegisterInfo(std::string name, std::unique_ptr<SDsRegInfo>&& reg);
 private:

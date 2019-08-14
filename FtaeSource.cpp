@@ -1,6 +1,6 @@
 #include"FtaeSource.h"
 #include"OdsErr.h"
-
+#include"Log.h"
 
 FtaeSource::FtaeSource(const std::shared_ptr<DrvFtaeAlarm::ISettingsDataSource>& settingsDataSource, const std::shared_ptr<DrvFtaeAlarm::DatabaseInfoDAO>& databaseInfo, const std::shared_ptr<DrvFtaeAlarm::ConditionRecordsDAO>& conditionRecords): configurator(settingsDataSource), browser(settingsDataSource,databaseInfo),server(settingsDataSource,databaseInfo, conditionRecords), m_pRegInfo(nullptr), m_pHost(nullptr)
 {
@@ -20,7 +20,10 @@ int FtaeSource::Attach(const ODS::IPluginHost* pHost)
 		return ODS::ERR::BAD_PARAM;
 
 	m_pHost = (ODS::IPluginHost*)pHost;
+	ODS::System::ILog* pILog =
+		static_cast<ODS::System::ILog*>(const_cast<ODS::IPluginHost*>(pHost)->GetInterface(ODS::IPluginHost::IID_LOG));
 
+	DrvFtaeAlarm::Log::GetInstance()->Init(pILog);
 	return ODS::ERR::OK;
 }
 
@@ -33,7 +36,7 @@ on the plugin. It's called before destroying
 int FtaeSource::Detach()
 {
 	m_pHost = NULL;
-
+	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("Source Detach"));
 	return ODS::ERR::OK;
 }
 
@@ -41,6 +44,7 @@ ODS::IPropertySet* FtaeSource::GetPropertySet()
 {
 	if (m_pRegInfo)
 	{
+		DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("Source Get Property set"));
 		ODS::RegisterInfo* pInfo = (ODS::RegisterInfo*)m_pRegInfo;
 
 		return pInfo->m_pPropertySet;
@@ -49,7 +53,7 @@ ODS::IPropertySet* FtaeSource::GetPropertySet()
 	return NULL;
 }
 
-void* FtaeSource::GetInterface()
+void* FtaeSource::GetInterface(int nIfcId)
 {
 	return NULL;
 }
