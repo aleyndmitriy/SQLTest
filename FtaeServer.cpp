@@ -422,6 +422,7 @@ void SetODSProperty(ODS::Property& prop, ULONG ulId, const TCHAR* szName, const 
 {
 	VARIANT vValue;
 	float val = 0.0;
+	bool bitVal = false;
 	prop.SetFlag(ODS::Property::PROP_FLAG_ACCESS_READ_ONLY, true);
 	prop.SetId(ulId);
 	prop.SetName(szName);
@@ -443,14 +444,20 @@ void SetODSProperty(ODS::Property& prop, ULONG ulId, const TCHAR* szName, const 
 		::VariantInit(&vValue);
 		vValue.vt = VT_R8;
 		val = std::stof(szValue);
-		vValue.fltVal = val;
+		vValue.dblVal = val;
 		prop.SetVarValue(&vValue);
 		::VariantClear(&vValue);
 		break;
 	case SQL_C_BIT:
 		::VariantInit(&vValue);
 		vValue.vt = VT_BOOL;
-		vValue.bVal = std::stoi(szValue);
+		if (std::stoi(szValue) > 0) {
+			bitVal = true;
+		}
+		else {
+			bitVal = false;
+		}
+		vValue.boolVal = bitVal;
 		prop.SetVarValue(&vValue);
 		::VariantClear(&vValue);
 		break;

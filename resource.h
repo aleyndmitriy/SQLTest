@@ -22,14 +22,11 @@
 #define IDC_RADIO4                      1008
 #define IDC_RADIO_SQLAUTH               1008
 #define IDC_TAB1                        1009
-#define IDC_EDIT3                       1009
 #define IDC_EDIT_USERNAME               1009
-#define IDC_EDIT4                       1010
 #define IDC_EDIT_PASSWORD               1010
-#define IDC_LIST2                       1011
 #define IDC_LIST_FILTERS                1011
-#define IDC_EDIT_USERNAME2              1011
-#define IDC_EDIT_ALARM_END_CODE         1011
+#define IDC_RADIO_ALARM                 1012
+#define IDC_RADIO_EVENT                 1014
 #define IDC_BUTTON_REMOVEFILTER         1013
 #define IDC_LIST3                       1015
 #define IDC_LIST_CONDITIONS             1015
