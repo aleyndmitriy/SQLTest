@@ -34,7 +34,6 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance,
 		FtaeServer server(DrvFtaeAlarm::DataSQLServerAccessAssembly::instance().GetSettingDataSource(), DrvFtaeAlarm::DataSQLServerAccessAssembly::instance().GetDatabaseInfoSQLServerDao(),
 			DrvFtaeAlarm::DataSQLServerAccessAssembly::instance().GetConditionRecordSQLServerDao());
 		std::vector<std::string> vec = {std::string("asdf")};
-		server.LoadEvents(vec);
 		return 0;
 	}
 }

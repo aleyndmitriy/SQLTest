@@ -245,21 +245,24 @@ std::string DrvFtaeAlarm::SQLServerStatement::DataToString(char* data, SQLSMALLI
 		break;
 	case SQL_C_TYPE_TIMESTAMP:
 		ptrTime = reinterpret_cast<TIMESTAMP_STRUCT*>(data);
-		str = std::to_string(ptrTime->year) + std::string("-") + std::to_string(ptrTime->month) + std::string("-") +
+		str = std::string(data, sizeof(TIMESTAMP_STRUCT));
+		/*str = std::to_string(ptrTime->year) + std::string("-") + std::to_string(ptrTime->month) + std::string("-") +
 			std::to_string(ptrTime->day) + std::string(" ") + std::to_string(ptrTime->hour) + std::string(":") + std::to_string(ptrTime->minute) +
-			std::string(":") + std::to_string(ptrTime->second) + std::string(".") + std::to_string(ptrTime->fraction);
+			std::string(":") + std::to_string(ptrTime->second) + std::string(".") + std::to_string(ptrTime->fraction);*/
 		return str;
 		break;
 	case SQL_C_TYPE_TIME:
 		ptrHour = reinterpret_cast<TIME_STRUCT*>(data);
-		str =  std::to_string(ptrHour->hour) + std::string(":") + std::to_string(ptrHour->minute) +
-			std::string(":") + std::to_string(ptrHour->second);
+		str = std::string(data, sizeof(TIME_STRUCT));
+		/*str =  std::to_string(ptrHour->hour) + std::string(":") + std::to_string(ptrHour->minute) +
+			std::string(":") + std::to_string(ptrHour->second);*/
 		return str;
 		break;
 	case SQL_C_TYPE_DATE:
 		ptrDay = reinterpret_cast<DATE_STRUCT*>(data);
-		str = std::to_string(ptrDay->year) + std::string("-") + std::to_string(ptrDay->month) + std::string("-") +
-			std::to_string(ptrDay->day);
+		str = std::string(data, sizeof(DATE_STRUCT));
+		/*str = std::to_string(ptrDay->year) + std::string("-") + std::to_string(ptrDay->month) + std::string("-") +
+			std::to_string(ptrDay->day);*/
 		return str;
 		break;
 	case SQL_C_FLOAT:

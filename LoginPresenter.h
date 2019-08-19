@@ -21,6 +21,7 @@ namespace DrvFtaeAlarm {
 		 void CheckConnectToDatabase() override;
 		 void SaveSettings() override;
 		 void GetAuthType(int isSystem) override;
+		 void GetReportType(bool isAlarm) override;
 	private:
 		std::weak_ptr<ILoginViewInput> view;
 		std::shared_ptr<DatabaseEngine> _database;

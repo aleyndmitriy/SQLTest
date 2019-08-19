@@ -195,6 +195,12 @@ void DrvFtaeAlarm::LoginViewController::LoadConnectionSettings(const ConnectionA
 		EnableWindow(hloginControl,FALSE);
 		EnableWindow(hpassControl, FALSE);
 	}
+	if (attributes.isAlarmReport) {
+		CheckRadioButton(window, IDC_RADIO_ALARM, IDC_RADIO_EVENT, IDC_RADIO_ALARM);
+	}
+	else {
+		CheckRadioButton(window, IDC_RADIO_ALARM, IDC_RADIO_EVENT, IDC_RADIO_EVENT);
+	}
 }
 
 void DrvFtaeAlarm::LoginViewController::SaveServerName()
@@ -209,6 +215,16 @@ void DrvFtaeAlarm::LoginViewController::SaveDatabaseName()
 	TCHAR base[STR_LENGTH];
 	GetDlgItemText(window, IDC_COMBO_CONFIG_DATABASE_NAME, base, STR_LENGTH);
 	presenter->GetDatabaseName(std::string(base));
+}
+
+void DrvFtaeAlarm::LoginViewController::SetAlarmReportType()
+{
+	presenter->GetReportType(true);
+}
+
+void  DrvFtaeAlarm::LoginViewController::SetEventReportType()
+{
+	presenter->GetReportType(false);
 }
 
 void DrvFtaeAlarm::LoginViewController::StartLoading()
@@ -320,6 +336,22 @@ INT_PTR WINAPI LoginDlg_Proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			{
 			case BN_CLICKED:
 				controller->CheckConnectionToDatabase();
+				break;
+			}
+			break;
+		case IDC_RADIO_ALARM:
+			switch (HIWORD(wParam))
+			{
+			case BN_CLICKED:
+				controller->SetAlarmReportType();
+				break;
+			}
+			break;
+		case IDC_RADIO_EVENT:
+			switch (HIWORD(wParam))
+			{
+			case BN_CLICKED:
+				controller->SetEventReportType();
 				break;
 			}
 			break;

@@ -1,6 +1,6 @@
 #include "ConnectionAttributes.h"
 
-DrvFtaeAlarm::ConnectionAttributes::ConnectionAttributes():driver(),serverName(),databaseName(),loginName(),password(),isServerAuthentication(false)
+DrvFtaeAlarm::ConnectionAttributes::ConnectionAttributes():driver(),serverName(),databaseName(),loginName(),password(),isServerAuthentication(false),isAlarmReport(false)
 {
 
 }

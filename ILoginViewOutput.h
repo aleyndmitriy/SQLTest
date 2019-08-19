@@ -19,6 +19,7 @@ namespace DrvFtaeAlarm {
 		virtual void ConnectToServer() = 0;
 		virtual void CheckConnectToDatabase() = 0;
 		virtual void SaveSettings() = 0;
+		virtual void GetReportType(bool isAlarm) = 0;
 		virtual ~ILoginViewOutput() {};
 	};
 }

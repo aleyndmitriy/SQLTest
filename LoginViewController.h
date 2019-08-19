@@ -40,6 +40,8 @@ namespace DrvFtaeAlarm {
 		void ChooseAuthentication();
 		void ChooseDatabase();
 		void CheckConnectionToDatabase();
+		void SetAlarmReportType();
+		void SetEventReportType();
 	private:
 		std::shared_ptr<ILoginViewOutput> presenter;
 	};

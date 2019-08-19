@@ -149,3 +149,8 @@ void DrvFtaeAlarm::LoginPresenter::SaveSettings()
 		_settingsDataSource->Save(attributes);
 	}
 }
+
+void DrvFtaeAlarm::LoginPresenter::GetReportType(bool isAlarm)
+{
+	attributes.isAlarmReport = isAlarm;
+}

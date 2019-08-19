@@ -23,7 +23,7 @@ public:
 	int IsHdaFunctionSupported(int nFuncType) override;
 	int Execute(ODS::HdaCommand* pCommand, ODS::HdaCommandResult** ppResult) override;
 	int DestroyResult(ODS::HdaCommandResult* pResult) override;
-	std::vector<DrvFtaeAlarm::Record> LoadEvents(std::vector<std::string> filters);
+	std::vector<DrvFtaeAlarm::Record> LoadEvents(const std::vector<std::string>& filters, const std::vector<DrvFtaeAlarm::PRIORITY_FILTER>& priorityFilters, const SYSTEMTIME& timeStart, const SYSTEMTIME& timeFinish, const std::string& sqlCondition);
 private:
 	std::shared_ptr<DrvFtaeAlarm::ISettingsDataSource> _settingsDataSource;
 	std::shared_ptr<DrvFtaeAlarm::DatabaseInfoDAO> _databaseInfo;
@@ -33,6 +33,11 @@ private:
 	int GetFuncParameterList(ODS::HdaFunction* pFunc, std::string& szSqc, std::vector<DrvFtaeAlarm::PRIORITY_FILTER>& filterList,
 		std::vector<std::string>& staticFilterList);
 	int BuildFuncResult(ODS::HdaFunctionResult* pFuncResult, const std::vector<DrvFtaeAlarm::Record>& rRecordList);
+	int BuildFuncAlarmsResult(ODS::HdaFunctionResult* pFuncResult, const std::vector<DrvFtaeAlarm::Record>& rRecordList);
+	int BuildFuncEventsResult(ODS::HdaFunctionResult* pFuncResult, const std::vector<DrvFtaeAlarm::Record>& rRecordList);
+	DrvFtaeAlarm::StatementCondition StatementFromTimeStamp(const std::string& property, const SYSTEMTIME& timeStart, const SYSTEMTIME& timeFinish);
+	DrvFtaeAlarm::StatementCondition StatementFromPriority(const std::string& property, DrvFtaeAlarm::PRIORITY_FILTER priority);
+
 };
 
 USHORT VariantToUSHORT(VARIANT* pvValue);

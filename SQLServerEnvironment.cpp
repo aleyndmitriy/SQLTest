@@ -9,6 +9,7 @@ DrvFtaeAlarm::SQLServerEnvironment::SQLServerEnvironment() :sqlEnvironment(SQL_N
 
 DrvFtaeAlarm::SQLServerEnvironment::~SQLServerEnvironment() {
 	SQLSMALLINT res = SQLFreeHandle(SQL_HANDLE_ENV, sqlEnvironment);
+	sqlEnvironment = SQL_NULL_HENV;
 }
 
 void* DrvFtaeAlarm::SQLServerEnvironment::GetInterface(int nIfcId) {

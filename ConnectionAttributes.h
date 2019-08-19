@@ -8,6 +8,7 @@ namespace DrvFtaeAlarm {
 		std::string loginName;
 		std::string password;
 		bool isServerAuthentication;
+		bool isAlarmReport;
 		ConnectionAttributes();
 		~ConnectionAttributes();
 	};
