@@ -323,7 +323,7 @@ int FtaeServer::BuildFuncAlarmsResult(ODS::HdaFunctionResult* pFuncResult, const
 			std::map<std::string, std::vector<DrvFtaeAlarm::Record> >::iterator alarmItr = alarmMap.find(itr->second.second);
 			if (alarmItr != alarmMap.end()) {
 				alarmItr->second.push_back(*recordsIterator);
-				/*std::sort(alarmItr->second.cbegin(), alarmItr->second.cend(), [](const DrvFtaeAlarm::Record& rec1, const DrvFtaeAlarm::Record& rec2) {
+				std::sort(alarmItr->second.begin(), alarmItr->second.end(), [](const DrvFtaeAlarm::Record& rec1, const DrvFtaeAlarm::Record& rec2) {
 					DrvFtaeAlarm::Record::const_iterator itr1 = rec1.findColumnValue(std::string("TicksTimeStamp"));
 					DrvFtaeAlarm::Record::const_iterator itr2 = rec2.findColumnValue(std::string("TicksTimeStamp"));
 					if (itr1 == rec1.cend()) {
@@ -333,7 +333,7 @@ int FtaeServer::BuildFuncAlarmsResult(ODS::HdaFunctionResult* pFuncResult, const
 						return true;
 					}
 					return (itr1->second.second < itr2->second.second);
-					});*/
+					});
 			}
 			else {
 				std::pair<std::string, std::vector<DrvFtaeAlarm::Record> > pairMap =
@@ -369,7 +369,7 @@ int FtaeServer::BuildFuncAlarmsResult(ODS::HdaFunctionResult* pFuncResult, const
 						listProp.push_back(prop);
 						if (columnIter->first == std::string("EventTimeStamp")) {
 							ODS::Property prop;
-							SetODSProperty(prop, ODS::AlarmProperty::ID_START_TIME, TEXT("StartTime"), columnIter->second.second, SQL_C_TYPE_TIMESTAMP);
+							SetODSTimeProperty(prop, ODS::AlarmProperty::ID_START_TIME, TEXT("StartTime"), columnIter->second.second);
 							listProp.push_back(prop);
 						}
 						if (columnIter->first == std::string("Priority")) {
@@ -389,7 +389,7 @@ int FtaeServer::BuildFuncAlarmsResult(ODS::HdaFunctionResult* pFuncResult, const
 					DrvFtaeAlarm::Record::const_iterator itrEndTime = finditr->findColumnValue(std::string("EventTimeStamp"));
 					if (itrEndTime != finditr->cend()) {
 						ODS::Property prop;
-						SetODSProperty(prop, ODS::AlarmProperty::ID_END_TIME, TEXT("EndTime"), itrEndTime->second.second, SQL_C_TYPE_TIMESTAMP);
+						SetODSTimeProperty(prop, ODS::AlarmProperty::ID_END_TIME, TEXT("EndTime"), itrEndTime->second.second);
 						listProp.push_back(prop);
 					}
 				}
@@ -401,7 +401,7 @@ int FtaeServer::BuildFuncAlarmsResult(ODS::HdaFunctionResult* pFuncResult, const
 					DrvFtaeAlarm::Record::const_iterator itrAckedTime = finditr->findColumnValue(std::string("EventTimeStamp"));
 					if (itrAckedTime != finditr->cend()) {
 						ODS::Property prop;
-						SetODSProperty(prop, ODS::AlarmProperty::ID_ACK_TIME, TEXT("AckTime"), itrAckedTime->second.second, SQL_C_TYPE_TIMESTAMP);
+						SetODSTimeProperty(prop, ODS::AlarmProperty::ID_ACK_TIME, TEXT("AckTime"), itrAckedTime->second.second);
 						listProp.push_back(prop);
 					}
 				}
@@ -449,12 +449,12 @@ int FtaeServer::BuildFuncEventsResult(ODS::HdaFunctionResult* pFuncResult, const
 				if (itr != recordsIterator->cend()) {
 					if (itr->second.second == std::string("1")) {
 						ODS::Property prop;
-						SetODSProperty(prop, ODS::AlarmProperty::ID_START_TIME, TEXT("StartTime"), columnIter->second.second, SQL_C_TYPE_TIMESTAMP);
+						SetODSTimeProperty(prop, ODS::AlarmProperty::ID_START_TIME, TEXT("StartTime"), columnIter->second.second);
 						listProp.push_back(prop);
 					}
 					if (itr->second.second == std::string("0")) {
 						ODS::Property prop;
-						SetODSProperty(prop, ODS::AlarmProperty::ID_END_TIME, TEXT("EndTime"), columnIter->second.second, SQL_C_TYPE_TIMESTAMP);
+						SetODSTimeProperty(prop, ODS::AlarmProperty::ID_END_TIME, TEXT("EndTime"), columnIter->second.second);
 						listProp.push_back(prop);
 					}
 				}
@@ -463,7 +463,7 @@ int FtaeServer::BuildFuncEventsResult(ODS::HdaFunctionResult* pFuncResult, const
 				{
 					if (itrAcked->second.second == std::string("1")) {
 						ODS::Property prop;
-						SetODSProperty(prop, ODS::AlarmProperty::ID_ACK_TIME, TEXT("AckTime"), columnIter->second.second, SQL_C_TYPE_TIMESTAMP);
+						SetODSTimeProperty(prop, ODS::AlarmProperty::ID_ACK_TIME, TEXT("AckTime"), columnIter->second.second);
 						listProp.push_back(prop);
 					}
 				}
@@ -544,7 +544,7 @@ std::vector<DrvFtaeAlarm::Record> FtaeServer::LoadEvents(const std::vector<std::
 			}
 		}
 	}
-	records = _recordsInfo->GetRecords(*table, attributes, conditions);
+	records = _recordsInfo->GetRecords(*table, attributes, conditions, sqlCondition);
 	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("LoadEvents: Number of records: %d"), records.size());
 	return records;
 }
@@ -624,8 +624,6 @@ USHORT VariantToUSHORT(VARIANT* pvValue)
 void SetODSProperty(ODS::Property& prop, ULONG ulId, const TCHAR* szName, const std::string& szValue, short type)
 {
 	VARIANT vValue;
-	ULONG64 ul64Millisec = 0;
-	SYSTEMTIME dataTime = { 0 };
 	std::string str;
 	const TIMESTAMP_STRUCT* timeStampStruct = nullptr;
 	const TIME_STRUCT* timeStruct = nullptr;
@@ -700,20 +698,11 @@ void SetODSProperty(ODS::Property& prop, ULONG ulId, const TCHAR* szName, const 
 		::VariantClear(&vValue);
 		break;
 	case SQL_C_TYPE_TIMESTAMP:
-		::VariantInit(&vValue);
-		vValue.vt = VT_UI8;
 		timeStampStruct = reinterpret_cast<const TIMESTAMP_STRUCT*>(szValue.c_str());
-		dataTime.wYear = timeStampStruct->year;
-		dataTime.wMonth = timeStampStruct->month;
-		dataTime.wDay = timeStampStruct->day;
-		dataTime.wHour = timeStampStruct->hour;
-		dataTime.wMinute = timeStampStruct->minute;
-		dataTime.wSecond = timeStampStruct->second;
-		dataTime.wMilliseconds = timeStampStruct->fraction;
-		ODS::TimeUtils::SysTimeLocalToUlong64(dataTime, &ul64Millisec);
-		vValue.ullVal = ul64Millisec;
-		prop.SetVarValue(&vValue);
-		::VariantClear(&vValue);
+		str = std::to_string(timeStampStruct->year) + std::string("-") + std::to_string(timeStampStruct->month) + std::string("-") +
+			std::to_string(timeStampStruct->day) + std::string(" ") + std::to_string(timeStampStruct->hour) + std::string(":") + std::to_string(timeStampStruct->minute) +
+			std::string(":") + std::to_string(timeStampStruct->second) + std::string(".") + std::to_string(timeStampStruct->fraction);
+		prop.SetStrValue(str.c_str());
 		break;
 	case SQL_C_TYPE_TIME:
 		timeStruct = reinterpret_cast<const TIME_STRUCT*>(szValue.c_str());
@@ -729,5 +718,29 @@ void SetODSProperty(ODS::Property& prop, ULONG ulId, const TCHAR* szName, const 
 	default:
 		break;
 	}
+}
+
+void SetODSTimeProperty(ODS::Property& prop, ULONG ulId, const TCHAR* szName, const std::string& szValue)
+{
+	VARIANT vValue;
+	ULONG64 ul64Millisec = 0;
+	SYSTEMTIME dataTime = { 0 };
+	const TIMESTAMP_STRUCT* timeStampStruct = reinterpret_cast<const TIMESTAMP_STRUCT*>(szValue.c_str());
+	prop.SetFlag(ODS::Property::PROP_FLAG_ACCESS_READ_ONLY, true);
+	prop.SetId(ulId);
+	prop.SetName(szName);
+	::VariantInit(&vValue);
+	vValue.vt = VT_UI8;
+	dataTime.wYear = timeStampStruct->year;
+	dataTime.wMonth = timeStampStruct->month;
+	dataTime.wDay = timeStampStruct->day;
+	dataTime.wHour = timeStampStruct->hour;
+	dataTime.wMinute = timeStampStruct->minute;
+	dataTime.wSecond = timeStampStruct->second;
+	dataTime.wMilliseconds = timeStampStruct->fraction;
+	ODS::TimeUtils::SysTimeLocalToUlong64(dataTime, &ul64Millisec);
+	vValue.ullVal = ul64Millisec;
+	prop.SetVarValue(&vValue);
+	::VariantClear(&vValue);
 }
 

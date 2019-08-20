@@ -42,3 +42,4 @@ private:
 
 USHORT VariantToUSHORT(VARIANT* pvValue);
 void SetODSProperty(ODS::Property& prop, ULONG ulId, const TCHAR* szName, const std::string& szValue, short type);
+void SetODSTimeProperty(ODS::Property& prop, ULONG ulId, const TCHAR* szName, const std::string& szValue);

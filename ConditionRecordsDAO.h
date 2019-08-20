@@ -16,7 +16,7 @@ namespace DrvFtaeAlarm {
 		ConditionRecordsDAO& operator=(const ConditionRecordsDAO& src) = default;
 		ConditionRecordsDAO& operator=(ConditionRecordsDAO&& rhs) = default;
 		~ConditionRecordsDAO();
-		virtual std::vector<Record> GetRecords(const SQLTable& table, const ConnectionAttributes& attributes, const std::vector<StatementCondition>& conditions) = 0;
+		virtual std::vector<Record> GetRecords(const SQLTable& table, const ConnectionAttributes& attributes, const std::vector<StatementCondition>& conditions, std::string txtSql) = 0;
 	protected:
 		std::shared_ptr<DatabaseEngine> _databaseEngine;
 	};

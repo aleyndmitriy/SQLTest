@@ -11,14 +11,17 @@ DrvFtaeAlarm::SQLServerConditionRecordsDAO::~SQLServerConditionRecordsDAO()
 	_databaseEngine.reset();
 }
 
-std::vector<DrvFtaeAlarm::Record> DrvFtaeAlarm::SQLServerConditionRecordsDAO::GetRecords(const SQLTable& table, const ConnectionAttributes& attributes, const std::vector<StatementCondition>& conditions)
+std::vector<DrvFtaeAlarm::Record> DrvFtaeAlarm::SQLServerConditionRecordsDAO::GetRecords(const SQLTable& table, const ConnectionAttributes& attributes, const std::vector<StatementCondition>& conditions, std::string txtSql)
 {
 	std::vector<Record> records;
 	if (!_databaseEngine->OpenConnectionIfNeeded(attributes)) {
 		return records;
 	}
 	std::string querry = ConvertStatementsConditionToSQL(table,conditions);
-	Log::GetInstance()->WriteInfoDebug(_T("SQL Query: %s ."), (LPCTSTR)querry.c_str());
+	if (!txtSql.empty()) {
+		querry = querry + txtSql;
+	}
+	Log::GetInstance()->WriteInfo(_T("SQL Query : % s ."), (LPCTSTR)querry.c_str());
 	HANDLE hFile = CreateFile("SQLQuerry.sql", GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (hFile == INVALID_HANDLE_VALUE)
 	{

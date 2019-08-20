@@ -11,7 +11,7 @@ namespace DrvFtaeAlarm {
 		Record(const Record& src) = default;
 		Record& operator=(const Record& src) = default;
 		Record(Record&& src) noexcept = default;
-		Record& operator=(Record&& src) = default;
+		Record& operator=(Record&& src) noexcept = default;
 		std::pair<const_iterator, bool> insert(std::string colName, short dataType, std::string value);
 		const FieldData& at(const std::string& key) const;
 		const_iterator cbegin() const;
