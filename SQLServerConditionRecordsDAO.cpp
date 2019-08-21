@@ -22,21 +22,6 @@ std::vector<DrvFtaeAlarm::Record> DrvFtaeAlarm::SQLServerConditionRecordsDAO::Ge
 		querry = querry + txtSql;
 	}
 	Log::GetInstance()->WriteInfo(_T("SQL Query : % s ."), (LPCTSTR)querry.c_str());
-	HANDLE hFile = CreateFile("SQLQuerry.sql", GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-	if (hFile == INVALID_HANDLE_VALUE)
-	{
-		return records;
-	}
-	BOOL isWrite = FALSE;
-	DWORD posPointer = 0;
-	isWrite = WriteFile(hFile, querry.c_str(), querry.size() + 1, &posPointer, NULL);
-	if (posPointer != querry.size() + 1) {
-		CloseHandle(hFile);
-		hFile = INVALID_HANDLE_VALUE;
-		return records;
-	}
-	CloseHandle(hFile);
-	hFile = INVALID_HANDLE_VALUE;
 	std::vector<std::string> params = { };
 	records = _databaseEngine->ExecuteStatement(querry, params);
 	return records;

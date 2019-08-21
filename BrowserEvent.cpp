@@ -30,6 +30,8 @@ int BrowserEvent::Init(TCHAR* szCfgString)
 int  BrowserEvent::Shut()
 {
 	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("Browse Shut"));
+	DeleteFile("Filters.xml");
+	DeleteFile("Settings.xml");
 	return ODS::ERR::OK;
 }
 

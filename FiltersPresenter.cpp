@@ -145,6 +145,36 @@ void DrvFtaeAlarm::FiltersPresenter::RemoveCondition(size_t index, std::string f
 	}
 }
 
+void DrvFtaeAlarm::FiltersPresenter::RemoveAllConditions(std::string filterName)
+{
+	std::shared_ptr<IFiltersViewInput> ptrView = view.lock();
+	if (ptrView) {
+		FiltersIterator itr = filters.find(filterName);
+		if (itr != filters.end()) {
+				itr->second.clear();
+		}
+		else {
+			ptrView->WarningMessage(std::string("There is not such filter in list!"));
+
+		}
+	}
+}
+
+void DrvFtaeAlarm::FiltersPresenter::RemoveFilter(std::string filterName)
+{
+	std::shared_ptr<IFiltersViewInput> ptrView = view.lock();
+	if (ptrView) {
+		FiltersIterator itr = filters.find(filterName);
+		if (itr != filters.end()) {
+			filters.erase(itr);
+		}
+		else {
+			ptrView->WarningMessage(std::string("There is not such filter in list!"));
+
+		}
+	}
+}
+
 void DrvFtaeAlarm::FiltersPresenter::SaveFilters()
 {
 	bool bSaved = false;

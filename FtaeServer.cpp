@@ -38,6 +38,8 @@ int FtaeServer::Init(TCHAR* szCfgString)
 int  FtaeServer::Shut()
 {
 	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("Server Shut"));
+	DeleteFile("Filters.xml");
+	DeleteFile("Settings.xml");
 	return ODS::ERR::OK;
 }
 
@@ -422,7 +424,7 @@ int FtaeServer::BuildFuncAlarmsResult(ODS::HdaFunctionResult* pFuncResult, const
 		}
 	}
 	pFR->SetAlarmList(pAlarmList, iAddRecCount);
-
+	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("LoadAlarms: Number of alarms: %d"), alarmMap.size());
 	// clear memory
 	delete[] pAlarmList;
 	return ODS::ERR::OK;
@@ -495,7 +497,6 @@ int FtaeServer::BuildFuncEventsResult(ODS::HdaFunctionResult* pFuncResult, const
 	}
 
 	pFR->SetAlarmList(pAlarmList, iAddRecCount);
-
 	// clear memory
 	delete[] pAlarmList;
 	return ODS::ERR::OK;
@@ -519,7 +520,7 @@ std::vector<DrvFtaeAlarm::Record> FtaeServer::LoadEvents(const std::vector<std::
 	}
 	std::map<std::pair<std::string, bool>, std::vector<DrvFtaeAlarm::StatementCondition> > loadedFilters;
 	if (!_settingsDataSource->Load(loadedFilters)) {
-		return records;
+		DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("There are no any user filters"));
 	}
 	std::vector<DrvFtaeAlarm::StatementCondition> conditions;
 	for (std::vector<std::string>::const_iterator itr = filters.cbegin(); itr != filters.cend(); ++itr) {

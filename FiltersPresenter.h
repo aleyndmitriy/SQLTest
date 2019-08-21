@@ -15,9 +15,11 @@ namespace DrvFtaeAlarm {
 		void viewIsReady() override;
 		void SetViewInput(std::shared_ptr<IFiltersViewInput> input) override;
 		void AddFilter(std::string filterName) override;
+		void RemoveFilter(std::string filterName) override;
 		void SelectFilter(std::string filterName) override;
 		void AddCondition(StatementCondition&& condition, std::string filterName) override;
 		void RemoveCondition(size_t index, std::string filterName) override;
+		void RemoveAllConditions(std::string filterName) override;
 		void SelectCondition(size_t index, std::string filterName) override;
 		void SaveFilters() override;
 		void LoadProperties() override;

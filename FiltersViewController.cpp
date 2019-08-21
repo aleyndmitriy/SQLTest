@@ -145,9 +145,30 @@ void DrvFtaeAlarm::FiltersViewController::RemoveCondition()
 	
 }
 
+void DrvFtaeAlarm::FiltersViewController::RemoveAllConditions()
+{
+	TCHAR wchFilterName[MAX_FILTERNAME_LENGTH];
+	GetDlgItemText(window, IDC_EDIT_INSTANCE, wchFilterName, MAX_FILTERNAME_LENGTH);
+	std::string filterName = std::string(wchFilterName);
+	LRESULT res = SendDlgItemMessage(window, IDC_LIST_FILTERS, LVM_GETNEXTITEM, (WPARAM)-1, (LPARAM)LVNI_FOCUSED);
+	if (res > -1) {
+		presenter->RemoveAllConditions(filterName);
+		SendDlgItemMessage(window, IDC_LIST_CONDITIONS, LVM_DELETEALLITEMS, 0, 0);
+		ClearConditionView();
+	}
+}
+
 void DrvFtaeAlarm::FiltersViewController::RemoveFilter()
 {
-
+	TCHAR wchFilterName[MAX_FILTERNAME_LENGTH];
+	GetDlgItemText(window, IDC_EDIT_INSTANCE, wchFilterName, MAX_FILTERNAME_LENGTH);
+	std::string filterName = std::string(wchFilterName);
+	LRESULT res = SendDlgItemMessage(window, IDC_LIST_FILTERS, LVM_GETNEXTITEM, (WPARAM)-1, (LPARAM)LVNI_FOCUSED);
+	if (res > -1) {
+		presenter->RemoveFilter(filterName);
+		SendDlgItemMessage(window, IDC_LIST_FILTERS, LVM_DELETEITEM, (WPARAM)res, (LPARAM)0);
+		ClearFilterView();
+	}
 }
 
 void DrvFtaeAlarm::FiltersViewController::CloseView()
@@ -211,7 +232,6 @@ void DrvFtaeAlarm::FiltersViewController::ClearConditionView()
 	SendDlgItemMessage(window, IDC_EDIT_VALUE2, EM_SETSEL, 0, -1);
 	SendDlgItemMessage(window, IDC_EDIT_VALUE2, WM_CLEAR, 0, 0);
 	EnableWindow(GetDlgItem(window, IDC_BUTTON_REMOVECONDITION), FALSE);
-	EnableWindow(GetDlgItem(window, IDC_BUTTON_REMOVEALLCONDITIONS), FALSE);
 }
 
 void DrvFtaeAlarm::FiltersViewController::ActivateFilterView(std::string filterName)
@@ -287,6 +307,7 @@ void DrvFtaeAlarm::FiltersViewController::SelectCondition()
 	EnableWindow(GetDlgItem(window, IDC_RADIO_AND), FALSE);
 	EnableWindow(GetDlgItem(window, IDC_RADIO_OR), FALSE);
 	EnableWindow(GetDlgItem(window, IDC_BUTTON_ADDCONDITION), FALSE);
+	EnableWindow(GetDlgItem(window, IDC_BUTTON_REMOVEALLCONDITIONS), FALSE);
 	EnableWindow(GetDlgItem(window, IDC_BUTTON_REMOVECONDITION), TRUE);
 
 }
@@ -303,6 +324,7 @@ void DrvFtaeAlarm::FiltersViewController::UnselectCondition()
 	EnableWindow(GetDlgItem(window, IDC_RADIO_OR), TRUE);
 	EnableWindow(GetDlgItem(window, IDC_BUTTON_ADDCONDITION), TRUE);
 	EnableWindow(GetDlgItem(window, IDC_BUTTON_REMOVECONDITION), FALSE);
+	EnableWindow(GetDlgItem(window, IDC_BUTTON_REMOVEALLCONDITIONS), TRUE);
 	SendDlgItemMessage(window, IDC_COMBO_PROPERTYTYPE, CB_RESETCONTENT, 0, 0);
 	SendDlgItemMessage(window, IDC_COMBO_CONDITION, CB_RESETCONTENT, 0, 0);
 	ClearEditValue1Control();
@@ -696,7 +718,7 @@ INT_PTR WINAPI FiltersDlg_Proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 			controller->RemoveCondition();
 			break;
 		case IDC_BUTTON_REMOVEALLCONDITIONS:
-
+			controller->RemoveAllConditions();
 			break;
 		case IDC_BUTTON_ADDFILTER:
 			controller->AddFilter();
@@ -731,11 +753,6 @@ INT_PTR WINAPI FiltersDlg_Proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 					size_t nameLength = SendMessage(GetDlgItem(hwnd, IDC_LIST_FILTERS), LVM_GETITEMTEXT, iItem, LPARAM(&itemList));
 					wchfilterName[nameLength + 1] = L'\0';
 					controller->SelectFilter(std::string(wchfilterName));
-					/*if(SendDlgItemMessage(hwnd, IDC_LIST_FILTERS, LVM_GETSELECTEDCOUNT, 0, 0) > 1) {
-						itemList.state = 0;
-						itemList.stateMask = LVIS_SELECTED | LVIS_FOCUSED;
-						SendMessage(GetDlgItem(hwnd, IDC_LIST_FILTERS), LVM_SETITEMSTATE, iItem, LPARAM(&itemList));
-					}*/
 				}
 				break;
 			case LVN_ITEMCHANGING:

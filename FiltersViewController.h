@@ -39,6 +39,7 @@ namespace DrvFtaeAlarm {
 		void SelectedCondition(const StatementCondition& condition) override;
 		void AddCondition();
 		void RemoveCondition();
+		void RemoveAllConditions();
 		void ChooseConditionProperty();
 		void ChooseConditionPropertyType();
 		void ChooseCondition();
