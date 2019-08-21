@@ -34,8 +34,18 @@ void* DrvFtaeAlarm::SQLServerConnection::GetInterface(int nIfcId) {
 }
 
 void DrvFtaeAlarm::SQLServerConnection::freeConnection() {
-	SQLSMALLINT res = SQLDisconnect(sqlDBC);
-	res = SQLFreeHandle(SQL_HANDLE_DBC, sqlDBC);
+	__try {
+		SQLSMALLINT res = SQLDisconnect(sqlDBC);
+		__try {
+			res = SQLFreeHandle(SQL_HANDLE_DBC, sqlDBC);
+		}
+		__except (GetExceptionCode() == EXCEPTION_ACCESS_VIOLATION ? EXCEPTION_EXECUTE_HANDLER : EXCEPTION_CONTINUE_SEARCH) {
+	
+		}
+	}
+	__except(GetExceptionCode() == EXCEPTION_ACCESS_VIOLATION  ? EXCEPTION_EXECUTE_HANDLER : EXCEPTION_CONTINUE_SEARCH) {
+
+	}
 	sqlDBC = SQL_NULL_HDBC;
 	ptrEnvironment.reset();
 	databaseList.clear();
