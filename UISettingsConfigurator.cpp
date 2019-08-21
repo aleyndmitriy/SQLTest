@@ -1,7 +1,7 @@
 #include"UISettingsConfigurator.h"
 #include "OdsErr.h"
 #include"SettingsInitializer.h"
-
+#include "Constants.h"
 UISettingsConfigurator::UISettingsConfigurator(const std::shared_ptr<DrvFtaeAlarm::ISettingsDataSource>& settingsDataSource):_settingsDataSource(settingsDataSource)
 {
 
@@ -53,8 +53,8 @@ int UISettingsConfigurator::Configure(const TCHAR* szCfgInString, TCHAR** pszCfg
 		*pszCfgOutString = outStr;
 		CloseHandle(hFile);
 		DeleteFile("OutputXML.xml");
-		DeleteFile("Filters.xml");
-		DeleteFile("Settings.xml");
+		DeleteFile(FITERS_XML_FILE_NAME);
+		DeleteFile(SETTINGS_XML_FILE_NAME);
 		hFile = INVALID_HANDLE_VALUE;
 		iRes = ODS::ERR::OK;
 	}

@@ -49,8 +49,15 @@ std::vector<std::string> split(const std::string& text, const std::string& delim
 		}
 		prevPos = pos + 1;
 	}
-	/*if (prevPos < text.length()) {
-		tokens.push_back(text.substr(prevPos, std::string::npos));
-	}*/
 	return tokens;
+}
+
+std::string EncryptPassword(const std::string& password)
+{
+	return std::string(password);
+}
+
+std::string DecryptPassword(const std::string& password)
+{
+	return std::string(password);
 }

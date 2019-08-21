@@ -38,8 +38,8 @@ int FtaeServer::Init(TCHAR* szCfgString)
 int  FtaeServer::Shut()
 {
 	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("Server Shut"));
-	DeleteFile("Filters.xml");
-	DeleteFile("Settings.xml");
+	DeleteFile(FITERS_XML_FILE_NAME);
+	DeleteFile(SETTINGS_XML_FILE_NAME);
 	return ODS::ERR::OK;
 }
 

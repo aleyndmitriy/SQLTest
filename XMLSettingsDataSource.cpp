@@ -1,5 +1,7 @@
 #include "XMLSettingsDataSource.h"
+#include "Utils.h"
 #include"pugixml.hpp"
+#include "Constants.h"
 
 bool DrvFtaeAlarm::XMLSettingsDataSource::Save(const std::map<std::pair<std::string, bool>, std::vector<StatementCondition> >& filters)
 {
@@ -24,7 +26,7 @@ bool DrvFtaeAlarm::XMLSettingsDataSource::Save(const std::map<std::pair<std::str
 			}
 		}
 	}
-	doc.save_file("Filters.xml");
+	doc.save_file(FITERS_XML_FILE_NAME);
 	return true;
 }
 
@@ -39,15 +41,16 @@ bool DrvFtaeAlarm::XMLSettingsDataSource::Save(const ConnectionAttributes& attri
 	connectionNode.append_attribute("ReportType").set_value(attributes.isAlarmReport);
 	connectionNode.append_attribute("ConfigDataBase").set_value(attributes.databaseName.c_str());
 	connectionNode.append_attribute("User").set_value(attributes.loginName.c_str());
-	connectionNode.append_attribute("Password").set_value(attributes.password.c_str());
-	doc.save_file("Settings.xml");
+	std::string encryptPass = EncryptPassword(attributes.password);
+	connectionNode.append_attribute("Password").set_value(encryptPass.c_str());
+	doc.save_file(SETTINGS_XML_FILE_NAME);
 	return true;
 }
 
 bool DrvFtaeAlarm::XMLSettingsDataSource::Load(std::map<std::pair<std::string, bool>, std::vector<StatementCondition> >& filters)
 {
 	pugi::xml_document doc;
-	pugi::xml_parse_result res = doc.load_file("Filters.xml");
+	pugi::xml_parse_result res = doc.load_file(FITERS_XML_FILE_NAME);
 	if (!res) {
 		return false;
 	}
@@ -73,7 +76,7 @@ bool DrvFtaeAlarm::XMLSettingsDataSource::Load(std::map<std::pair<std::string, b
 bool DrvFtaeAlarm::XMLSettingsDataSource::Load(ConnectionAttributes& attributes)
 {
 	pugi::xml_document doc;
-	pugi::xml_parse_result res = doc.load_file("Settings.xml");
+	pugi::xml_parse_result res = doc.load_file(SETTINGS_XML_FILE_NAME);
 	if (!res) {
 		return false;
 	}
@@ -85,7 +88,8 @@ bool DrvFtaeAlarm::XMLSettingsDataSource::Load(ConnectionAttributes& attributes)
 	attributes.isAlarmReport = connectionNode.attribute("ReportType").as_bool();
 	attributes.databaseName = std::string(connectionNode.attribute("ConfigDataBase").as_string());
 	attributes.loginName = std::string(connectionNode.attribute("User").as_string());
-	attributes.password = std::string(connectionNode.attribute("Password").as_string());
+	std::string pass = std::string(connectionNode.attribute("Password").as_string());
+	attributes.password = std::string(DecryptPassword(pass));
 	return true;
 }
 
@@ -105,7 +109,8 @@ bool DrvFtaeAlarm::XMLSettingsDataSource::LoadSettingsString(const char* source,
 	attributes.isAlarmReport = connectionNode.attribute("ReportType").as_bool();
 	attributes.databaseName = std::string(connectionNode.attribute("ConfigDataBase").as_string());
 	attributes.loginName = std::string(connectionNode.attribute("User").as_string());
-	attributes.password = std::string(connectionNode.attribute("Password").as_string());
+	std::string pass = std::string(connectionNode.attribute("Password").as_string());
+	attributes.password = std::string(DecryptPassword(pass));
 	if (!Save(attributes)) {
 		return false;
 	}
@@ -147,7 +152,8 @@ bool DrvFtaeAlarm::XMLSettingsDataSource::SaveSettingsString(const char* fileNam
 	connectionNode.append_attribute("ReportType").set_value(attributes.isAlarmReport);
 	connectionNode.append_attribute("ConfigDataBase").set_value(attributes.databaseName.c_str());
 	connectionNode.append_attribute("User").set_value(attributes.loginName.c_str());
-	connectionNode.append_attribute("Password").set_value(attributes.password.c_str());
+	std::string encryptPass = EncryptPassword(attributes.password);
+	connectionNode.append_attribute("Password").set_value(encryptPass.c_str());
 	std::map<std::pair<std::string, bool>, std::vector<StatementCondition> > filters;
 
 	if (!Load(filters)) {
