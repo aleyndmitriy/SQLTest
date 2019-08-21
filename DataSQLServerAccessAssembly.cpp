@@ -21,10 +21,7 @@ databaseInfoDAO(std::make_shared<SQLServerDatabaseInfoDAO>(databaseEngine)), con
 
 DrvFtaeAlarm::DataSQLServerAccessAssembly::~DataSQLServerAccessAssembly()
 {
-	conditionRecordsDAO.reset();
-	databaseInfoDAO.reset();
-	settingsDataSource.reset();
-	databaseEngine.reset();
+	ClearAssemblies();
 }
 
 DrvFtaeAlarm::DataSQLServerAccessAssembly& DrvFtaeAlarm::DataSQLServerAccessAssembly::instance()
@@ -41,4 +38,12 @@ std::shared_ptr<DrvFtaeAlarm::DatabaseInfoDAO> DrvFtaeAlarm::DataSQLServerAccess
 std::shared_ptr<DrvFtaeAlarm::ConditionRecordsDAO> DrvFtaeAlarm::DataSQLServerAccessAssembly::GetConditionRecordSQLServerDao() const {
 
 	return conditionRecordsDAO;
+}
+
+void DrvFtaeAlarm::DataSQLServerAccessAssembly::ClearAssemblies()
+{
+	conditionRecordsDAO.reset();
+	databaseInfoDAO.reset();
+	settingsDataSource.reset();
+	databaseEngine.reset();
 }

@@ -13,6 +13,7 @@ namespace DrvFtaeAlarm {
 		std::shared_ptr<ISettingsDataSource> GetSettingDataSource() const override;
 		std::shared_ptr<DatabaseInfoDAO> GetDatabaseInfoSQLServerDao() const override;
 		std::shared_ptr<ConditionRecordsDAO> GetConditionRecordSQLServerDao() const override;
+		void ClearAssemblies() override;
 		DataSQLServerAccessAssembly(const DataSQLServerAccessAssembly& src) = delete;
 		DataSQLServerAccessAssembly& operator=(const DataSQLServerAccessAssembly& src) = delete;
 		DataSQLServerAccessAssembly(DataSQLServerAccessAssembly&& rhs) = delete;

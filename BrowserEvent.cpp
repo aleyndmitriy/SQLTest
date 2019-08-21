@@ -13,8 +13,8 @@ BrowserEvent::BrowserEvent(const std::shared_ptr<DrvFtaeAlarm::ISettingsDataSour
 
 BrowserEvent::~BrowserEvent()
 {
-	_settingsDataSource.reset();
 	_databaseInfo.reset();
+	_settingsDataSource.reset();
 	cfgString.clear();
 }
 
