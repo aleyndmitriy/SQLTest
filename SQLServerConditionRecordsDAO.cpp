@@ -11,9 +11,12 @@ DrvFtaeAlarm::SQLServerConditionRecordsDAO::~SQLServerConditionRecordsDAO()
 	_databaseEngine.reset();
 }
 
-std::vector<DrvFtaeAlarm::Record> DrvFtaeAlarm::SQLServerConditionRecordsDAO::GetRecords(const SQLTable& table, const ConnectionAttributes& attributes, const std::vector<StatementCondition>& conditions, std::string txtSql)
+std::vector<DrvFtaeAlarm::Record> DrvFtaeAlarm::SQLServerConditionRecordsDAO::GetRecords(bool isManageConnection, const SQLTable& table, const ConnectionAttributes& attributes, const std::vector<StatementCondition>& conditions, std::string txtSql)
 {
 	std::vector<Record> records;
+	if (isManageConnection) {
+		_databaseEngine->CloseConnection();
+	}
 	if (!_databaseEngine->OpenConnectionIfNeeded(attributes)) {
 		return records;
 	}
@@ -24,6 +27,9 @@ std::vector<DrvFtaeAlarm::Record> DrvFtaeAlarm::SQLServerConditionRecordsDAO::Ge
 	Log::GetInstance()->WriteInfo(_T("SQL Query : % s ."), (LPCTSTR)querry.c_str());
 	std::vector<std::string> params = { };
 	records = _databaseEngine->ExecuteStatement(querry, params);
+	if (isManageConnection) {
+		_databaseEngine->CloseConnection();
+	}
 	return records;
 }
 

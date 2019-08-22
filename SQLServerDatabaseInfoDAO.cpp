@@ -34,14 +34,20 @@ std::unique_ptr<DrvFtaeAlarm::SQLDatabase> DrvFtaeAlarm::SQLServerDatabaseInfoDA
 	return ptrData;
 }
 
-std::unique_ptr<DrvFtaeAlarm::SQLTable> DrvFtaeAlarm::SQLServerDatabaseInfoDAO::GetTableInfo(const ConnectionAttributes& attributes, std::string databaseName, std::string tableName)
+std::unique_ptr<DrvFtaeAlarm::SQLTable> DrvFtaeAlarm::SQLServerDatabaseInfoDAO::GetTableInfo(bool isManageConnection, const ConnectionAttributes& attributes, std::string databaseName, std::string tableName)
 {
+	if (isManageConnection) {
+		_databaseEngine->CloseConnection();
+	}
 	if (!_databaseEngine->OpenConnectionIfNeeded(attributes)) {
 		return nullptr;
 	}
 	std::string querry = std::string("SELECT COLUMN_NAME, DATA_TYPE, TABLE_SCHEMA FROM Information_schema.Columns WHERE TABLE_NAME = '") + tableName + std::string("';");
 	std::vector<std::string> vec = { };
 	std::vector<Record> records = _databaseEngine->ExecuteStatement(querry, vec);
+	if (isManageConnection) {
+		_databaseEngine->CloseConnection();
+	}
 	if (records.empty()) {
 		return nullptr;
 	}

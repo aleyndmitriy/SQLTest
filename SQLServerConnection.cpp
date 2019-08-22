@@ -38,13 +38,18 @@ void DrvFtaeAlarm::SQLServerConnection::freeConnection() {
 		SQLSMALLINT res = SQLDisconnect(sqlDBC);
 		__try {
 			res = SQLFreeHandle(SQL_HANDLE_DBC, sqlDBC);
+			sqlDBC = SQL_NULL_HDBC;
 		}
 		__except (GetExceptionCode() == EXCEPTION_ACCESS_VIOLATION ? EXCEPTION_EXECUTE_HANDLER : EXCEPTION_CONTINUE_SEARCH) {
 	
 		}
 	}
-	__except(GetExceptionCode() == EXCEPTION_ACCESS_VIOLATION  ? EXCEPTION_EXECUTE_HANDLER : EXCEPTION_CONTINUE_SEARCH) {
+	__except((GetExceptionCode() == EXCEPTION_ACCESS_VIOLATION || GetExceptionCode() == EXCEPTION_BREAKPOINT)  ? EXCEPTION_EXECUTE_HANDLER : EXCEPTION_CONTINUE_SEARCH) {
 
+	}
+	if (sqlDBC)
+	{
+		SQLSMALLINT res = SQLFreeHandle(SQL_HANDLE_DBC, sqlDBC);
 	}
 	sqlDBC = SQL_NULL_HDBC;
 	ptrEnvironment.reset();
@@ -59,6 +64,7 @@ void DrvFtaeAlarm::SQLServerConnection::freeConnection() {
 }
 
 void DrvFtaeAlarm::SQLServerConnection::allocateConnection() {
+	sqlDBC = SQL_NULL_HDBC;
 	SQLSMALLINT res = SQLAllocHandle(SQL_HANDLE_DBC, ptrEnvironment->GetInterface(0), &sqlDBC);
 	if (res == SQL_ERROR)
 	{

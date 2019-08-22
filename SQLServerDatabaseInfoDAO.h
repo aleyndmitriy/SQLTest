@@ -14,6 +14,6 @@ namespace DrvFtaeAlarm {
 		SQLServerDatabaseInfoDAO& operator=(SQLServerDatabaseInfoDAO&& rhs) = default;
 		~SQLServerDatabaseInfoDAO();
 		std::unique_ptr<SQLDatabase> GetDatabaseInfo(const ConnectionAttributes& attributes, std::string databaseName) override;
-		std::unique_ptr<SQLTable> GetTableInfo(const ConnectionAttributes& attributes, std::string databaseName, std::string tableName) override;
+		std::unique_ptr<SQLTable> GetTableInfo(bool isManageConnection, const ConnectionAttributes& attributes, std::string databaseName, std::string tableName) override;
 	};
 }

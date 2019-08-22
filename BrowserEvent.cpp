@@ -30,6 +30,9 @@ int BrowserEvent::Init(TCHAR* szCfgString)
 int  BrowserEvent::Shut()
 {
 	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("Browse Shut"));
+	_databaseInfo.reset();
+	_settingsDataSource.reset();
+	cfgString.clear();
 	DeleteFile(FITERS_XML_FILE_NAME);
 	DeleteFile(SETTINGS_XML_FILE_NAME);
 	return ODS::ERR::OK;
@@ -103,7 +106,7 @@ int BrowserEvent::GetAlarmPropertyInfoList(ODS::PropertyInfo** ppPropertyInfoLis
 		_settingsDataSource->Load(attributes);
 	}
 
-	std::unique_ptr<DrvFtaeAlarm::SQLTable> table = _databaseInfo->GetTableInfo(attributes, std::string(), std::string("ConditionEvent"));
+	std::unique_ptr<DrvFtaeAlarm::SQLTable> table = _databaseInfo->GetTableInfo(true, attributes, std::string(), std::string("ConditionEvent"));
 
 	std::map<std::string, DrvFtaeAlarm::PropertyType> properties;
 	for (DrvFtaeAlarm::SQLTable::const_iterator itr = table->cbegin(); itr != table->cend(); ++itr) {

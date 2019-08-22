@@ -40,6 +40,9 @@ int  FtaeServer::Shut()
 	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("Server Shut"));
 	DeleteFile(FITERS_XML_FILE_NAME);
 	DeleteFile(SETTINGS_XML_FILE_NAME);
+	_settingsDataSource.reset();
+	_databaseInfo.reset();
+	cfgString.clear();
 	return ODS::ERR::OK;
 }
 
@@ -531,7 +534,7 @@ std::vector<DrvFtaeAlarm::Record> FtaeServer::LoadEvents(const std::vector<std::
 			}
 		}
 	}
-	std::unique_ptr<DrvFtaeAlarm::SQLTable> table = _databaseInfo->GetTableInfo(attributes, attributes.databaseName, std::string("ConditionEvent"));
+	std::unique_ptr<DrvFtaeAlarm::SQLTable> table = _databaseInfo->GetTableInfo(true,attributes, attributes.databaseName, std::string("ConditionEvent"));
 	if (!table) {
 		return records;
 	}
@@ -545,7 +548,7 @@ std::vector<DrvFtaeAlarm::Record> FtaeServer::LoadEvents(const std::vector<std::
 			}
 		}
 	}
-	records = _recordsInfo->GetRecords(*table, attributes, conditions, sqlCondition);
+	records = _recordsInfo->GetRecords(true,*table, attributes, conditions, sqlCondition);
 	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("LoadEvents: Number of records: %d"), records.size());
 	return records;
 }
