@@ -74,20 +74,18 @@ DrvFtaeAlarm::SettingsViewController::~SettingsViewController()
 {
 	presenter.reset();
 	childs.clear();
-	EndDialog(window, bOK);
+	EndDialog(window, 1);
 	window = NULL;
 }
 
 
 void DrvFtaeAlarm::SettingsViewController::OnBtnOkTouched()
 {
-	bOK = true;
 	CloseView();
 }
 
 void DrvFtaeAlarm::SettingsViewController::OnBtnCancelTouched()
 {
-	bOK = false;
 	CloseView();
 }
 
@@ -101,10 +99,7 @@ void DrvFtaeAlarm::SettingsViewController::DestroyLoginView()
 
 void DrvFtaeAlarm::SettingsViewController::CreateLoginView()
 {
-	if (childs.at(0).expired()) {
-
-	}
-	else {
+	if (childs.at(0).expired() == false) {
 		std::shared_ptr<UIDialogViewController> ptr = childs.at(0).lock();
 		if (ptr) {
 			ptr->ShowView();
@@ -123,10 +118,7 @@ void DrvFtaeAlarm::SettingsViewController::DestroyFiltersView()
 
 void DrvFtaeAlarm::SettingsViewController::CreateFiltersView()
 {
-	if (childs.at(1).expired()) {
-
-	}
-	else {
+	if (childs.at(1).expired() == false) {
 		std::shared_ptr<UIDialogViewController> ptr = childs.at(1).lock();
 		if (ptr) {
 			ptr->ShowView();
