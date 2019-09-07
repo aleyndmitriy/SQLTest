@@ -3,7 +3,7 @@
 #include"LoginInitializer.h"
 #include"FiltersInitializer.h"
 
-DrvFtaeAlarm::SettingsViewController::SettingsViewController(const std::shared_ptr<UIDialogViewController>& parent, const std::shared_ptr<ISettingsViewOutput>& output):UIDialogViewController(parent), presenter(output)
+DrvFtaeAlarm::SettingsViewController::SettingsViewController(const std::shared_ptr<UIDialogViewController>& parent, const std::shared_ptr<ISettingsViewOutput>& output):UIDialogViewController(parent), presenter(output),isOk(false)
 {
 	
 }
@@ -74,18 +74,21 @@ DrvFtaeAlarm::SettingsViewController::~SettingsViewController()
 {
 	presenter.reset();
 	childs.clear();
-	EndDialog(window, 1);
+	EndDialog(window, isOk);
+	isOk = false;
 	window = NULL;
 }
 
 
 void DrvFtaeAlarm::SettingsViewController::OnBtnOkTouched()
 {
+	isOk = true;
 	CloseView();
 }
 
 void DrvFtaeAlarm::SettingsViewController::OnBtnCancelTouched()
 {
+	isOk = false;
 	CloseView();
 }
 

@@ -35,6 +35,7 @@ namespace DrvFtaeAlarm {
 		std::shared_ptr<ISettingsViewOutput> presenter;
 		std::vector<std::weak_ptr<UIDialogViewController> > childs;
 		void ShiftChildDialog();
+		bool isOk;
 	};
 
 }
