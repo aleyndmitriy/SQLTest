@@ -109,6 +109,12 @@ std::string DrvFtaeAlarm::StatementCondition::ConditionView() const
 	case ConditionType::CONDTYPE_LIKE:
 		type = std::string("LIKE");
 		break;
+	case ConditionType::CONDTYPE_TRUE:
+		type = std::string("TRUE");
+		break;
+	case ConditionType::CONDTYPE_FALSE:
+		type = std::string("FALSE");
+		break;
 	default:
 		type = std::string("(NONE)");
 		break;
@@ -260,6 +266,12 @@ DrvFtaeAlarm::ConditionType DrvFtaeAlarm::IntToConditionType(int type)
 		break;
 	case 9:
 		res = ConditionType::CONDTYPE_LIKE;
+		break;
+	case 10:
+		res = ConditionType::CONDTYPE_TRUE;
+		break;
+	case 11:
+		res = ConditionType::CONDTYPE_FALSE;
 		break;
 	default:
 		res = ConditionType::CONDTYPE_NONE;

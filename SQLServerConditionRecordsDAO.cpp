@@ -108,6 +108,12 @@ std::string DrvFtaeAlarm::SQLServerConditionRecordsDAO::ConvertStatementConditio
 	case ConditionType::CONDTYPE_LIKE:
 		sql += std::string(" LIKE ") + std::string(" '") + condition.GetValue1() + std::string("%' ");
 		break;
+	case ConditionType::CONDTYPE_TRUE:
+		sql += std::string(" = 1");
+		break;
+	case ConditionType::CONDTYPE_FALSE:
+		sql += std::string(" = 0");
+		break;
 	default:
 		break;
 	}

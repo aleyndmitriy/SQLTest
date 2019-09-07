@@ -36,7 +36,9 @@ namespace DrvFtaeAlarm {
 		CONDTYPE_BETWEEN = 6,
 		CONDTYPE_ISNULL = 7,
 		CONDTYPE_ISNOTNULL = 8,
-		CONDTYPE_LIKE = 9
+		CONDTYPE_LIKE = 9,
+		CONDTYPE_TRUE = 10,
+		CONDTYPE_FALSE = 11
 	};
 
 	enum class CombineOperation : int

@@ -277,7 +277,14 @@ void DrvFtaeAlarm::FiltersViewController::SelectCondition(int index)
 void DrvFtaeAlarm::FiltersViewController::SelectedCondition(const StatementCondition& condition)
 {
 	LRESULT index = SendDlgItemMessage(window, IDC_COMBO_PROPERTY, CB_FINDSTRING, 0, (LPARAM)condition.GetProperty().c_str());
-	SendDlgItemMessage(window, IDC_COMBO_PROPERTY, CB_SETCURSEL, (WPARAM)index, 0);
+	if (index == CB_ERR) {
+		LRESULT pos = SendDlgItemMessage(window, IDC_COMBO_PROPERTY, CB_ADDSTRING, 0, (LPARAM)condition.GetProperty().c_str());
+		SendDlgItemMessage(window, IDC_COMBO_PROPERTY, CB_SETCURSEL, (WPARAM)pos, 0);
+	}
+	else {
+		SendDlgItemMessage(window, IDC_COMBO_PROPERTY, CB_SETCURSEL, (WPARAM)index, 0);
+	}
+	
 	if (condition.GetCombineOperation() == CombineOperation::COMBINEOP_OR) {
 		CheckRadioButton(window, IDC_RADIO_AND, IDC_RADIO_OR, IDC_RADIO_OR);
 	}
@@ -291,9 +298,26 @@ void DrvFtaeAlarm::FiltersViewController::SelectedCondition(const StatementCondi
 	index = SendDlgItemMessage(window, IDC_COMBO_CONDITION, CB_ADDSTRING, 0, (LPARAM)wProperty.c_str());
 	SendDlgItemMessage(window, IDC_COMBO_CONDITION, CB_SETCURSEL, (WPARAM)index, 0);
 	ClearEditValue1Control();
-	SendDlgItemMessage(window, IDC_EDIT_VALUE1, WM_SETTEXT, 0, (LPARAM)condition.GetValue1().c_str());
+	HWND hEditControl1 = GetDlgItem(window, IDC_EDIT_VALUE1);
+	if (condition.GetValue1().empty()) {
+		ShowWindow(hEditControl1, FALSE);
+	}
+	else {
+		ShowWindow(hEditControl1, TRUE);
+		SendMessage(hEditControl1, WM_SETTEXT, 0, (LPARAM)condition.GetValue1().c_str());
+	}
 	ClearEditValue2Control();
-	SendDlgItemMessage(window, IDC_EDIT_VALUE2, WM_SETTEXT, 0, (LPARAM)condition.GetValue2().c_str());
+	HWND hEditControl2 = GetDlgItem(window, IDC_EDIT_VALUE2);
+	HWND hStaticEnd = GetDlgItem(window, IDC_STATIC_AND);
+	if (condition.GetValue2().empty()) {
+		ShowWindow(hEditControl2, FALSE);
+		ShowWindow(hStaticEnd, FALSE);
+	}
+	else {
+		ShowWindow(hEditControl2, TRUE);
+		ShowWindow(hStaticEnd, TRUE);
+		SendMessage(hEditControl2, WM_SETTEXT, 0, (LPARAM)condition.GetValue2().c_str());
+	}
 	SelectCondition();
 }
 
@@ -319,7 +343,10 @@ void DrvFtaeAlarm::FiltersViewController::UnselectCondition()
 	EnableWindow(GetDlgItem(window, IDC_COMBO_PROPERTYTYPE), TRUE);
 	EnableWindow(GetDlgItem(window, IDC_COMBO_CONDITION), TRUE);
 	EnableWindow(GetDlgItem(window, IDC_EDIT_VALUE1), TRUE);
+	ShowWindow(GetDlgItem(window, IDC_EDIT_VALUE1), FALSE);
 	EnableWindow(GetDlgItem(window, IDC_EDIT_VALUE2), TRUE);
+	ShowWindow(GetDlgItem(window, IDC_EDIT_VALUE2), FALSE);
+	ShowWindow(GetDlgItem(window, IDC_STATIC_AND), FALSE);
 	EnableWindow(GetDlgItem(window, IDC_RADIO_AND), TRUE);
 	EnableWindow(GetDlgItem(window, IDC_RADIO_OR), TRUE);
 	EnableWindow(GetDlgItem(window, IDC_BUTTON_ADDCONDITION), TRUE);
@@ -369,6 +396,7 @@ void DrvFtaeAlarm::FiltersViewController::AddCondition(const StatementCondition&
 	item.iSubItem = 2;
 	item.pszText = wchConditionType;
 	SendMessage(hConditionListControl, LVM_SETITEM, 0, (LPARAM)& item);
+	UnselectCondition();
 }
 
 std::string DrvFtaeAlarm::FiltersViewController::GetSelectedConditionProperty()
@@ -449,6 +477,12 @@ DrvFtaeAlarm::ConditionType DrvFtaeAlarm::FiltersViewController::GetSelectedCond
 		break;
 	case 9:
 		type = ConditionType::CONDTYPE_LIKE;
+		break;
+	case 10:
+		type = ConditionType::CONDTYPE_TRUE;
+		break;
+	case 11:
+		type = ConditionType::CONDTYPE_FALSE;
 		break;
 	default:
 		break;
@@ -617,9 +651,9 @@ void DrvFtaeAlarm::FiltersViewController::CreateConditionComboBoolean()
 {
 	HWND hComboControl = GetDlgItem(window, IDC_COMBO_CONDITION);
 	LRESULT pos = SendMessage(hComboControl, CB_ADDSTRING, 0, (LPARAM)TEXT("TRUE"));
-	SendMessage(hComboControl, CB_SETITEMDATA, pos, (LPARAM)ConditionType::CONDTYPE_EQUAL);
+	SendMessage(hComboControl, CB_SETITEMDATA, pos, (LPARAM)ConditionType::CONDTYPE_TRUE);
 	pos = SendMessage(hComboControl, CB_ADDSTRING, 0, (LPARAM)TEXT("FALSE"));
-	SendMessage(hComboControl, CB_SETITEMDATA, pos, (LPARAM)ConditionType::CONDTYPE_NOTEQUAL);
+	SendMessage(hComboControl, CB_SETITEMDATA, pos, (LPARAM)ConditionType::CONDTYPE_FALSE);
 	pos = SendMessage(hComboControl, CB_ADDSTRING, 0, (LPARAM)TEXT("IS NULL"));
 	SendMessage(hComboControl, CB_SETITEMDATA, pos, (LPARAM)ConditionType::CONDTYPE_ISNULL);
 	pos = SendMessage(hComboControl, CB_ADDSTRING, 0, (LPARAM)TEXT("IS NOT NULL"));
