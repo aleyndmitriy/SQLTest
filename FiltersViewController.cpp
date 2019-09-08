@@ -18,6 +18,7 @@ void DrvFtaeAlarm::FiltersViewController::setupInitialState()
 	CreateFiltersList();
 	CreateConditionsList();
 	EnableConditionView(FALSE);
+	CheckRadioButton(window, IDC_RADIO_AND, IDC_RADIO_OR, IDC_RADIO_AND);
 	presenter->viewIsReady();
 }
 

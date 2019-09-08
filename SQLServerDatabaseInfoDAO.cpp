@@ -1,4 +1,5 @@
 #include"SQLServerDatabaseInfoDAO.h"
+#include"Log.h"
 
 DrvFtaeAlarm::SQLServerDatabaseInfoDAO::SQLServerDatabaseInfoDAO(const std::shared_ptr<SQLServerDatabaseEngine>& databaseEngine):DatabaseInfoDAO(databaseEngine)
 {
@@ -40,6 +41,7 @@ std::unique_ptr<DrvFtaeAlarm::SQLTable> DrvFtaeAlarm::SQLServerDatabaseInfoDAO::
 		_databaseEngine->CloseConnection();
 	}
 	if (!_databaseEngine->OpenConnectionIfNeeded(attributes)) {
+		Log::GetInstance()->WriteInfo(_T("Can't connect to database"));
 		return nullptr;
 	}
 	std::string querry = std::string("SELECT COLUMN_NAME, DATA_TYPE, TABLE_SCHEMA FROM Information_schema.Columns WHERE TABLE_NAME = '") + tableName + std::string("';");

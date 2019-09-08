@@ -18,6 +18,7 @@ std::vector<DrvFtaeAlarm::Record> DrvFtaeAlarm::SQLServerConditionRecordsDAO::Ge
 		_databaseEngine->CloseConnection();
 	}
 	if (!_databaseEngine->OpenConnectionIfNeeded(attributes)) {
+		Log::GetInstance()->WriteInfo(_T("Can't connect to database"));
 		return records;
 	}
 	std::string querry = ConvertStatementsConditionToSQL(table,conditions);

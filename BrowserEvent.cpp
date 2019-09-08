@@ -68,6 +68,9 @@ int BrowserEvent::GetFilterList(TCHAR*** ppszFilterList, ULONG* pulCount)
 		return ODS::ERR::OK;
 	}
 	std::vector<std::string> filterNameList = _settingsDataSource->GetFiltersName();
+	if (filterNameList.empty()) {
+		filterNameList.push_back(std::string("Default"));
+	}
 	ULONG count = filterNameList.size();
 	*pulCount = count;
 	*ppszFilterList = new TCHAR * [count];
@@ -86,7 +89,6 @@ int BrowserEvent::GetFilterList(TCHAR*** ppszFilterList, ULONG* pulCount)
 
 int BrowserEvent::GetAlarmPropertyInfoList(ODS::PropertyInfo** ppPropertyInfoList, ULONG* pulCount)
 {
-	
 	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("GetAlarmPropertyInfoList"));
 	if (!cfgString.empty())
 	{
