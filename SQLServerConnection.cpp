@@ -140,7 +140,7 @@ bool DrvFtaeAlarm::SQLServerConnection::ConnectToServerInstances(std::string dri
 bool DrvFtaeAlarm::SQLServerConnection::ConnectToDatabaseInstances(std::string serverName, std::string login, std::string password, AuthenticationType authType)
 {
 	TCHAR whUserInfo[SQL_MAX_MESSAGE_LENGTH];
-	TCHAR wStrOut[STR_LENGTH];
+	std::unique_ptr<TCHAR[]> wStrOut(new TCHAR[STR_LENGTH]);
 	SQLSMALLINT shBrowseResultLen = 0;
 	std::string strServerData = std::string("SERVER=") + serverName;
 	if (authType == AuthenticationType::Server) {
@@ -151,9 +151,14 @@ bool DrvFtaeAlarm::SQLServerConnection::ConnectToDatabaseInstances(std::string s
 	}
 	StringCchCopy(whUserInfo, strServerData.length() + 1, strServerData.c_str());
 	SQLSMALLINT res = SQLBrowseConnect(sqlDBC, reinterpret_cast<SQLCHAR*>(whUserInfo), SQL_NTS,
-		reinterpret_cast<SQLCHAR*>(wStrOut), STR_LENGTH, &shBrowseResultLen);
+		reinterpret_cast<SQLCHAR*>(wStrOut.get()), STR_LENGTH, &shBrowseResultLen);
+	if ((SQL_SUCCEEDED(res) || res == SQL_NEED_DATA) && shBrowseResultLen > STR_LENGTH) {
+		wStrOut.reset(new TCHAR[shBrowseResultLen + 1]);
+		res = SQLBrowseConnect(sqlDBC, reinterpret_cast<SQLCHAR*>(whUserInfo), SQL_NTS,
+			reinterpret_cast<SQLCHAR*>(wStrOut.get()), shBrowseResultLen, &shBrowseResultLen);
+	}
 	if (SQL_SUCCEEDED(res) || res == SQL_NEED_DATA) {
-		std::string strRes(wStrOut);
+		std::string strRes(wStrOut.get());
 		size_t firstPos = strRes.find_first_of("{", 0);
 		size_t lastPos = strRes.find_first_of("}", 0);
 		if (firstPos != std::string::npos && lastPos != std::string::npos) {
