@@ -530,6 +530,12 @@
     <ClInclude Include="OdsStringUtils.h">
       <Filter>Export\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="IAbstractUIFacrory.h">
+      <Filter>Export\ExportInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="IDbBrowser.h">
+      <Filter>Export\ExportInterface</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SQLTest.rc">

@@ -201,9 +201,11 @@
     <ClInclude Include="HdaFunctionParam.h" />
     <ClInclude Include="HdaFunctionResult.h" />
     <ClInclude Include="HdaFunctionTypes.h" />
+    <ClInclude Include="IAbstractUIFacrory.h" />
     <ClInclude Include="IBrowserEvent.h" />
     <ClInclude Include="DatabaseInfoDAO.h" />
     <ClInclude Include="IDataSource.h" />
+    <ClInclude Include="IDbBrowser.h" />
     <ClInclude Include="IDsBrowser.h" />
     <ClInclude Include="IDsConfigurator.h" />
     <ClInclude Include="IDsConfiguratorEvent.h" />
