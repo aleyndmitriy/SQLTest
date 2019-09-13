@@ -69,6 +69,9 @@ void DrvFtaeAlarm::FiltersPresenter::AddFilter(std::string filterName)
 {
 	std::shared_ptr<IFiltersViewInput> ptrView = view.lock();
 	if (ptrView) {
+		if (filterName.empty()) {
+			ptrView->ErrorMessage(std::string("Please, enter filter name!"));
+		}
 		FiltersIterator itr = filters.find(filterName);
 		if (itr != filters.end()) {
 			ptrView->WarningMessage(std::string("Filter with such name already exist!"));

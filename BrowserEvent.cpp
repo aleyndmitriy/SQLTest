@@ -121,6 +121,9 @@ int BrowserEvent::GetAlarmPropertyInfoList(ODS::PropertyInfo** ppPropertyInfoLis
 	{
 		ULONG i = 0;
 		for (std::map< std::string, DrvFtaeAlarm::PropertyType>::const_iterator itr = properties.cbegin(); itr != properties.cend(); ++itr) {
+			if (itr->first == std::string("EventTimeStamp") || itr->first == std::string("Priority") || itr->first == std::string("Message")) {
+				continue;
+			}
 			(*ppPropertyInfoList + i)->SetId(PROP_START_ID + i);
 			(*ppPropertyInfoList + i)->SetName(itr->first.c_str());
 			switch (itr->second)

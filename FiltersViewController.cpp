@@ -193,6 +193,11 @@ void DrvFtaeAlarm::FiltersViewController::WarningMessage(std::string message)
 	MessageBox(window, TEXT(message.c_str()), "Warning", MB_ICONWARNING);
 }
 
+void DrvFtaeAlarm::FiltersViewController::ErrorMessage(std::string message)
+{
+	MessageBox(window, TEXT(message.c_str()), "Warning", MB_ICONSTOP);
+}
+
 void DrvFtaeAlarm::FiltersViewController::AddFilter(std::string filterName)
 {
 	HWND hFilterListControl = GetDlgItem(window, IDC_LIST_FILTERS);

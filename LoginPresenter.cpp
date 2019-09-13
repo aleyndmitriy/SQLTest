@@ -82,7 +82,7 @@ void DrvFtaeAlarm::LoginPresenter::ConnectToDriver() {
 			attributes.driver.clear();
 			_database->CloseConnection();
 			ptrView->StopLoading();
-			ptrView->WarningMessage(std::string("Can't open connection"));
+			ptrView->ErrorMessage(std::string("Connection Error"));
 		}
 	}
 	
@@ -108,19 +108,19 @@ void DrvFtaeAlarm::LoginPresenter::CheckConnectToDatabase()
 	std::shared_ptr< ILoginViewInput> ptrView = view.lock();
 	if (ptrView) {
 		ptrView->StartLoading();
-		if (!attributes.driver.empty() && !attributes.serverName.empty() && !attributes.databaseName.empty()) {
+		if (!attributes.driver.empty() && !attributes.serverName.empty()) {
 			if (!_database->OpenConnectionIfNeeded(attributes)) {
 				ptrView->StopLoading();
-				ptrView->WarningMessage(std::string("Can't open connection"));
+				ptrView->ErrorMessage(std::string("Connection Test Failed!"));
 			}
 			else {
 				ptrView->StopLoading();
-				ptrView->WarningMessage(std::string("Connection has been successfully established!"));
+				ptrView->WarningMessage(std::string("Connection Test Succeed!"));
 			}
 		}
 		else {
 			ptrView->StopLoading();
-			ptrView->WarningMessage(std::string("Empty fields!"));
+			ptrView->ErrorMessage(std::string("Empty fields!"));
 		}
 	}
 }

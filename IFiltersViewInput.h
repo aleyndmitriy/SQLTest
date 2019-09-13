@@ -7,6 +7,7 @@ namespace DrvFtaeAlarm {
 	public:
 		virtual void setupInitialState() = 0;
 		virtual void WarningMessage(std::string message) = 0;
+		virtual void ErrorMessage(std::string message) = 0;
 		virtual void AddFilter(std::string filterName) = 0;
 		virtual void AddCondition(const StatementCondition& condition, int index) = 0;
 		virtual void SelectedCondition(const StatementCondition& condition) = 0;

@@ -23,7 +23,7 @@ std::vector<DrvFtaeAlarm::Record> DrvFtaeAlarm::SQLServerConditionRecordsDAO::Ge
 	}
 	std::string querry = ConvertStatementsConditionToSQL(table,conditions);
 	if (!txtSql.empty()) {
-		querry = querry + txtSql;
+		querry = querry + std::string(" ") + txtSql;
 	}
 	Log::GetInstance()->WriteInfo(_T("SQL Query : % s ."), (LPCTSTR)querry.c_str());
 	std::vector<std::string> params = { };

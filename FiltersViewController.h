@@ -28,6 +28,7 @@ namespace DrvFtaeAlarm {
 		void AddFilter();
 		void RemoveFilter();
 		void WarningMessage(std::string message) override;
+		void ErrorMessage(std::string message) override;
 		void AddFilter(std::string filterName) override;
 		void SelectFilter(std::string filterName);
 		void SelectCondition(int index);

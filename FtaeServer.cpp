@@ -369,24 +369,20 @@ int FtaeServer::BuildFuncAlarmsResult(ODS::HdaFunctionResult* pFuncResult, const
 					isActiveFind = true;
 					for (DrvFtaeAlarm::Record::const_iterator columnIter = finditr->cbegin(); columnIter != finditr->cend(); ++columnIter) {
 						ODS::Property prop;
-						SetODSProperty(prop, PROP_START_ID + index, columnIter->first.c_str(), columnIter->second.second, columnIter->second.first);
-						++index;
-						listProp.push_back(prop);
 						if (columnIter->first == std::string("EventTimeStamp")) {
-							ODS::Property prop;
 							SetODSTimeProperty(prop, ODS::AlarmProperty::ID_START_TIME, TEXT("StartTime"), columnIter->second.second);
-							listProp.push_back(prop);
 						}
-						if (columnIter->first == std::string("Priority")) {
-							ODS::Property prop;
+						else if (columnIter->first == std::string("Priority")) {
 							SetODSProperty(prop, ODS::AlarmProperty::ID_PRIORITY, TEXT("Priority"), columnIter->second.second, columnIter->second.first);
-							listProp.push_back(prop);
 						}
-						if (columnIter->first == std::string("Message")) {
-							ODS::Property prop;
+						else if (columnIter->first == std::string("Message")) {
 							SetODSProperty(prop, ODS::AlarmProperty::ID_TEXT, TEXT("Description"), columnIter->second.second, columnIter->second.first);
-							listProp.push_back(prop);
 						}
+						else {
+							SetODSProperty(prop, PROP_START_ID + index, columnIter->first.c_str(), columnIter->second.second, columnIter->second.first);
+							++index;
+						}
+						listProp.push_back(prop);
 					}
 				}
 				if (itr->second.second == std::string("0") && isInActiveFind == false) {
@@ -396,6 +392,23 @@ int FtaeServer::BuildFuncAlarmsResult(ODS::HdaFunctionResult* pFuncResult, const
 						ODS::Property prop;
 						SetODSTimeProperty(prop, ODS::AlarmProperty::ID_END_TIME, TEXT("EndTime"), itrEndTime->second.second);
 						listProp.push_back(prop);
+					}
+					if (isActiveFind == false) {
+						unsigned int index = 0;
+						for (DrvFtaeAlarm::Record::const_iterator columnIter = finditr->cbegin(); columnIter != finditr->cend(); ++columnIter) {
+							ODS::Property prop;
+							if (columnIter->first == std::string("Priority")) {
+								SetODSProperty(prop, ODS::AlarmProperty::ID_PRIORITY, TEXT("Priority"), columnIter->second.second, columnIter->second.first);
+							}
+							else if (columnIter->first == std::string("Message")) {
+								SetODSProperty(prop, ODS::AlarmProperty::ID_TEXT, TEXT("Description"), columnIter->second.second, columnIter->second.first);
+							}
+							else {
+								SetODSProperty(prop, PROP_START_ID + index, columnIter->first.c_str(), columnIter->second.second, columnIter->second.first);
+								++index;
+							}
+							listProp.push_back(prop);
+						}
 					}
 				}
 			}
@@ -445,10 +458,6 @@ int FtaeServer::BuildFuncEventsResult(ODS::HdaFunctionResult* pFuncResult, const
 		std::vector<ODS::Property> listProp;
 		unsigned int index = 0;
 		for (DrvFtaeAlarm::Record::const_iterator columnIter = recordsIterator->cbegin(); columnIter != recordsIterator->cend(); ++columnIter) {
-			ODS::Property prop;
-			SetODSProperty(prop, PROP_START_ID + index, columnIter->first.c_str(), columnIter->second.second, columnIter->second.first);
-			++index;
-			listProp.push_back(prop);
 			if (columnIter->first == std::string("EventTimeStamp")) {
 				DrvFtaeAlarm::Record::const_iterator itr = recordsIterator->findColumnValue(std::string("Active"));
 				if (itr != recordsIterator->cend()) {
@@ -473,14 +482,20 @@ int FtaeServer::BuildFuncEventsResult(ODS::HdaFunctionResult* pFuncResult, const
 					}
 				}
 			}
-			if (columnIter->first == std::string("Priority")) {
+			else if (columnIter->first == std::string("Priority")) {
 				ODS::Property prop;
 				SetODSProperty(prop, ODS::AlarmProperty::ID_PRIORITY, TEXT("Priority"), columnIter->second.second, columnIter->second.first);
 				listProp.push_back(prop);
 			}
-			if (columnIter->first == std::string("Message")) {
+			else if (columnIter->first == std::string("Message")) {
 				ODS::Property prop;
 				SetODSProperty(prop, ODS::AlarmProperty::ID_TEXT, TEXT("Description"), columnIter->second.second, columnIter->second.first);
+				listProp.push_back(prop);
+			}
+			else {
+				ODS::Property prop;
+				SetODSProperty(prop, PROP_START_ID + index, columnIter->first.c_str(), columnIter->second.second, columnIter->second.first);
+				++index;
 				listProp.push_back(prop);
 			}
 		}
