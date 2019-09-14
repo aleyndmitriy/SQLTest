@@ -368,46 +368,64 @@ int FtaeServer::BuildFuncAlarmsResult(ODS::HdaFunctionResult* pFuncResult, const
 					unsigned int index = 0;
 					isActiveFind = true;
 					for (DrvFtaeAlarm::Record::const_iterator columnIter = finditr->cbegin(); columnIter != finditr->cend(); ++columnIter) {
-						ODS::Property prop;
 						if (columnIter->first == std::string("EventTimeStamp")) {
+							ODS::Property prop;
 							SetODSTimeProperty(prop, ODS::AlarmProperty::ID_START_TIME, TEXT("StartTime"), columnIter->second.second);
+							listProp.push_back(prop);
 						}
 						else if (columnIter->first == std::string("Priority")) {
+							ODS::Property prop;
 							SetODSProperty(prop, ODS::AlarmProperty::ID_PRIORITY, TEXT("Priority"), columnIter->second.second, columnIter->second.first);
+							listProp.push_back(prop);
 						}
 						else if (columnIter->first == std::string("Message")) {
+							ODS::Property prop;
 							SetODSProperty(prop, ODS::AlarmProperty::ID_TEXT, TEXT("Description"), columnIter->second.second, columnIter->second.first);
+							listProp.push_back(prop);
 						}
 						else {
+							ODS::Property prop;
 							SetODSProperty(prop, PROP_START_ID + index, columnIter->first.c_str(), columnIter->second.second, columnIter->second.first);
+							listProp.push_back(prop);
 							++index;
 						}
-						listProp.push_back(prop);
 					}
 				}
 				if (itr->second.second == std::string("0") && isInActiveFind == false) {
 					isInActiveFind = true;
-					DrvFtaeAlarm::Record::const_iterator itrEndTime = finditr->findColumnValue(std::string("EventTimeStamp"));
-					if (itrEndTime != finditr->cend()) {
-						ODS::Property prop;
-						SetODSTimeProperty(prop, ODS::AlarmProperty::ID_END_TIME, TEXT("EndTime"), itrEndTime->second.second);
-						listProp.push_back(prop);
+					if (isActiveFind) {
+						DrvFtaeAlarm::Record::const_iterator itrEndTime = finditr->findColumnValue(std::string("EventTimeStamp"));
+						if (itrEndTime != finditr->cend()) {
+							ODS::Property prop;
+							SetODSTimeProperty(prop, ODS::AlarmProperty::ID_END_TIME, TEXT("EndTime"), itrEndTime->second.second);
+							listProp.push_back(prop);
+						}
 					}
-					if (isActiveFind == false) {
+					else {
 						unsigned int index = 0;
 						for (DrvFtaeAlarm::Record::const_iterator columnIter = finditr->cbegin(); columnIter != finditr->cend(); ++columnIter) {
-							ODS::Property prop;
-							if (columnIter->first == std::string("Priority")) {
+							if (columnIter->first == std::string("EventTimeStamp")) {
+								ODS::Property prop;
+								SetODSTimeProperty(prop, ODS::AlarmProperty::ID_END_TIME, TEXT("EndTime"), columnIter->second.second);
+								listProp.push_back(prop);
+							}
+							else if (columnIter->first == std::string("Priority")) {
+								ODS::Property prop;
 								SetODSProperty(prop, ODS::AlarmProperty::ID_PRIORITY, TEXT("Priority"), columnIter->second.second, columnIter->second.first);
+								listProp.push_back(prop);
 							}
 							else if (columnIter->first == std::string("Message")) {
+								ODS::Property prop;
 								SetODSProperty(prop, ODS::AlarmProperty::ID_TEXT, TEXT("Description"), columnIter->second.second, columnIter->second.first);
+								listProp.push_back(prop);
 							}
 							else {
+								ODS::Property prop;
 								SetODSProperty(prop, PROP_START_ID + index, columnIter->first.c_str(), columnIter->second.second, columnIter->second.first);
+								listProp.push_back(prop);
 								++index;
 							}
-							listProp.push_back(prop);
+
 						}
 					}
 				}
