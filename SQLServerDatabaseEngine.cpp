@@ -51,8 +51,7 @@ bool DrvFtaeAlarm::SQLServerDatabaseEngine::OpenConnectionIfNeeded(const Connect
 					return ChooseDatabase(attributes.databaseName);
 				}
 				else {
-					CloseConnection();
-					return OpenConnection(attributes);
+					return true;
 				}
 				return true;
 			}

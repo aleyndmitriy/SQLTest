@@ -39,7 +39,7 @@ namespace DrvFtaeAlarm {
 		SQLHDBC sqlDBC;
 		void freeConnection();
 		void allocateConnection();
-		void HandleDiagnosticRecord();
+		std::string HandleDiagnosticRecord();
 		std::vector<std::string> serverList;
 		std::vector<std::string> databaseList;
 	};

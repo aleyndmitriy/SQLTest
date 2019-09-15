@@ -22,6 +22,7 @@ namespace DrvFtaeAlarm {
 		void LoadConnectionSettings(const ConnectionAttributes& attributes) override;
 		void WarningMessage(std::string message) override;
 		void ErrorMessage(std::string message) override;
+		void SelectDatabase(std::string databaseName) override;
 		void StartLoading() override;
 		void StopLoading() override;
 		void AddToParentView() override;

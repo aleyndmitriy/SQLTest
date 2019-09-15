@@ -93,7 +93,7 @@ void DrvFtaeAlarm::LoginPresenter::ConnectToServer()
 	std::shared_ptr< ILoginViewInput> ptrView = view.lock();
 	if (ptrView) {
 		ptrView->StartLoading();
-		attributes.databaseName.clear();
+		//attributes.databaseName.clear();
 		if (_database->OpenConnectionIfNeeded(attributes)) {
 			databaseNames = _database->GetDatabasesList();
 			ptrView->LoadDatabasesList(databaseNames);
@@ -108,12 +108,20 @@ void DrvFtaeAlarm::LoginPresenter::CheckConnectToDatabase()
 	std::shared_ptr< ILoginViewInput> ptrView = view.lock();
 	if (ptrView) {
 		ptrView->StartLoading();
-		if (!attributes.driver.empty() && !attributes.serverName.empty()) {
+		if (attributes.driver.empty()) {
+			attributes.driver = std::string("SQL Server Native Client 11.0");
+		}
+		if (!attributes.serverName.empty()) {
 			if (!_database->OpenConnectionIfNeeded(attributes)) {
 				ptrView->StopLoading();
 				ptrView->ErrorMessage(std::string("Connection Test Failed!"));
 			}
 			else {
+				databaseNames = _database->GetDatabasesList();
+				ptrView->LoadDatabasesList(databaseNames);
+				if (!attributes.databaseName.empty()) {
+					ptrView->SelectDatabase(attributes.databaseName);
+				}
 				ptrView->StopLoading();
 				ptrView->WarningMessage(std::string("Connection Test Succeed!"));
 			}

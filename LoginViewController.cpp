@@ -161,6 +161,18 @@ void DrvFtaeAlarm::LoginViewController::LoadDatabasesList(const std::vector<std:
 	}
 }
 
+void DrvFtaeAlarm::LoginViewController::SelectDatabase(std::string databaseName)
+{
+	LRESULT index = SendDlgItemMessage(window, IDC_COMBO_CONFIG_DATABASE_NAME, CB_FINDSTRING, 0, (LPARAM)databaseName.c_str());
+	if (index == CB_ERR) {
+		LRESULT pos = SendDlgItemMessage(window, IDC_COMBO_CONFIG_DATABASE_NAME, CB_ADDSTRING, 0, (LPARAM)databaseName.c_str());
+		SendDlgItemMessage(window, IDC_COMBO_CONFIG_DATABASE_NAME, CB_SETCURSEL, (WPARAM)pos, 0);
+	}
+	else {
+		SendDlgItemMessage(window, IDC_COMBO_CONFIG_DATABASE_NAME, CB_SETCURSEL, (WPARAM)index, 0);
+	}
+}
+
 void DrvFtaeAlarm::LoginViewController::LoadConnectionSettings(const ConnectionAttributes& attributes)
 {
 	

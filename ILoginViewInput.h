@@ -11,6 +11,7 @@ namespace DrvFtaeAlarm {
 		virtual void LoadConnectionSettings(const ConnectionAttributes& attributes) = 0;
 		virtual void WarningMessage(std::string message) = 0;
 		virtual void ErrorMessage(std::string message) = 0;
+		virtual void SelectDatabase(std::string databaseName) = 0;
 		virtual void StartLoading() = 0;
 		virtual void StopLoading() = 0;
 		virtual ~ILoginViewInput() {};

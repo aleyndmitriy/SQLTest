@@ -158,6 +158,11 @@ bool DrvFtaeAlarm::SQLServerConnection::ConnectToDatabaseInstances(std::string s
 			reinterpret_cast<SQLCHAR*>(wStrOut.get()), shBrowseResultLen, &shBrowseResultLen);
 	}
 	if (SQL_SUCCEEDED(res) || res == SQL_NEED_DATA) {
+		std::string result = HandleDiagnosticRecord();
+		if (result.empty() == false) {
+			freeConnection();
+			return false;
+		}
 		std::string strRes(wStrOut.get());
 		size_t firstPos = strRes.find_first_of("{", 0);
 		size_t lastPos = strRes.find_first_of("}", 0);
@@ -245,12 +250,14 @@ DrvFtaeAlarm::ConnectionStatus DrvFtaeAlarm::SQLServerConnection::GetConnectionS
 	}
 }
 
-void DrvFtaeAlarm::SQLServerConnection::HandleDiagnosticRecord()
+std::string DrvFtaeAlarm::SQLServerConnection::HandleDiagnosticRecord()
 {
 	SQLSMALLINT iRec = 0;
 	SQLINTEGER  iError;
 	TCHAR       wszMessage[SQL_MAX_MESSAGE_LENGTH];
+	ZeroMemory(wszMessage, SQL_MAX_MESSAGE_LENGTH);
 	TCHAR       wszState[SQL_SQLSTATE_SIZE + 1];
+	ZeroMemory(wszState, SQL_SQLSTATE_SIZE + 1);
 	while (SQLGetDiagRec(SQL_HANDLE_DBC, sqlDBC, ++iRec, reinterpret_cast<SQLCHAR*>(wszState), &iError, reinterpret_cast<SQLCHAR*>(wszMessage),
 		(SQLSMALLINT)(sizeof(wszMessage) / sizeof(TCHAR)), (SQLSMALLINT*)NULL) == SQL_SUCCESS)
 	{
@@ -258,5 +265,9 @@ void DrvFtaeAlarm::SQLServerConnection::HandleDiagnosticRecord()
 		{
 			fprintf(stderr, "[%5.5s] %s (%d)\n", wszState, wszMessage, iError);
 		}
+		if (!_tcsnccmp(wszState, TEXT("08001"), SQL_MAX_MESSAGE_LENGTH)) {
+			return std::string("08001");
+		}
 	}
+	return std::string(wszState);
 }
