@@ -4,7 +4,7 @@
 
 DrvFtaeAlarm::LoginViewController::LoginViewController(const std::shared_ptr<UIDialogViewController>& parent, std::function<ODS::UI::IAbstractUIFacrory* (void)> factoryGetter, const std::shared_ptr<ILoginViewOutput>& output): UIDialogViewController(parent),presenter(output), uiFactoryGetter(factoryGetter), sqlBrowser(nullptr)
 {
-	sqlBrowser.reset(dynamic_cast<ODS::Resources::ISqlBrowser*>(uiFactoryGetter()->CreateSqlBrowser()));
+
 }
 
 void DrvFtaeAlarm::LoginViewController::setupInitialState()
@@ -88,6 +88,7 @@ void DrvFtaeAlarm::LoginViewController::ChooseServer()
 		SendMessage(hpassControl, WM_CLEAR, 0, 0);
 		EnableWindow(hpassControl, FALSE);
 		ODS::OdsString server;
+		sqlBrowser.reset(dynamic_cast<ODS::Resources::ISqlBrowser*>(uiFactoryGetter()->CreateSqlBrowser()));
 		sqlBrowser->OpenSourcesBrowserDlg(window, "Browse SQL Servers", server);
 		if (server.IsEmpty()) {
 			SendDlgItemMessage(window, IDC_COMBO_SERVER_NAME, CB_SETCURSEL, (WPARAM)0, 0);
@@ -107,6 +108,7 @@ void DrvFtaeAlarm::LoginViewController::ChooseServer()
 		SendDlgItemMessage(window, IDC_COMBO_SERVER_NAME, CB_SETCURSEL, (WPARAM)0, 0);
 	}
 	SaveServerName();
+	sqlBrowser.reset();
 }
 
 void DrvFtaeAlarm::LoginViewController::ConnectToServer()
@@ -336,6 +338,9 @@ INT_PTR WINAPI LoginDlg_Proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				break;
 			case CBN_EDITCHANGE:
 				controller->SaveServerName();
+				break;
+			case CBN_SELENDOK:
+				controller->ChooseServer();
 				break;
 			}
 			break;

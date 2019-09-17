@@ -102,6 +102,7 @@ void DrvFtaeAlarm::LoginPresenter::CheckConnectToDatabase()
 	std::shared_ptr< ILoginViewInput> ptrView = view.lock();
 	if (ptrView) {
 		ptrView->StartLoading();
+		_database->CloseConnection();
 		if (attributes.driver.empty()) {
 			attributes.driver = std::string("SQL Server Native Client 11.0");
 		}

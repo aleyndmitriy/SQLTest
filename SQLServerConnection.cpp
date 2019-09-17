@@ -2,6 +2,8 @@
 #include"Constants.h"
 #include "Utils.h"
 #include<tchar.h>
+#include"Log.h"
+
 DrvFtaeAlarm::SQLServerConnection::SQLServerConnection(const std::shared_ptr<SQLServerEnvironment>& environment, const ConnectionAttributes& attributes) :Connection(environment, attributes), sqlDBC(SQL_NULL_HDBC)
 {
 	allocateConnection();
@@ -41,11 +43,11 @@ void DrvFtaeAlarm::SQLServerConnection::freeConnection() {
 			sqlDBC = SQL_NULL_HDBC;
 		}
 		__except (GetExceptionCode() == EXCEPTION_ACCESS_VIOLATION ? EXCEPTION_EXECUTE_HANDLER : EXCEPTION_CONTINUE_SEARCH) {
-	
+			Log::GetInstance()->WriteInfo(_T("exeption during free connection!"));
 		}
 	}
 	__except((GetExceptionCode() == EXCEPTION_ACCESS_VIOLATION || GetExceptionCode() == EXCEPTION_BREAKPOINT)  ? EXCEPTION_EXECUTE_HANDLER : EXCEPTION_CONTINUE_SEARCH) {
-
+		Log::GetInstance()->WriteInfo(_T("exeption during free connection in debug"));
 	}
 	if (sqlDBC)
 	{
