@@ -569,6 +569,7 @@ std::vector<DrvFtaeAlarm::Record> FtaeServer::LoadEvents(const std::vector<std::
 	}
 	std::unique_ptr<DrvFtaeAlarm::SQLTable> table = _databaseInfo->GetTableInfo(true,attributes, attributes.databaseName, std::string("ConditionEvent"));
 	if (!table) {
+		DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("Can't create table instance pointer"));
 		return records;
 	}
 	for (DrvFtaeAlarm::SQLTable::const_iterator itr = table->cbegin(); itr != table->cend(); ++itr) {
