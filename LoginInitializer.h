@@ -5,6 +5,6 @@
 namespace DrvFtaeAlarm {
 	class LoginInitializer final {
 	public:
-		static void CreateModule(HINSTANCE hInstance, const std::shared_ptr<UIDialogViewController>& parent);
+		static void CreateModule(HINSTANCE hInstance, std::function<ODS::UI::IAbstractUIFacrory* (void)> factoryGetter, const std::shared_ptr<UIDialogViewController>& parent);
 	};
 }

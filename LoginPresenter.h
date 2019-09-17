@@ -11,7 +11,6 @@ namespace DrvFtaeAlarm {
 		void SetViewInput(std::shared_ptr<ILoginViewInput> input) override;
 		 ~LoginPresenter();
 		 void GetServerName(std::string&& serverName) override;
-		 void GetServerIndex(int index) override;
 		 void GetLogin(std::string&& login) override;
 		 void GetPassword(std::string&& password) override;
 		 void GetDatabaseName(std::string&& databaseName) override;

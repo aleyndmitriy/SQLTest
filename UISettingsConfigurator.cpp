@@ -2,7 +2,7 @@
 #include "OdsErr.h"
 #include"SettingsInitializer.h"
 #include "Constants.h"
-UISettingsConfigurator::UISettingsConfigurator(const std::shared_ptr<DrvFtaeAlarm::ISettingsDataSource>& settingsDataSource):_settingsDataSource(settingsDataSource)
+UISettingsConfigurator::UISettingsConfigurator(const std::shared_ptr<DrvFtaeAlarm::ISettingsDataSource>& settingsDataSource, std::function<ODS::UI::IAbstractUIFacrory* (void)> uiFactoryGetter):_settingsDataSource(settingsDataSource),_uiFactoryGetter(uiFactoryGetter), _hParentWindow(nullptr)
 {
 
 }
@@ -24,7 +24,7 @@ int UISettingsConfigurator::Configure(const TCHAR* szCfgInString, TCHAR** pszCfg
 		}
 	}
 
-	int isOk = DrvFtaeAlarm::SettingsInitializer::CreateModule(GetModuleHandle("Drv_Ftae_HdaAlarm.dll"), std::shared_ptr<DrvFtaeAlarm::UIDialogViewController>());
+	int isOk = DrvFtaeAlarm::SettingsInitializer::CreateModule(GetModuleHandle("Drv_Ftae_HdaAlarm.dll"), _uiFactoryGetter,&_hParentWindow);
 	
 	if (isOk) {
 		if (_settingsDataSource) {
@@ -101,4 +101,8 @@ int UISettingsConfigurator::ConfigureFilters(TCHAR* szCfgInString, TCHAR** pszCf
 void* UISettingsConfigurator::GetInterface(int nIfcId)
 {
 	return NULL;
+}
+
+void UISettingsConfigurator::SetOwnerWnd(void* pOwnerWnd) {
+	_hParentWindow = (HWND)(pOwnerWnd);
 }

@@ -5,6 +5,6 @@
 namespace DrvFtaeAlarm {
 	class SettingsInitializer final {
 	public:
-		static int CreateModule(HINSTANCE hInstance, const std::shared_ptr<UIDialogViewController>& parent);
+		static int CreateModule(HINSTANCE hInstance, std::function<ODS::UI::IAbstractUIFacrory* (void)> factoryGetter, HWND* parent);
 	};
 }

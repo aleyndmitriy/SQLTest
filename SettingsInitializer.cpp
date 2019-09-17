@@ -1,12 +1,12 @@
 #include"SettingsInitializer.h"
 #include"Windows.h"
-int DrvFtaeAlarm::SettingsInitializer::CreateModule(HINSTANCE hInstance, const std::shared_ptr<UIDialogViewController>& parent)
+int DrvFtaeAlarm::SettingsInitializer::CreateModule(HINSTANCE hInstance, std::function<ODS::UI::IAbstractUIFacrory* (void)> factoryGetter,HWND* parent)
 {
 	std::shared_ptr<ISettingsViewOutput> presenter = std::make_shared<SettingsPresenter>();
-	SettingsViewController* controller = new SettingsViewController(parent, presenter);
-	HWND hParenHandle = NULL;
+	SettingsViewController* controller = new SettingsViewController(std::shared_ptr<DrvFtaeAlarm::UIDialogViewController>(), factoryGetter, presenter);
+	HWND hParentHandle = NULL;
 	if (parent) {
-		hParenHandle = (HWND)(parent->GetInterface(0));
+		hParentHandle = *parent;
 	}
-	return DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_SETTINGS_DIALOG), hParenHandle, SettingDlg_Proc, (LPARAM)controller);
+	return DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_SETTINGS_DIALOG), hParentHandle, SettingDlg_Proc, (LPARAM)controller);
 }

@@ -52,12 +52,7 @@ void DrvFtaeAlarm::LoginPresenter::GetAuthType(int isSystem) {
 	attributes.isServerAuthentication = (isSystem > 0);
 }
 
-void DrvFtaeAlarm::LoginPresenter::GetServerIndex(int index)
-{
-	if (!serverNames.empty() && index < serverNames.size()) {
-		attributes.serverName = serverNames.at(index);
-	}
-}
+
 
 void DrvFtaeAlarm::LoginPresenter::GetDatabaseIndex(int index)
 {
@@ -75,7 +70,6 @@ void DrvFtaeAlarm::LoginPresenter::ConnectToDriver() {
 		ptrView->LoadConnectionSettings(attributes);
 		if (_database->OpenConnectionIfNeeded(attributes)) {
 			serverNames = _database->GetServersList();
-			ptrView->LoadServerList(serverNames);
 			ptrView->StopLoading();
 		}
 		else {
@@ -113,6 +107,8 @@ void DrvFtaeAlarm::LoginPresenter::CheckConnectToDatabase()
 		}
 		if (!attributes.serverName.empty()) {
 			if (!_database->OpenConnectionIfNeeded(attributes)) {
+				databaseNames.clear();
+				ptrView->LoadDatabasesList(databaseNames);
 				ptrView->StopLoading();
 				ptrView->ErrorMessage(std::string("Connection Test Failed!"));
 			}
@@ -146,7 +142,6 @@ void DrvFtaeAlarm::LoginPresenter::CloseExistentConnection()
 	databaseNames.clear();
 	std::shared_ptr< ILoginViewInput> ptrView = view.lock();
 	if (ptrView) {
-		ptrView->LoadServerList(serverNames);
 		ptrView->LoadDatabasesList(databaseNames);
 	}
 }

@@ -2,9 +2,9 @@
 #include"Constants.h"
 #include"Utils.h"
 
-DrvFtaeAlarm::LoginViewController::LoginViewController(const std::shared_ptr<UIDialogViewController>& parent, const std::shared_ptr<ILoginViewOutput>& output): UIDialogViewController(parent),presenter(output)
+DrvFtaeAlarm::LoginViewController::LoginViewController(const std::shared_ptr<UIDialogViewController>& parent, std::function<ODS::UI::IAbstractUIFacrory* (void)> factoryGetter, const std::shared_ptr<ILoginViewOutput>& output): UIDialogViewController(parent),presenter(output), uiFactoryGetter(factoryGetter), sqlBrowser(nullptr)
 {
-
+	sqlBrowser.reset(dynamic_cast<ODS::Resources::ISqlBrowser*>(uiFactoryGetter()->CreateSqlBrowser()));
 }
 
 void DrvFtaeAlarm::LoginViewController::setupInitialState()
@@ -75,8 +75,38 @@ void DrvFtaeAlarm::LoginViewController::ChooseServer()
 {
 	HWND hComboControl = GetDlgItem(window, IDC_COMBO_SERVER_NAME);
 	int index = (int)SendMessage(hComboControl, CB_GETCURSEL, 0, 0);
-	int res = SendMessage(hComboControl, CB_GETITEMDATA, index, 0);
-	presenter->GetServerIndex(res);
+	if (index) {
+		SendDlgItemMessage(window, IDC_COMBO_AUTH_TYPE, CB_SETCURSEL, (WPARAM)0, 0);
+		HWND hComboControl = GetDlgItem(window, IDC_COMBO_CONFIG_DATABASE_NAME);
+		SendMessage(hComboControl, CB_RESETCONTENT, 0, 0);
+		HWND hloginControl = GetDlgItem(window, IDC_EDIT_USERNAME);
+		SendMessage(hloginControl, EM_SETSEL, 0, -1);
+		SendMessage(hloginControl, WM_CLEAR, 0, 0);
+		EnableWindow(hloginControl, FALSE);
+		HWND hpassControl = GetDlgItem(window, IDC_EDIT_PASSWORD);
+		SendMessage(hpassControl, EM_SETSEL, 0, -1);
+		SendMessage(hpassControl, WM_CLEAR, 0, 0);
+		EnableWindow(hpassControl, FALSE);
+		ODS::OdsString server;
+		sqlBrowser->OpenSourcesBrowserDlg(window, "Browse SQL Servers", server);
+		if (server.IsEmpty()) {
+			SendDlgItemMessage(window, IDC_COMBO_SERVER_NAME, CB_SETCURSEL, (WPARAM)0, 0);
+		}
+		else {
+			LRESULT ind = SendDlgItemMessage(window, IDC_COMBO_SERVER_NAME, CB_FINDSTRING, 0, (LPARAM)server.GetString());
+			if (ind == CB_ERR) {
+				ind = SendDlgItemMessage(window, IDC_COMBO_SERVER_NAME, CB_ADDSTRING, 0, (LPARAM)server.GetString());
+				SendDlgItemMessage(window, IDC_COMBO_SERVER_NAME, CB_SETCURSEL, (WPARAM)ind, 0);
+			}
+			else {
+				SendDlgItemMessage(window, IDC_COMBO_SERVER_NAME, CB_SETCURSEL, (WPARAM)ind, 0);
+			}
+		}
+	}
+	else {
+		SendDlgItemMessage(window, IDC_COMBO_SERVER_NAME, CB_SETCURSEL, (WPARAM)0, 0);
+	}
+	SaveServerName();
 }
 
 void DrvFtaeAlarm::LoginViewController::ConnectToServer()
@@ -137,16 +167,14 @@ void DrvFtaeAlarm::LoginViewController::HideView() {
 	ShowWindow(window, SW_HIDE);
 }
 
-void DrvFtaeAlarm::LoginViewController::LoadServerList(const std::vector<std::string>& servers)
+void DrvFtaeAlarm::LoginViewController::ChooseLocalOrRemoteServers()
 {
 	HWND hComboControl = GetDlgItem(window, IDC_COMBO_SERVER_NAME);
 	SendMessage(hComboControl, CB_RESETCONTENT, 0, 0);
-	size_t index = 0;
-	for (std::vector<std::string>::const_iterator itr = servers.cbegin(); itr != servers.cend(); ++itr)
-	{
-		int pos = SendMessage(hComboControl, CB_ADDSTRING, 0, (LPARAM)itr->c_str());
-		SendMessage(hComboControl, CB_SETITEMDATA, pos, (LPARAM)index++);
-	}
+	int pos = SendMessage(hComboControl, CB_ADDSTRING, 0, (LPARAM)TEXT("(local)"));
+	SendMessage(hComboControl, CB_SETITEMDATA, pos, (LPARAM)0);
+	pos = SendMessage(hComboControl, CB_ADDSTRING, 0, (LPARAM)TEXT("<Browse for more...>"));
+	SendMessage(hComboControl, CB_SETITEMDATA, pos, (LPARAM)1);
 }
 
 void DrvFtaeAlarm::LoginViewController::LoadDatabasesList(const std::vector<std::string>& databases)
@@ -304,19 +332,10 @@ INT_PTR WINAPI LoginDlg_Proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			switch (HIWORD(wParam))
 			{
 			case CBN_DROPDOWN:
-				controller->LoadSeverInstances();
-				break;
-			case CBN_EDITUPDATE:
-				//controller->ChooseServer();
+				controller->ChooseLocalOrRemoteServers();
 				break;
 			case CBN_EDITCHANGE:
 				controller->SaveServerName();
-				break;
-			case CBN_SELCHANGE:
-				controller->ChooseServer();
-				break;
-			case CBN_SELENDOK:
-				controller->ChooseServer();
 				break;
 			}
 			break;

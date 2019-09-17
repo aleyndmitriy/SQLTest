@@ -46,6 +46,10 @@ bool DrvFtaeAlarm::SQLServerDatabaseEngine::OpenConnectionIfNeeded(const Connect
 			}
 			break;
 		case ConnectionStatus::ConnectToServer:
+			if (attributes.loginName != attr.loginName || attributes.password != attr.password || attributes.isServerAuthentication != attr.isServerAuthentication  || attributes.serverName != attr.serverName) {
+				CloseConnection();
+				return OpenConnection(attributes);
+			}
 			if (attributes.serverName == attr.serverName) {
 				if (!attributes.databaseName.empty()) {
 					return ChooseDatabase(attributes.databaseName);
@@ -54,10 +58,6 @@ bool DrvFtaeAlarm::SQLServerDatabaseEngine::OpenConnectionIfNeeded(const Connect
 					return true;
 				}
 				return true;
-			}
-			else {
-				CloseConnection();
-				return OpenConnection(attributes);
 			}
 			break;
 		case ConnectionStatus::ConnectToDriver:

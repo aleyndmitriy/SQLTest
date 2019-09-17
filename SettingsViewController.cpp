@@ -3,7 +3,7 @@
 #include"LoginInitializer.h"
 #include"FiltersInitializer.h"
 
-DrvFtaeAlarm::SettingsViewController::SettingsViewController(const std::shared_ptr<UIDialogViewController>& parent, const std::shared_ptr<ISettingsViewOutput>& output):UIDialogViewController(parent), presenter(output),isOk(false)
+DrvFtaeAlarm::SettingsViewController::SettingsViewController(const std::shared_ptr<UIDialogViewController>& parent, std::function<ODS::UI::IAbstractUIFacrory* (void)> factoryGetter, const std::shared_ptr<ISettingsViewOutput>& output):UIDialogViewController(parent), presenter(output), uiFactoryGetter(factoryGetter), isOk(false)
 {
 	
 }
@@ -18,7 +18,7 @@ void DrvFtaeAlarm::SettingsViewController::setupInitialState()
 	iccex.dwICC = ICC_TAB_CLASSES;
 	InitCommonControlsEx(&iccex);
 	HWND hTabControl = GetDlgItem(window, IDC_TAB);
-	LoginInitializer::CreateModule(GetModuleHandle("Drv_Ftae_HdaAlarm.dll"), shared_from_this());
+	LoginInitializer::CreateModule(GetModuleHandle("Drv_Ftae_HdaAlarm.dll"), uiFactoryGetter, shared_from_this());
 	TCITEM tia;
 	tia.mask = TCIF_TEXT;
 	TCHAR header1[] = "Configuration";
