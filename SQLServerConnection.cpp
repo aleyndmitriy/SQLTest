@@ -267,7 +267,9 @@ std::string DrvFtaeAlarm::SQLServerConnection::HandleDiagnosticRecord()
 		{
 			fprintf(stderr, "[%5.5s] %s (%d)\n", wszState, wszMessage, iError);
 		}
+		Log::GetInstance()->WriteInfo(_T("State: %s - Message : %s ."), (LPCTSTR)wszState, (LPCTSTR)wszMessage);
 		if (!_tcsnccmp(wszState, TEXT("08001"), SQL_MAX_MESSAGE_LENGTH)) {
+
 			return std::string("08001");
 		}
 	}

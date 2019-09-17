@@ -3,6 +3,7 @@
 #include"Constants.h"
 #include<tchar.h>
 #include"SQLServerType.h"
+#include"Log.h"
 
 DrvFtaeAlarm::SQLServerStatement::SQLServerStatement(const std::shared_ptr<SQLServerConnection>& connection, const std::string& query, const std::vector<std::string>& parameters) : Statement(connection, query, parameters), sqlStmt(SQL_NULL_HSTMT)
 {
@@ -91,6 +92,7 @@ void DrvFtaeAlarm::SQLServerStatement::HandleDiagnosticRecord()
 		{
 			fprintf(stderr, "[%5.5s] %s (%d)\n", wszState, wszMessage, iError);
 		}
+		Log::GetInstance()->WriteInfo(_T("State: %s - Message : %s ."), (LPCTSTR)wszState, (LPCTSTR)wszMessage);
 	}
 }
 
