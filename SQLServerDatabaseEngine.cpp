@@ -50,15 +50,15 @@ bool DrvFtaeAlarm::SQLServerDatabaseEngine::OpenConnectionIfNeeded(const Connect
 				CloseConnection();
 				return OpenConnection(attributes);
 			}
-			if (attributes.serverName == attr.serverName) {
+			else {
 				if (!attributes.databaseName.empty()) {
 					return ChooseDatabase(attributes.databaseName);
 				}
 				else {
 					return true;
 				}
-				return true;
 			}
+			
 			break;
 		case ConnectionStatus::ConnectToDriver:
 			if (attributes.driver == attr.driver) {
