@@ -6,7 +6,7 @@
 namespace DrvFtaeAlarm {
 	class LoginPresenter final: public ILoginViewOutput {
 	public:
-		LoginPresenter(const std::shared_ptr<DatabaseEngine> &database, const std::shared_ptr<ISettingsDataSource>& settingsDataSource);
+		LoginPresenter(const std::shared_ptr<DatabaseEngine> &database, std::shared_ptr<ConnectionAttributes> externAttributes);
 		void viewIsReady() override;
 		void SetViewInput(std::shared_ptr<ILoginViewInput> input) override;
 		 ~LoginPresenter();
@@ -22,12 +22,10 @@ namespace DrvFtaeAlarm {
 		 void GetAuthType(int isSystem) override;
 		 void GetReportType(bool isAlarm) override;
 	private:
-		std::weak_ptr<ILoginViewInput> view;
+		std::weak_ptr<ILoginViewInput> _view;
 		std::shared_ptr<DatabaseEngine> _database;
-		std::shared_ptr<ISettingsDataSource> _settingsDataSource;
-		ConnectionAttributes attributes;
+		std::shared_ptr<ConnectionAttributes> _externAttributes;
 		std::vector<std::string> serverNames;
 		std::vector<std::string> databaseNames;
-		void CloseExistentConnection();
 	};
 }

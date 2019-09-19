@@ -4,6 +4,7 @@ DrvFtaeAlarm::ConnectionAttributes::ConnectionAttributes():driver(),serverName()
 {
 
 }
+
 DrvFtaeAlarm::ConnectionAttributes::~ConnectionAttributes()
 {
 

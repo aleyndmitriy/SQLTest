@@ -29,7 +29,6 @@ FtaeServer::~FtaeServer()
 int FtaeServer::Init(TCHAR* szCfgString)
 {
 	int iRes = ODS::ERR::OK;
-
 	cfgString = szCfgString;
 	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("Server Init, %s"), (0 == szCfgString) ? _T("") : szCfgString);
 	return iRes;
@@ -38,8 +37,6 @@ int FtaeServer::Init(TCHAR* szCfgString)
 int  FtaeServer::Shut()
 {
 	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("Server Shut"));
-	DeleteFile(FITERS_XML_FILE_NAME);
-	DeleteFile(SETTINGS_XML_FILE_NAME);
 	_settingsDataSource.reset();
 	_databaseInfo.reset();
 	cfgString.clear();
@@ -295,20 +292,24 @@ int FtaeServer::GetFuncParameterList(ODS::HdaFunction* pFunc, std::string& szSqc
 
 int FtaeServer::BuildFuncResult(ODS::HdaFunctionResult* pFuncResult, const std::vector<DrvFtaeAlarm::Record>& rRecordList)
 {
-	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("BuildFuncResult"));
-
 	if (rRecordList.empty()) {
 		return ODS::ERR::DB_NO_DATA;
 	}
-	size_t len = cfgString.size();
-	if (_settingsDataSource) {
-		_settingsDataSource->LoadSettingsString(cfgString.c_str(), len + 1);
-	}
+	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("BuildFuncResult"));
 	DrvFtaeAlarm::ConnectionAttributes attributes;
-	if (!_settingsDataSource->Load(attributes)) {
-		return  ODS::ERR::DB_NO_DATA;
+	if (!cfgString.empty())
+	{
+		size_t len = cfgString.size();
+		if (_settingsDataSource) {
+			_settingsDataSource->LoadAttributesSettingsString(cfgString.c_str(), len, attributes);
+		}
+		else {
+			return ODS::ERR::DB_NO_DATA;
+		}
 	}
-
+	else {
+		return ODS::ERR::DB_NO_DATA;
+	}
 	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("BuildFuncResult: Number of parameters: %d"), rRecordList.size());
 	if (attributes.isAlarmReport) {
 		return BuildFuncAlarmsResult(pFuncResult, rRecordList);
@@ -541,28 +542,27 @@ int FtaeServer::BuildFuncEventsResult(ODS::HdaFunctionResult* pFuncResult, const
 std::vector<DrvFtaeAlarm::Record> FtaeServer::LoadEvents(const std::vector<std::string>& filters, const std::vector<DrvFtaeAlarm::PRIORITY_FILTER>& priorityFilters, const SYSTEMTIME& timeStart, const SYSTEMTIME& timeFinish, const std::string& sqlCondition)
 {
 	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("LoadEvents"));
-	
-	std::vector<DrvFtaeAlarm::Record> records;
-	if (!_settingsDataSource) {
-		return records;
-	}
-	size_t len = cfgString.size();
-	if (_settingsDataSource) {
-		_settingsDataSource->LoadSettingsString(cfgString.c_str(), len + 1);
-	}
 	DrvFtaeAlarm::ConnectionAttributes attributes;
-	if (!_settingsDataSource->Load(attributes)) {
-		return records;
+	std::map<std::string, std::vector<DrvFtaeAlarm::StatementCondition> > loadedFilters;
+	std::vector<DrvFtaeAlarm::Record> records;
+	if (!cfgString.empty())
+	{
+		size_t len = cfgString.size();
+		if (_settingsDataSource) {
+			_settingsDataSource->LoadSettingsString(cfgString.c_str(), len, attributes, loadedFilters);
+		}
+		else {
+			return records;
+		}
 	}
-	std::map<std::pair<std::string, bool>, std::vector<DrvFtaeAlarm::StatementCondition> > loadedFilters;
-	if (!_settingsDataSource->Load(loadedFilters)) {
-		DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("There are no any user filters"));
+	else {
+		return records;
 	}
 	std::vector<DrvFtaeAlarm::StatementCondition> conditions;
 	for (std::vector<std::string>::const_iterator itr = filters.cbegin(); itr != filters.cend(); ++itr) {
-		for (std::map<std::pair<std::string, bool>, std::vector<DrvFtaeAlarm::StatementCondition> >::const_iterator mapItr = loadedFilters.cbegin();
+		for (std::map<std::string, std::vector<DrvFtaeAlarm::StatementCondition> >::const_iterator mapItr = loadedFilters.cbegin();
 			mapItr != loadedFilters.cend(); ++mapItr) {
-			if (mapItr->first.first == *itr) {
+			if (mapItr->first == *itr) {
 				conditions.insert(conditions.cend(), mapItr->second.cbegin(), mapItr->second.cend());
 			}
 		}

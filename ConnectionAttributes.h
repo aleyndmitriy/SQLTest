@@ -10,6 +10,8 @@ namespace DrvFtaeAlarm {
 		bool isServerAuthentication;
 		bool isAlarmReport;
 		ConnectionAttributes();
+		ConnectionAttributes(const ConnectionAttributes& src) = default;
+		ConnectionAttributes& operator=(const ConnectionAttributes& rhs) = default;
 		~ConnectionAttributes();
 	};
 

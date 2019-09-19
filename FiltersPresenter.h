@@ -11,7 +11,7 @@ namespace DrvFtaeAlarm {
 	public:
 		using ConditionsVector = std::vector<StatementCondition>;
 		using FiltersIterator = std::map<std::string, ConditionsVector>::iterator;
-		FiltersPresenter(const std::shared_ptr<DatabaseEngine>& database, const std::shared_ptr<DatabaseInfoDAO>& databaseInfoDAO, const std::shared_ptr<ISettingsDataSource>& settingsDataSource);
+		FiltersPresenter(const std::shared_ptr<DatabaseEngine>& database, const std::shared_ptr<DatabaseInfoDAO>& databaseInfoDAO, std::shared_ptr<ConnectionAttributes> externAttributes, std::shared_ptr<std::map<std::string, std::vector<StatementCondition> > > externalFilters);
 		void viewIsReady() override;
 		void SetViewInput(std::shared_ptr<IFiltersViewInput> input) override;
 		void AddFilter(std::string filterName) override;
@@ -25,10 +25,10 @@ namespace DrvFtaeAlarm {
 		void LoadProperties() override;
 		~FiltersPresenter();
 	private:
-		std::weak_ptr<IFiltersViewInput> view;
+		std::weak_ptr<IFiltersViewInput> _view;
 		std::shared_ptr<DatabaseEngine> _database;
 		std::shared_ptr<DatabaseInfoDAO> _databaseInfoDAO;
-		std::shared_ptr<ISettingsDataSource> _settingsDataSource;
-		std::map<std::string, ConditionsVector> filters;
+		std::shared_ptr<ConnectionAttributes> _externAttributes;
+		std::shared_ptr<std::map<std::string, std::vector<StatementCondition> > > _externalFilters;
 	};
 }

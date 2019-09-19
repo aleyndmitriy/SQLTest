@@ -3,7 +3,7 @@
 #include"LoginInitializer.h"
 #include"FiltersInitializer.h"
 
-DrvFtaeAlarm::SettingsViewController::SettingsViewController(const std::shared_ptr<UIDialogViewController>& parent, std::function<ODS::UI::IAbstractUIFacrory* (void)> factoryGetter, const std::shared_ptr<ISettingsViewOutput>& output):UIDialogViewController(parent), presenter(output), uiFactoryGetter(factoryGetter), isOk(false)
+DrvFtaeAlarm::SettingsViewController::SettingsViewController(const std::shared_ptr<UIDialogViewController>& parent, std::function<ODS::UI::IAbstractUIFacrory* (void)> factoryGetter, const std::shared_ptr<ISettingsViewOutput>& output, std::shared_ptr<ConnectionAttributes> attributes, std::shared_ptr<std::map<std::string, std::vector<StatementCondition> > > filters):UIDialogViewController(parent), presenter(output), uiFactoryGetter(factoryGetter), isOk(false),connectionAttributes(attributes),conditionFilters(filters)
 {
 	
 }
@@ -18,13 +18,13 @@ void DrvFtaeAlarm::SettingsViewController::setupInitialState()
 	iccex.dwICC = ICC_TAB_CLASSES;
 	InitCommonControlsEx(&iccex);
 	HWND hTabControl = GetDlgItem(window, IDC_TAB);
-	LoginInitializer::CreateModule(GetModuleHandle("Drv_Ftae_HdaAlarm.dll"), uiFactoryGetter, shared_from_this());
+	LoginInitializer::CreateModule(GetModuleHandle("Drv_Ftae_HdaAlarm.dll"), uiFactoryGetter, shared_from_this(), connectionAttributes);
 	TCITEM tia;
 	tia.mask = TCIF_TEXT;
 	TCHAR header1[] = "Configuration";
 	tia.pszText = header1;
 	TabCtrl_InsertItem(hTabControl, 0, &tia);
-	FiltersInitializer::CreateModule(GetModuleHandle("Drv_Ftae_HdaAlarm.dll"), shared_from_this());
+	FiltersInitializer::CreateModule(GetModuleHandle("Drv_Ftae_HdaAlarm.dll"), shared_from_this(), connectionAttributes, conditionFilters);
 	TCHAR header2[] = "Filters";
 	tia.pszText = header2;
 	TabCtrl_InsertItem(hTabControl, 1, &tia);

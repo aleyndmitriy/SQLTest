@@ -2,6 +2,8 @@
 #include "OdsErr.h"
 #include"SettingsInitializer.h"
 #include "Constants.h"
+#include <sstream>
+
 UISettingsConfigurator::UISettingsConfigurator(const std::shared_ptr<DrvFtaeAlarm::ISettingsDataSource>& settingsDataSource, std::function<ODS::UI::IAbstractUIFacrory* (void)> uiFactoryGetter):_settingsDataSource(settingsDataSource),_uiFactoryGetter(uiFactoryGetter), _hParentWindow(nullptr)
 {
 
@@ -15,59 +17,28 @@ UISettingsConfigurator::~UISettingsConfigurator()
 int UISettingsConfigurator::Configure(const TCHAR* szCfgInString, TCHAR** pszCfgOutString)
 {
 	int iRes = ODS::ERR::FILE;
-
+	std::shared_ptr<DrvFtaeAlarm::ConnectionAttributes> attributes = std::make_shared<DrvFtaeAlarm::ConnectionAttributes>();
+	std::shared_ptr<std::map<std::string, std::vector<DrvFtaeAlarm::StatementCondition> > > filters = std::make_shared<std::map<std::string, std::vector<DrvFtaeAlarm::StatementCondition> > >();
 	if (szCfgInString != NULL)
 	{
 		size_t len = _tcslen(szCfgInString);
 		if (_settingsDataSource) {
-			_settingsDataSource->LoadSettingsString(szCfgInString, len);
+			_settingsDataSource->LoadSettingsString(szCfgInString, len,*attributes,*filters);
 		}
 	}
-
-	int isOk = DrvFtaeAlarm::SettingsInitializer::CreateModule(GetModuleHandle("Drv_Ftae_HdaAlarm.dll"), _uiFactoryGetter,&_hParentWindow);
-	
+	int isOk = DrvFtaeAlarm::SettingsInitializer::CreateModule(GetModuleHandle("Drv_Ftae_HdaAlarm.dll"), _uiFactoryGetter,&_hParentWindow,attributes,filters);
 	if (isOk) {
+		std::ostringstream outStream;
 		if (_settingsDataSource) {
-			_settingsDataSource->SaveSettingsString("OutputXML.xml");
-		}
-		HANDLE hFile = CreateFile("OutputXML.xml", GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-		if (hFile != INVALID_HANDLE_VALUE)
-		{
-			DWORD fileSizeHight = 0;
-			DWORD fileSizeLow = GetFileSize(hFile, &fileSizeHight);
-			if (fileSizeLow == INVALID_FILE_SIZE && fileSizeHight == NULL)
-			{
-				CloseHandle(hFile);
-				hFile = INVALID_HANDLE_VALUE;
-				return iRes;
-			}
-			char* outStr = new char[fileSizeLow + 1];
-			DWORD numRead = 0;
-			BOOL isRead = FALSE;
-			isRead = ReadFile(hFile, outStr, fileSizeLow, &numRead, NULL);
-			if (isRead == FALSE || numRead != fileSizeLow)
-			{
-				CloseHandle(hFile);
-				hFile = INVALID_HANDLE_VALUE;
-				return ODS::ERR::FILE;
-			}
+			_settingsDataSource->SaveSettingsString(*attributes,*filters,outStream);
+			std::string outString = outStream.str();
+			char* outStr = new char[outString.length() + 1];
+			_tcscpy_s(outStr, outString.length() + 1, outString.c_str());
 			*pszCfgOutString = outStr;
-			CloseHandle(hFile);
-			DeleteFile("OutputXML.xml");
-			DeleteFile(FITERS_XML_FILE_NAME);
-			DeleteFile(SETTINGS_XML_FILE_NAME);
-			hFile = INVALID_HANDLE_VALUE;
 			iRes = ODS::ERR::OK;
-		}
-		else {
-			DeleteFile("OutputXML.xml");
-			DeleteFile(FITERS_XML_FILE_NAME);
-			DeleteFile(SETTINGS_XML_FILE_NAME);
 		}
 	}
 	else {
-		DeleteFile(FITERS_XML_FILE_NAME);
-		DeleteFile(SETTINGS_XML_FILE_NAME);
 		if (szCfgInString != NULL)
 		{
 			size_t len = _tcslen(szCfgInString);
@@ -77,7 +48,6 @@ int UISettingsConfigurator::Configure(const TCHAR* szCfgInString, TCHAR** pszCfg
 			iRes = ODS::ERR::OK;
 		}
 	}
-	
 	return iRes;
 }
 

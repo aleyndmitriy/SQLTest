@@ -1,48 +1,30 @@
 #include"FiltersPresenter.h"
 #include "SQLServerType.h"
 
-DrvFtaeAlarm::FiltersPresenter::FiltersPresenter(const std::shared_ptr<DatabaseEngine>& database, const std::shared_ptr<DatabaseInfoDAO>& databaseInfoDAO, const std::shared_ptr<ISettingsDataSource>& settingsDataSource) :view(), _database(database),_databaseInfoDAO(databaseInfoDAO), _settingsDataSource(settingsDataSource)
+DrvFtaeAlarm::FiltersPresenter::FiltersPresenter(const std::shared_ptr<DatabaseEngine>& database, const std::shared_ptr<DatabaseInfoDAO>& databaseInfoDAO, std::shared_ptr<ConnectionAttributes> externAttributes, std::shared_ptr<std::map<std::string, std::vector<StatementCondition> > > externalFilters) :_view(), _database(database),_databaseInfoDAO(databaseInfoDAO), _externAttributes(externAttributes), _externalFilters(externalFilters)
 {
 	
 }
 
 DrvFtaeAlarm::FiltersPresenter::~FiltersPresenter()
 {
-	view.reset();
+	_view.reset();
 	_database.reset();
 	_databaseInfoDAO.reset();
-	_settingsDataSource.reset();
+	_externAttributes.reset();
+	_externalFilters.reset();
 }
 
 void DrvFtaeAlarm::FiltersPresenter::SetViewInput(std::shared_ptr<IFiltersViewInput> input)
 {
-	view = input;
+	_view = input;
 }
 
 void DrvFtaeAlarm::FiltersPresenter::viewIsReady()
 {
-	std::map< std::string, PropertyType> properties;
-	ConnectionAttributes attributes;
-	if (!attributes.serverName.empty() && !attributes.loginName.empty() && !attributes.password.empty()) {
-		_settingsDataSource->Load(attributes);
-		std::unique_ptr<SQLTable> table = _databaseInfoDAO->GetTableInfo(false, attributes, attributes.databaseName, std::string("ConditionEvent"));
-		for (SQLTable::const_iterator itr = table->cbegin(); itr != table->cend(); ++itr) {
-			std::pair<std::string, PropertyType> pair = std::make_pair<std::string, PropertyType>(std::string(itr->first), PropertyTypeFromString(itr->second));
-			properties.insert(pair);
-		}
-	}
-	
-	std::map<std::pair<std::string, bool>, std::vector<StatementCondition> > loadFilters;
-	_settingsDataSource->Load(loadFilters);
-	for (std::map<std::pair<std::string, bool>, std::vector<StatementCondition> >::const_iterator itr = loadFilters.cbegin(); itr != loadFilters.cend(); ++itr) {
-		filters.insert(std::make_pair<std::string, ConditionsVector>(std::string(itr->first.first), ConditionsVector(itr->second)));
-	}
-	std::shared_ptr<IFiltersViewInput> ptrView = view.lock();
+	std::shared_ptr<IFiltersViewInput> ptrView = _view.lock();
 	if (ptrView) {
-		if (!properties.empty()) {
-			ptrView->LoadPropertiesList(properties);
-		}
-		for (FiltersIterator itr = filters.begin(); itr != filters.end(); ++itr)
+		for (FiltersIterator itr = _externalFilters->begin(); itr != _externalFilters->end(); ++itr)
 		{
 			ptrView->AddFilter(itr->first);
 		}
@@ -51,10 +33,10 @@ void DrvFtaeAlarm::FiltersPresenter::viewIsReady()
 
 void DrvFtaeAlarm::FiltersPresenter::AddCondition(StatementCondition&& condition, std::string filterName)
 {
-	std::shared_ptr<IFiltersViewInput> ptrView = view.lock();
+	std::shared_ptr<IFiltersViewInput> ptrView = _view.lock();
 	if (ptrView) {
-		FiltersIterator itr = filters.find(filterName);
-		if (itr != filters.end()) {
+		FiltersIterator itr = _externalFilters->find(filterName);
+		if (itr != _externalFilters->end()) {
 			itr->second.push_back(condition);
 			ptrView->AddCondition(condition, itr->second.size() - 1);
 		}
@@ -67,17 +49,17 @@ void DrvFtaeAlarm::FiltersPresenter::AddCondition(StatementCondition&& condition
 
 void DrvFtaeAlarm::FiltersPresenter::AddFilter(std::string filterName)
 {
-	std::shared_ptr<IFiltersViewInput> ptrView = view.lock();
+	std::shared_ptr<IFiltersViewInput> ptrView = _view.lock();
 	if (ptrView) {
 		if (filterName.empty()) {
 			ptrView->ErrorMessage(std::string("Please, enter filter name!"));
 		}
-		FiltersIterator itr = filters.find(filterName);
-		if (itr != filters.end()) {
+		FiltersIterator itr = _externalFilters->find(filterName);
+		if (itr != _externalFilters->end()) {
 			ptrView->WarningMessage(std::string("Filter with such name already exist!"));
 		}
 		else {
-			std::pair<FiltersIterator, bool> res = filters.insert(std::make_pair<std::string, ConditionsVector>(std::string(filterName), ConditionsVector{}));
+			std::pair<FiltersIterator, bool> res = _externalFilters->insert(std::make_pair<std::string, ConditionsVector>(std::string(filterName), ConditionsVector{}));
 			if (res.second) {
 				ptrView->AddFilter(filterName);
 			}
@@ -90,10 +72,10 @@ void DrvFtaeAlarm::FiltersPresenter::AddFilter(std::string filterName)
 
 void DrvFtaeAlarm::FiltersPresenter::SelectFilter(std::string filterName)
 {
-	std::shared_ptr<IFiltersViewInput> ptrView = view.lock();
+	std::shared_ptr<IFiltersViewInput> ptrView = _view.lock();
 	if (ptrView) {
-		FiltersIterator itr = filters.find(filterName);
-		if (itr != filters.end()) {
+		FiltersIterator itr = _externalFilters->find(filterName);
+		if (itr != _externalFilters->end()) {
 			int index = 0;
 			for (std::vector<StatementCondition>::const_iterator statementItr = itr->second.cbegin(); statementItr != itr->second.cend(); ++statementItr)
 			{
@@ -109,10 +91,10 @@ void DrvFtaeAlarm::FiltersPresenter::SelectFilter(std::string filterName)
 
 void DrvFtaeAlarm::FiltersPresenter::SelectCondition(size_t index, std::string filterName)
 {
-	std::shared_ptr<IFiltersViewInput> ptrView = view.lock();
+	std::shared_ptr<IFiltersViewInput> ptrView = _view.lock();
 	if (ptrView) {
-		FiltersIterator itr = filters.find(filterName);
-		if (itr != filters.end()) {
+		FiltersIterator itr = _externalFilters->find(filterName);
+		if (itr != _externalFilters->end()) {
 			if (index < itr->second.size()) {
 				ptrView->SelectedCondition(itr->second.at(index));
 			}
@@ -126,10 +108,10 @@ void DrvFtaeAlarm::FiltersPresenter::SelectCondition(size_t index, std::string f
 
 void DrvFtaeAlarm::FiltersPresenter::RemoveCondition(size_t index, std::string filterName)
 {
-	std::shared_ptr<IFiltersViewInput> ptrView = view.lock();
+	std::shared_ptr<IFiltersViewInput> ptrView = _view.lock();
 	if (ptrView) {
-		FiltersIterator itr = filters.find(filterName);
-		if (itr != filters.end()) {
+		FiltersIterator itr = _externalFilters->find(filterName);
+		if (itr != _externalFilters->end()) {
 			if (index < itr->second.size()) {
 				int searchIndex = 0;
 				std::vector<StatementCondition>::const_iterator statementItr = itr->second.cbegin();
@@ -150,10 +132,10 @@ void DrvFtaeAlarm::FiltersPresenter::RemoveCondition(size_t index, std::string f
 
 void DrvFtaeAlarm::FiltersPresenter::RemoveAllConditions(std::string filterName)
 {
-	std::shared_ptr<IFiltersViewInput> ptrView = view.lock();
+	std::shared_ptr<IFiltersViewInput> ptrView = _view.lock();
 	if (ptrView) {
-		FiltersIterator itr = filters.find(filterName);
-		if (itr != filters.end()) {
+		FiltersIterator itr = _externalFilters->find(filterName);
+		if (itr != _externalFilters->end()) {
 				itr->second.clear();
 		}
 		else {
@@ -165,11 +147,11 @@ void DrvFtaeAlarm::FiltersPresenter::RemoveAllConditions(std::string filterName)
 
 void DrvFtaeAlarm::FiltersPresenter::RemoveFilter(std::string filterName)
 {
-	std::shared_ptr<IFiltersViewInput> ptrView = view.lock();
+	std::shared_ptr<IFiltersViewInput> ptrView = _view.lock();
 	if (ptrView) {
-		FiltersIterator itr = filters.find(filterName);
-		if (itr != filters.end()) {
-			filters.erase(itr);
+		FiltersIterator itr = _externalFilters->find(filterName);
+		if (itr != _externalFilters->end()) {
+			_externalFilters->erase(itr);
 		}
 		else {
 			ptrView->WarningMessage(std::string("There is not such filter in list!"));
@@ -180,27 +162,17 @@ void DrvFtaeAlarm::FiltersPresenter::RemoveFilter(std::string filterName)
 
 void DrvFtaeAlarm::FiltersPresenter::SaveFilters()
 {
-	bool bSaved = false;
-	std::map<std::pair<std::string, bool>, ConditionsVector> savingFilters;
-	for (FiltersIterator itr = filters.begin(); itr != filters.end(); ++itr)
-	{
-		std::pair<std::pair<std::string, bool>, ConditionsVector> val = 
-			std::make_pair<std::pair<std::string, bool>, ConditionsVector>(std::make_pair<std::string, bool>(std::string(itr->first), true), ConditionsVector(itr->second));
-		savingFilters.insert(val);
-	}
-	bSaved = _settingsDataSource->Save(savingFilters);
+	
 }
 
 void DrvFtaeAlarm::FiltersPresenter::LoadProperties() {
 	
-	std::shared_ptr<IFiltersViewInput> ptrView = view.lock();
+	std::shared_ptr<IFiltersViewInput> ptrView = _view.lock();
 	if (ptrView) {
 		ptrView->StartLoading();
-		ConnectionAttributes attributes;
-		_settingsDataSource->Load(attributes);
-		if (!attributes.serverName.empty() && !attributes.databaseName.empty()) {
+		if (!_externAttributes->serverName.empty() && !_externAttributes->databaseName.empty()) {
 			std::map< std::string, PropertyType> properties;
-			std::unique_ptr<SQLTable> table = _databaseInfoDAO->GetTableInfo(false, attributes, attributes.databaseName, std::string("ConditionEvent"));
+			std::unique_ptr<SQLTable> table = _databaseInfoDAO->GetTableInfo(false, *_externAttributes, _externAttributes->databaseName, std::string("ConditionEvent"));
 			if (table) {
 				for (SQLTable::const_iterator itr = table->cbegin(); itr != table->cend(); ++itr) {
 					std::pair<std::string, PropertyType> pair = std::make_pair<std::string, PropertyType>(std::string(itr->first), PropertyTypeFromString(itr->second));

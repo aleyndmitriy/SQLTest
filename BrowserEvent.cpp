@@ -21,7 +21,6 @@ BrowserEvent::~BrowserEvent()
 int BrowserEvent::Init(TCHAR* szCfgString)
 {
 	int iRes = ODS::ERR::OK;
-
 	cfgString = szCfgString;
 	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("Browse Init, %s"), (0 == szCfgString) ? _T("") : szCfgString);
 	return iRes;
@@ -33,8 +32,6 @@ int  BrowserEvent::Shut()
 	_databaseInfo.reset();
 	_settingsDataSource.reset();
 	cfgString.clear();
-	DeleteFile(FITERS_XML_FILE_NAME);
-	DeleteFile(SETTINGS_XML_FILE_NAME);
 	return ODS::ERR::OK;
 }
 
@@ -54,11 +51,12 @@ int BrowserEvent::GetExternalFilterList(TCHAR*** ppszFilterList, ULONG* pulCount
 int BrowserEvent::GetFilterList(TCHAR*** ppszFilterList, ULONG* pulCount)
 {
 	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("GetFilterList"));
+	std::vector<std::string> filterNameList;
 	if (!cfgString.empty())
 	{
 		size_t len = cfgString.size();
 		if (_settingsDataSource) {
-			_settingsDataSource->LoadSettingsString(cfgString.c_str(), len);
+			filterNameList = _settingsDataSource->GetFiltersName(cfgString.c_str(), len);
 		}
 		else {
 			return ODS::ERR::OK;
@@ -67,7 +65,6 @@ int BrowserEvent::GetFilterList(TCHAR*** ppszFilterList, ULONG* pulCount)
 	else {
 		return ODS::ERR::OK;
 	}
-	std::vector<std::string> filterNameList = _settingsDataSource->GetFiltersName();
 	if (filterNameList.empty()) {
 		filterNameList.push_back(std::string("Default"));
 	}
@@ -90,24 +87,21 @@ int BrowserEvent::GetFilterList(TCHAR*** ppszFilterList, ULONG* pulCount)
 int BrowserEvent::GetAlarmPropertyInfoList(ODS::PropertyInfo** ppPropertyInfoList, ULONG* pulCount)
 {
 	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("GetAlarmPropertyInfoList"));
+	DrvFtaeAlarm::ConnectionAttributes attributes;
 	if (!cfgString.empty())
 	{
 		size_t len = cfgString.size();
 		if (_settingsDataSource) {
-			_settingsDataSource->LoadSettingsString(cfgString.c_str(), len);
+			_settingsDataSource->LoadAttributesSettingsString(cfgString.c_str(), len, attributes);
 		}
 		else {
-			return ODS::ERR::OK;
+			return ODS::ERR::DB_NO_DATA;
 		}
 	}
 	else {
-		return ODS::ERR::OK;
+		return ODS::ERR::DB_NO_DATA;
 	}
-	DrvFtaeAlarm::ConnectionAttributes attributes;
-	if (_settingsDataSource) {
-		_settingsDataSource->Load(attributes);
-	}
-
+	
 	std::unique_ptr<DrvFtaeAlarm::SQLTable> table = _databaseInfo->GetTableInfo(true, attributes, std::string(), std::string("ConditionEvent"));
 
 	std::map<std::string, DrvFtaeAlarm::PropertyType> properties;
