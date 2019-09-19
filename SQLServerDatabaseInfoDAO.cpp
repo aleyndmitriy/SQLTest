@@ -35,20 +35,20 @@ std::unique_ptr<DrvFtaeAlarm::SQLDatabase> DrvFtaeAlarm::SQLServerDatabaseInfoDA
 	return ptrData;
 }
 
-std::unique_ptr<DrvFtaeAlarm::SQLTable> DrvFtaeAlarm::SQLServerDatabaseInfoDAO::GetTableInfo(bool isManageConnection, const ConnectionAttributes& attributes, std::string databaseName, std::string tableName)
+std::unique_ptr<DrvFtaeAlarm::SQLTable> DrvFtaeAlarm::SQLServerDatabaseInfoDAO::GetTableInfo(bool isOpenConnection, bool isCloseConnection, const ConnectionAttributes& attributes, std::string databaseName, std::string tableName)
 {
-	if (isManageConnection) {
+	if (isOpenConnection) {
 		_databaseEngine->CloseConnection();
-	}
-	if (!_databaseEngine->OpenConnectionIfNeeded(attributes)) {
-		Log::GetInstance()->WriteInfo(_T("Can't connect to database"));
-		return nullptr;
+		if (!_databaseEngine->OpenConnectionIfNeeded(attributes)) {
+			Log::GetInstance()->WriteInfo(_T("Can't connect to database"));
+			return nullptr;
+		}
 	}
 	std::string querry = std::string("SELECT COLUMN_NAME, DATA_TYPE, TABLE_SCHEMA FROM Information_schema.Columns WHERE TABLE_NAME = '") + tableName + std::string("';");
 	std::vector<std::string> vec = { };
 	Log::GetInstance()->WriteInfo(_T("Table info querry : % s ."), (LPCTSTR)querry.c_str());
 	std::vector<Record> records = _databaseEngine->ExecuteStatement(querry, vec);
-	if (isManageConnection) {
+	if (isCloseConnection) {
 		_databaseEngine->CloseConnection();
 	}
 	if (records.empty()) {

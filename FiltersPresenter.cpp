@@ -172,7 +172,7 @@ void DrvFtaeAlarm::FiltersPresenter::LoadProperties() {
 		ptrView->StartLoading();
 		if (!_externAttributes->serverName.empty() && !_externAttributes->databaseName.empty()) {
 			std::map< std::string, PropertyType> properties;
-			std::unique_ptr<SQLTable> table = _databaseInfoDAO->GetTableInfo(false, *_externAttributes, _externAttributes->databaseName, std::string("ConditionEvent"));
+			std::unique_ptr<SQLTable> table = _databaseInfoDAO->GetTableInfo(false, false, *_externAttributes, _externAttributes->databaseName, std::string("ConditionEvent"));
 			if (table) {
 				for (SQLTable::const_iterator itr = table->cbegin(); itr != table->cend(); ++itr) {
 					std::pair<std::string, PropertyType> pair = std::make_pair<std::string, PropertyType>(std::string(itr->first), PropertyTypeFromString(itr->second));

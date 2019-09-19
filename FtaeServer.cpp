@@ -567,7 +567,7 @@ std::vector<DrvFtaeAlarm::Record> FtaeServer::LoadEvents(const std::vector<std::
 			}
 		}
 	}
-	std::unique_ptr<DrvFtaeAlarm::SQLTable> table = _databaseInfo->GetTableInfo(true,attributes, attributes.databaseName, std::string("ConditionEvent"));
+	std::unique_ptr<DrvFtaeAlarm::SQLTable> table = _databaseInfo->GetTableInfo(true, false, attributes, attributes.databaseName, std::string("ConditionEvent"));
 	if (!table) {
 		DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("Can't create table instance pointer"));
 		return records;
@@ -582,7 +582,7 @@ std::vector<DrvFtaeAlarm::Record> FtaeServer::LoadEvents(const std::vector<std::
 			}
 		}
 	}
-	records = _recordsInfo->GetRecords(true,*table, attributes, conditions, sqlCondition);
+	records = _recordsInfo->GetRecords(false, true, *table, attributes, conditions, sqlCondition);
 	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("LoadEvents: Number of records: %d"), records.size());
 	return records;
 }
@@ -763,6 +763,7 @@ void SetODSTimeProperty(ODS::Property& prop, ULONG ulId, const TCHAR* szName, co
 	VARIANT vValue;
 	ULONG64 ul64Millisec = 0;
 	SYSTEMTIME dataTime = { 0 };
+	SYSTEMTIME localDataTime = { 0 };
 	const TIMESTAMP_STRUCT* timeStampStruct = reinterpret_cast<const TIMESTAMP_STRUCT*>(szValue.c_str());
 	prop.SetFlag(ODS::Property::PROP_FLAG_ACCESS_READ_ONLY, true);
 	prop.SetId(ulId);
@@ -775,8 +776,12 @@ void SetODSTimeProperty(ODS::Property& prop, ULONG ulId, const TCHAR* szName, co
 	dataTime.wHour = timeStampStruct->hour;
 	dataTime.wMinute = timeStampStruct->minute;
 	dataTime.wSecond = timeStampStruct->second;
-	dataTime.wMilliseconds = timeStampStruct->fraction;
-	ODS::TimeUtils::SysTimeLocalToUlong64(dataTime, &ul64Millisec);
+	
+	ODS::TimeUtils::SysTimeUtcToUlong64(dataTime, &ul64Millisec);
+	ODS::TimeUtils::Ulong64ToSysTimeLocal(ul64Millisec, &localDataTime);
+	ul64Millisec = 0;
+	ODS::TimeUtils::SysTimeLocalToUlong64(localDataTime, &ul64Millisec);
+	
 	vValue.ullVal = ul64Millisec;
 	prop.SetVarValue(&vValue);
 	::VariantClear(&vValue);
