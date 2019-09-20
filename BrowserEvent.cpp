@@ -102,7 +102,7 @@ int BrowserEvent::GetAlarmPropertyInfoList(ODS::PropertyInfo** ppPropertyInfoLis
 		return ODS::ERR::DB_NO_DATA;
 	}
 	
-	std::unique_ptr<DrvFtaeAlarm::SQLTable> table = _databaseInfo->GetTableInfo(true, true, attributes, std::string(), std::string("ConditionEvent"));
+	std::unique_ptr<DrvFtaeAlarm::SQLTable> table = _databaseInfo->GetTableInfo(true, attributes, std::string(), std::string("ConditionEvent"));
 
 	std::map<std::string, DrvFtaeAlarm::PropertyType> properties;
 	for (DrvFtaeAlarm::SQLTable::const_iterator itr = table->cbegin(); itr != table->cend(); ++itr) {

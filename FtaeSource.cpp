@@ -2,11 +2,11 @@
 #include"OdsErr.h"
 #include"Log.h"
 
-FtaeSource::FtaeSource(const std::shared_ptr<DrvFtaeAlarm::ISettingsDataSource>& settingsDataSource, const std::shared_ptr<DrvFtaeAlarm::DatabaseInfoDAO>& databaseInfo, const std::shared_ptr<DrvFtaeAlarm::ConditionRecordsDAO>& conditionRecords): configurator(settingsDataSource, [this]()->ODS::UI::IAbstractUIFacrory* {
+FtaeSource::FtaeSource(const std::shared_ptr<DrvFtaeAlarm::DatabaseEngine>& databaseEngine, const std::shared_ptr<DrvFtaeAlarm::ISettingsDataSource>& settingsDataSource, const std::shared_ptr<DrvFtaeAlarm::DatabaseInfoDAO>& databaseInfo, const std::shared_ptr<DrvFtaeAlarm::ConditionRecordsDAO>& conditionRecords): configurator(settingsDataSource, [this]()->ODS::UI::IAbstractUIFacrory* {
 	if (m_pHost)
 		return (ODS::UI::IAbstractUIFacrory*) (m_pHost->GetInterface(ODS::IPluginHost::IID_UI_FACTORY));
 	return 	nullptr;
-}), browser(settingsDataSource,databaseInfo),server(settingsDataSource,databaseInfo, conditionRecords), m_pRegInfo(nullptr), m_pHost(nullptr)
+}), browser(settingsDataSource,databaseInfo),server(databaseEngine, settingsDataSource,databaseInfo, conditionRecords), m_pRegInfo(nullptr), m_pHost(nullptr)
 {
 
 }

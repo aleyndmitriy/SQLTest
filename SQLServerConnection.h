@@ -35,12 +35,12 @@ namespace DrvFtaeAlarm {
 		std::vector<std::string> GetDatabaseList() const override;
 		bool IsValidConnection() const override;
 		ConnectionStatus GetConnectionStatus() const override;
-
 		SQLHDBC sqlDBC;
 		void freeConnection();
 		void allocateConnection();
 		std::string HandleDiagnosticRecord();
 		std::vector<std::string> serverList;
 		std::vector<std::string> databaseList;
+		static std::shared_ptr<SQLServerConnection> CreateConnectionToDatabase(const std::shared_ptr<SQLServerEnvironment>& environment, const ConnectionAttributes& attributes);
 	};
 }

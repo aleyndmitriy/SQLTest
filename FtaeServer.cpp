@@ -14,15 +14,17 @@
 #include"Log.h"
 #include<algorithm>
 
-FtaeServer::FtaeServer(const std::shared_ptr<DrvFtaeAlarm::ISettingsDataSource>& settingsDataSource, const std::shared_ptr<DrvFtaeAlarm::DatabaseInfoDAO>& databaseInfo, const std::shared_ptr<DrvFtaeAlarm::ConditionRecordsDAO>& recordsInfo):_settingsDataSource(settingsDataSource), _databaseInfo(databaseInfo), _recordsInfo(recordsInfo), cfgString()
+FtaeServer::FtaeServer(const std::shared_ptr<DrvFtaeAlarm::DatabaseEngine>& databaseEngine, const std::shared_ptr<DrvFtaeAlarm::ISettingsDataSource>& settingsDataSource, const std::shared_ptr<DrvFtaeAlarm::DatabaseInfoDAO>& databaseInfo, const std::shared_ptr<DrvFtaeAlarm::ConditionRecordsDAO>& recordsInfo):_databaseEngine(databaseEngine), _settingsDataSource(settingsDataSource), _databaseInfo(databaseInfo), _recordsInfo(recordsInfo), cfgString()
 {
 
 }
 
 FtaeServer::~FtaeServer()
 {
+	_databaseEngine.reset();
 	_settingsDataSource.reset();
 	_databaseInfo.reset();
+	_recordsInfo.reset();
 	cfgString.clear();
 }
 
@@ -37,8 +39,10 @@ int FtaeServer::Init(TCHAR* szCfgString)
 int  FtaeServer::Shut()
 {
 	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("Server Shut"));
+	_databaseEngine.reset();
 	_settingsDataSource.reset();
 	_databaseInfo.reset();
+	_recordsInfo.reset();
 	cfgString.clear();
 	return ODS::ERR::OK;
 }
@@ -60,7 +64,9 @@ int FtaeServer::IsHdaFunctionSupported(int nFuncType)
 
 int FtaeServer::Execute(ODS::HdaCommand* pCommand, ODS::HdaCommandResult** ppResult)
 {
+	startProcess = std::chrono::high_resolution_clock::now();
 	int iRes = ODS::ERR::OK;
+	std::chrono::time_point<std::chrono::steady_clock> start = std::chrono::high_resolution_clock::now();
 
 	if (!pCommand || !ppResult)
 		return ODS::ERR::BAD_PARAM;
@@ -87,6 +93,9 @@ int FtaeServer::Execute(ODS::HdaCommand* pCommand, ODS::HdaCommandResult** ppRes
 					std::vector<DrvFtaeAlarm::PRIORITY_FILTER> filterList;
 					std::vector<std::string> staticFilterList;
 					if (ODS::ERR::OK == GetFuncParameterList(pList[ind], sqc, filterList, staticFilterList)) {
+						std::chrono::time_point<std::chrono::steady_clock> startLoadEvents = std::chrono::high_resolution_clock::now();
+						std::chrono::microseconds timebeforeLoadEvents = std::chrono::duration_cast<std::chrono::microseconds>(startLoadEvents - start);
+						DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("Execution before load events: %d"), timebeforeLoadEvents.count());
 						std::vector<DrvFtaeAlarm::Record> records = LoadEvents(staticFilterList, filterList,stTimeFrom,stTimeTo,sqc);
 						DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("Server has loaded events..."));
 						if (!records.empty()) {
@@ -121,6 +130,9 @@ int FtaeServer::Execute(ODS::HdaCommand* pCommand, ODS::HdaCommandResult** ppRes
 			iRes = ODS::ERR::MEMORY_ALLOCATION_ERR;
 		}
 	}
+	endProcess = std::chrono::high_resolution_clock::now();
+	std::chrono::microseconds timeProcess = std::chrono::duration_cast<std::chrono::microseconds>(endProcess - startProcess);
+	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("Sever process in microsec: %d"), timeProcess.count());
 	return iRes;
 }
 
@@ -321,8 +333,9 @@ int FtaeServer::BuildFuncResult(ODS::HdaFunctionResult* pFuncResult, const std::
 
 int FtaeServer::BuildFuncAlarmsResult(ODS::HdaFunctionResult* pFuncResult, const std::vector<DrvFtaeAlarm::Record>& rRecordList)
 {
+	std::chrono::time_point<std::chrono::steady_clock> start = std::chrono::high_resolution_clock::now();
 	std::map<std::string, std::vector<DrvFtaeAlarm::Record> > alarmMap;
-
+	
 	for (std::vector<DrvFtaeAlarm::Record>::const_iterator recordsIterator = rRecordList.cbegin(); recordsIterator != rRecordList.cend(); ++recordsIterator) {
 		DrvFtaeAlarm::Record::const_iterator itr = recordsIterator->findColumnValue(std::string("EventAssociationID"));
 		if (itr != recordsIterator->cend()) {
@@ -462,6 +475,9 @@ int FtaeServer::BuildFuncAlarmsResult(ODS::HdaFunctionResult* pFuncResult, const
 	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("LoadAlarms: Number of alarms: %d"), alarmMap.size());
 	// clear memory
 	delete[] pAlarmList;
+	std::chrono::time_point<std::chrono::steady_clock> end = std::chrono::high_resolution_clock::now();
+	std::chrono::microseconds timeBuildAlarm = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("Time for buildAlarm: %d"), timeBuildAlarm.count());
 	return ODS::ERR::OK;
 }
 
@@ -567,7 +583,13 @@ std::vector<DrvFtaeAlarm::Record> FtaeServer::LoadEvents(const std::vector<std::
 			}
 		}
 	}
-	std::unique_ptr<DrvFtaeAlarm::SQLTable> table = _databaseInfo->GetTableInfo(true, false, attributes, attributes.databaseName, std::string("ConditionEvent"));
+	std::chrono::time_point<std::chrono::steady_clock> startConnection = std::chrono::high_resolution_clock::now();
+	_databaseEngine->CloseConnection();
+	_databaseEngine->CreateDirectConnectionToDatabase(attributes);
+	std::chrono::time_point<std::chrono::steady_clock> endStartConnection = std::chrono::high_resolution_clock::now();
+	std::chrono::microseconds timeConnect = std::chrono::duration_cast<std::chrono::microseconds>(endStartConnection - startConnection);
+	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("Connection time in microces: %d"), timeConnect.count());
+	std::unique_ptr<DrvFtaeAlarm::SQLTable> table = _databaseInfo->GetTableInfo(false, attributes, attributes.databaseName, std::string("ConditionEvent"));
 	if (!table) {
 		DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("Can't create table instance pointer"));
 		return records;
@@ -582,7 +604,10 @@ std::vector<DrvFtaeAlarm::Record> FtaeServer::LoadEvents(const std::vector<std::
 			}
 		}
 	}
-	records = _recordsInfo->GetRecords(false, true, *table, attributes, conditions, sqlCondition);
+	records = _recordsInfo->GetRecords(false, *table, attributes, conditions, sqlCondition);
+	std::chrono::time_point<std::chrono::steady_clock> end = std::chrono::high_resolution_clock::now();
+	std::chrono::microseconds timeLoadEvents = std::chrono::duration_cast<std::chrono::microseconds>(end - endStartConnection);
+	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("Loading events in microces: %d"), timeLoadEvents.count());
 	DrvFtaeAlarm::Log::GetInstance()->WriteInfo(_T("LoadEvents: Number of records: %d"), records.size());
 	return records;
 }

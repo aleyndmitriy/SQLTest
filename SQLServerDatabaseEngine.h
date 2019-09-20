@@ -19,6 +19,7 @@ namespace DrvFtaeAlarm {
 		bool loadServerInstances(std::string driverName) override;
 		bool loadDatabaseInstances(std::string serverName, AuthenticationType type, std::string user, std::string password) override;
 		bool ChooseDatabase(std::string databaseName) override;
+		bool CreateDirectConnectionToDatabase(const ConnectionAttributes& attributes) override;
 		void CloseConnection() override;
 		bool IsValidConnection() const override;
 		ConnectionAttributes GetConnectionAttributes() const override;

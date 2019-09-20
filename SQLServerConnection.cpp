@@ -275,3 +275,35 @@ std::string DrvFtaeAlarm::SQLServerConnection::HandleDiagnosticRecord()
 	}
 	return std::string(wszState);
 }
+
+std::shared_ptr<DrvFtaeAlarm::SQLServerConnection> DrvFtaeAlarm::SQLServerConnection::CreateConnectionToDatabase(const std::shared_ptr<SQLServerEnvironment>& environment, const ConnectionAttributes& attributes) {
+	if (attributes.driver.empty() || attributes.serverName.empty() || attributes.databaseName.empty()) {
+		return nullptr;
+	}
+	std::shared_ptr<DrvFtaeAlarm::SQLServerConnection> connection = std::make_shared<SQLServerConnection>(environment);
+	if (connection->sqlDBC == SQL_NULL_HDBC) {
+		return nullptr;
+	}
+	TCHAR whServerInfo[SQL_MAX_MESSAGE_LENGTH];
+	TCHAR wStrOut[STR_LENGTH];
+	SQLSMALLINT shBrowseResultLen = 0;
+	std::string strServerData = std::string("DRIVER=") + attributes.driver + std::string(";SERVER=") + attributes.serverName;
+	
+	if (attributes.isServerAuthentication) {
+		strServerData = strServerData + std::string(";UID=") + attributes.loginName + std::string(";PWD=") + attributes.password;
+	}
+	else {
+		strServerData = strServerData + std::string(";Trusted_Connection=yes");
+	}
+	strServerData = strServerData + std::string(";DATABASE=") + attributes.databaseName + std::string(";");
+	StringCchCopy(whServerInfo, strServerData.length() + 1, strServerData.c_str());
+	SQLSMALLINT res = SQLDriverConnect(connection->sqlDBC, NULL,reinterpret_cast<SQLCHAR*>(whServerInfo), SQL_NTS,
+		reinterpret_cast<SQLCHAR*>(wStrOut), STR_LENGTH, &shBrowseResultLen, SQL_DRIVER_NOPROMPT);
+	if (!SQL_SUCCEEDED(res)) {
+		connection->HandleDiagnosticRecord();
+		connection.reset();
+		return nullptr;
+	}
+	connection->HandleDiagnosticRecord();
+	return connection;
+}

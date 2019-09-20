@@ -11,6 +11,20 @@ bool DrvFtaeAlarm::SQLServerDatabaseEngine::OpenConnection()
 	return isOpen;
 }
 
+bool DrvFtaeAlarm::SQLServerDatabaseEngine::CreateDirectConnectionToDatabase(const ConnectionAttributes& attributes)
+{
+	if (!environment) {
+		environment = std::make_shared<SQLServerEnvironment>();
+	}
+	connection = SQLServerConnection::CreateConnectionToDatabase(environment, attributes);
+	if (connection) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
 bool DrvFtaeAlarm::SQLServerDatabaseEngine::OpenConnection(const ConnectionAttributes& attributes)
 {
 	if (!environment) {

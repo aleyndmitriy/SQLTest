@@ -9,7 +9,7 @@ class FtaeSource final : public ODS::ISourceFtaeEvent
 {
 public:
 	FtaeSource() = delete;
-	FtaeSource(const std::shared_ptr<DrvFtaeAlarm::ISettingsDataSource>& settingsDataSource, const std::shared_ptr<DrvFtaeAlarm::DatabaseInfoDAO>& databaseInfo, const std::shared_ptr<DrvFtaeAlarm::ConditionRecordsDAO>& conditionRecords);
+	FtaeSource(const std::shared_ptr<DrvFtaeAlarm::DatabaseEngine>& databaseEngine, const std::shared_ptr<DrvFtaeAlarm::ISettingsDataSource>& settingsDataSource, const std::shared_ptr<DrvFtaeAlarm::DatabaseInfoDAO>& databaseInfo, const std::shared_ptr<DrvFtaeAlarm::ConditionRecordsDAO>& conditionRecords);
 	FtaeSource(const FtaeSource& src) = delete;
 	FtaeSource& operator=(const FtaeSource& src) = delete;
 	FtaeSource(FtaeSource&& rhs) = delete;

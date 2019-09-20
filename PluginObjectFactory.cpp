@@ -17,7 +17,7 @@ int PluginObjectFactory::CreateObject(const TCHAR* szObjKey, void* pObjCreationP
 		return ODS::ERR::NOT_FOUND;
 	}
 	if (itr->second) {
-		FtaeSource* source = new FtaeSource(DrvFtaeAlarm::DataSQLServerAccessAssembly::instance().GetSettingDataSource(), DrvFtaeAlarm::DataSQLServerAccessAssembly::instance().GetDatabaseInfoSQLServerDao(), DrvFtaeAlarm::DataSQLServerAccessAssembly::instance().GetConditionRecordSQLServerDao());
+		FtaeSource* source = new FtaeSource(DrvFtaeAlarm::DataSQLServerAccessAssembly::instance().GetDataBaseEngine(), DrvFtaeAlarm::DataSQLServerAccessAssembly::instance().GetSettingDataSource(), DrvFtaeAlarm::DataSQLServerAccessAssembly::instance().GetDatabaseInfoSQLServerDao(), DrvFtaeAlarm::DataSQLServerAccessAssembly::instance().GetConditionRecordSQLServerDao());
 		if (source) {
 			source->SetRegInfo(itr->second.get());
 			*ppPluginObj = source;

@@ -15,6 +15,7 @@ namespace DrvFtaeAlarm {
 		virtual bool loadServerInstances(std::string driverName) = 0;
 		virtual bool loadDatabaseInstances(std::string serverName, AuthenticationType type, std::string user, std::string password) = 0;
 		virtual bool ChooseDatabase(std::string databaseName) = 0;
+		virtual bool CreateDirectConnectionToDatabase(const ConnectionAttributes& attributes) = 0;
 		virtual void CloseConnection() = 0;
 		virtual bool IsValidConnection() const = 0;
 		virtual ConnectionAttributes GetConnectionAttributes() const = 0;
