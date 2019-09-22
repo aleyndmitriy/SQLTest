@@ -46,6 +46,7 @@ namespace DrvFtaeAlarm {
 		void SetAlarmReportType();
 		void SetEventReportType();
 		void ChooseLocalOrRemoteServers();
+		void TabEventHandler(WORD currentItem);
 	private:
 		std::shared_ptr<ILoginViewOutput> presenter;
 		std::function<ODS::UI::IAbstractUIFacrory* (void)> uiFactoryGetter;
