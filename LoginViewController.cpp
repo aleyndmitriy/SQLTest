@@ -290,7 +290,7 @@ void DrvFtaeAlarm::LoginViewController::ErrorMessage(std::string message)
 	MessageBox(window,TEXT(message.c_str()), "Warning", MB_ICONSTOP);
 }
 
-void DrvFtaeAlarm::LoginViewController::TabEventHandler(WORD currentItem)
+void DrvFtaeAlarm::LoginViewController::TabEventHandler(WORD& currentItem)
 {
 	HWND hServerComboControl = GetDlgItem(window, IDC_COMBO_SERVER_NAME);
 	HWND hAuthComboControl = GetDlgItem(window, IDC_COMBO_AUTH_TYPE);
@@ -299,39 +299,39 @@ void DrvFtaeAlarm::LoginViewController::TabEventHandler(WORD currentItem)
 	HWND hTestButtonControl = GetDlgItem(window, IDC_BUTTON_TESTCONNECTION);
 	HWND hDatabaseComboControl = GetDlgItem(window, IDC_COMBO_CONFIG_DATABASE_NAME);
 	if (currentItem == IDC_COMBO_SERVER_NAME) {
-		//currentItem = IDC_COMBO_AUTH_TYPE;
+		currentItem = IDC_COMBO_AUTH_TYPE;
 		SetFocus(hAuthComboControl);
 	}
 	else if (currentItem == IDC_COMBO_AUTH_TYPE) {
 		if (IsWindowEnabled(hloginControl)) {
-			//currentItem = IDC_EDIT_USERNAME;
+			currentItem = IDC_EDIT_USERNAME;
 			SetFocus(hloginControl);
 		}
 		else {
-			//currentItem = IDC_BUTTON_TESTCONNECTION;
+			currentItem = IDC_BUTTON_TESTCONNECTION;
 			SetFocus(hTestButtonControl);
 		}
 	}
 	else if (currentItem == IDC_EDIT_USERNAME) {
 		if (IsWindowEnabled(hpassControl)) {
-			//currentItem = IDC_EDIT_PASSWORD;
+			currentItem = IDC_EDIT_PASSWORD;
 			SetFocus(hpassControl);
 		}
 		else {
-			//currentItem = IDC_BUTTON_TESTCONNECTION;
+			currentItem = IDC_BUTTON_TESTCONNECTION;
 			SetFocus(hTestButtonControl);
 		}
 	}
 	else if (currentItem == IDC_EDIT_PASSWORD) {
-		//currentItem = IDC_BUTTON_TESTCONNECTION;
+		currentItem = IDC_BUTTON_TESTCONNECTION;
 		SetFocus(hTestButtonControl);
 	}
 	else if (currentItem == IDC_BUTTON_TESTCONNECTION) {
-		//currentItem = IDC_COMBO_CONFIG_DATABASE_NAME;
+		currentItem = IDC_COMBO_CONFIG_DATABASE_NAME;
 		SetFocus(hDatabaseComboControl);
 	}
 	else {
-		//currentItem = IDC_COMBO_SERVER_NAME;
+		currentItem = IDC_COMBO_SERVER_NAME;
 		SetFocus(hServerComboControl);
 	}
 }
@@ -355,11 +355,11 @@ INT_PTR WINAPI LoginDlg_Proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_CLOSE:
 		controller.reset();
 	case WM_COMMAND:
-		isPressed = GetAsyncKeyState(VK_TAB);
+		/*isPressed = GetAsyncKeyState(VK_TAB);
 		if (isPressed) {
 			controller->TabEventHandler(currentItem);
 			break;
-		}
+		}*/
 		switch (LOWORD(wParam))
 		{
 		case IDC_EDIT_USERNAME: 
@@ -371,9 +371,6 @@ INT_PTR WINAPI LoginDlg_Proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case EN_CHANGE:
 				controller->SaveLogin();
 				break;
-			case EN_SETFOCUS:
-				currentItem = IDC_EDIT_USERNAME;
-				break;
 			}
 			break;
 		case IDC_EDIT_PASSWORD:
@@ -384,9 +381,6 @@ INT_PTR WINAPI LoginDlg_Proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				break;
 			case EN_CHANGE:
 				controller->SavePassword();
-				break;
-			case EN_SETFOCUS:
-				currentItem = IDC_EDIT_PASSWORD;
 				break;
 			}
 			break;
@@ -402,9 +396,6 @@ INT_PTR WINAPI LoginDlg_Proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case CBN_SELENDOK:
 				controller->ChooseServer();
 				break;
-			case CBN_SETFOCUS:
-				currentItem = IDC_COMBO_SERVER_NAME;
-				break;
 			}
 			break;
 		case IDC_COMBO_AUTH_TYPE:
@@ -412,9 +403,6 @@ INT_PTR WINAPI LoginDlg_Proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			{
 			case CBN_SELCHANGE:
 				controller->ChooseAuthentication();
-				break;
-			case CBN_SETFOCUS:
-				currentItem = IDC_COMBO_AUTH_TYPE;
 				break;
 			}
 			break;
@@ -436,9 +424,6 @@ INT_PTR WINAPI LoginDlg_Proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case CBN_SELENDOK:
 				controller->ChooseDatabase();
 				break;
-			case CBN_SETFOCUS:
-				currentItem = IDC_COMBO_CONFIG_DATABASE_NAME;
-				break;
 			}
 			break;
 		case IDC_BUTTON_TESTCONNECTION:
@@ -446,9 +431,6 @@ INT_PTR WINAPI LoginDlg_Proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			{
 			case BN_CLICKED:
 				controller->CheckConnectionToDatabase();
-				break;
-			case BN_SETFOCUS:
-				currentItem = IDC_BUTTON_TESTCONNECTION;
 				break;
 			}
 			break;
