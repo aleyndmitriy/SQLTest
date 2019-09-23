@@ -801,7 +801,11 @@ void SetODSTimeProperty(ODS::Property& prop, ULONG ulId, const TCHAR* szName, co
 	dataTime.wHour = timeStampStruct->hour;
 	dataTime.wMinute = timeStampStruct->minute;
 	dataTime.wSecond = timeStampStruct->second;
-	
+	std::string miliStr = std::to_string(timeStampStruct->fraction);
+	if (miliStr.length() > 3) {
+		miliStr.erase(3, miliStr.length() - 3);
+	}
+	dataTime.wMilliseconds = std::stoul(miliStr);
 	ODS::TimeUtils::SysTimeUtcToUlong64(dataTime, &ul64Millisec);
 	ODS::TimeUtils::Ulong64ToSysTimeLocal(ul64Millisec, &localDataTime);
 	ul64Millisec = 0;
