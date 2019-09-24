@@ -305,5 +305,6 @@ std::shared_ptr<DrvFtaeAlarm::SQLServerConnection> DrvFtaeAlarm::SQLServerConnec
 		return nullptr;
 	}
 	connection->HandleDiagnosticRecord();
+	connection->connectionAttributes = attributes;
 	return connection;
 }

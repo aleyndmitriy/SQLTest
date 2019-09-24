@@ -68,3 +68,32 @@ std::unique_ptr<DrvFtaeAlarm::SQLTable> DrvFtaeAlarm::SQLServerDatabaseInfoDAO::
 	}
 	return ptrData;
 }
+
+std::unique_ptr<DrvFtaeAlarm::SQLTable> DrvFtaeAlarm::SQLServerDatabaseInfoDAO::GetTableInfoInDirectConnection(const ConnectionAttributes& attributes, std::string databaseName, std::string tableName) {
+		_databaseEngine->CloseConnection();
+		if (!_databaseEngine->CreateDirectConnectionToDatabase(attributes)) {
+			Log::GetInstance()->WriteInfo(_T("Can't connect to database"));
+			return nullptr;
+		}
+	std::string querry = std::string("SELECT COLUMN_NAME, DATA_TYPE, TABLE_SCHEMA FROM Information_schema.Columns WHERE TABLE_NAME = '") + tableName + std::string("';");
+	std::vector<std::string> vec = { };
+	Log::GetInstance()->WriteInfo(_T("Table info querry : % s ."), (LPCTSTR)querry.c_str());
+	std::vector<Record> records = _databaseEngine->ExecuteStatement(querry, vec);
+	_databaseEngine->CloseConnection();
+	if (records.empty()) {
+		Log::GetInstance()->WriteInfo(_T("Table has no any columns"));
+		return nullptr;
+	}
+	Log::GetInstance()->WriteInfo(_T("columns number : %d ."), records.size());
+	std::unique_ptr<SQLTable> ptrData = std::make_unique<SQLTable>(tableName);
+	for (std::vector<Record>::const_iterator itr = records.cbegin(); itr != records.cend(); ++itr) {
+		Record::const_iterator recordItrColName = itr->findColumnValue("COLUMN_NAME");
+		Record::const_iterator recordItrColType = itr->findColumnValue("DATA_TYPE");
+		Record::const_iterator recordItrColSchema = itr->findColumnValue("TABLE_SCHEMA");
+		if (recordItrColName != itr->cend() && recordItrColType != itr->cend() && recordItrColSchema != itr->cend()) {
+			ptrData->InsertColumn(recordItrColName->second.second, recordItrColType->second.second);
+			ptrData->SetSchemaName(recordItrColSchema->second.second);
+		}
+	}
+	return ptrData;
+}
