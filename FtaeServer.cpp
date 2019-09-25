@@ -748,8 +748,8 @@ void SetODSProperty(ODS::Property& prop, ULONG ulId, const TCHAR* szName, const 
 		break;
 	case SQL_C_UBIGINT:
 		::VariantInit(&vValue);
-		vValue.vt = VT_INT;
-		vValue.llVal = std::stoll(szValue);
+		vValue.vt = VT_UI8;
+		vValue.ullVal = std::stoull(szValue);
 		prop.SetVarValue(&vValue);
 		::VariantClear(&vValue);
 		break;
