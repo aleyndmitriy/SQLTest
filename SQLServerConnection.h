@@ -15,8 +15,6 @@ namespace DrvFtaeAlarm {
 	public:
 		friend class SQLServerDatabaseEngine;
 		friend class SQLServerStatement;
-		friend class std::_Ref_count_obj<SQLServerConnection>;
-	private:
 		SQLServerConnection() = delete;
 		SQLServerConnection(SQLServerConnection&& rsc) = delete;
 		SQLServerConnection& operator=(SQLServerConnection&& rhs) = delete;
@@ -27,6 +25,7 @@ namespace DrvFtaeAlarm {
 		SQLServerConnection(const SQLServerConnection& src) = default;
 		SQLServerConnection& operator=(const SQLServerConnection& rhs) = default;
 		~SQLServerConnection() override;
+	private:
 		void* GetInterface(int nIfcId) override;
 		bool ConnectToServerInstances(std::string driverName) override;
 		bool ConnectToDatabaseInstances(std::string serverName, std::string login, std::string password, AuthenticationType authType) override;
